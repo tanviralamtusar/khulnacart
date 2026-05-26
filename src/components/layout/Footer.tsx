@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import siteLogoAsset from '@/assets/site-logo.png';
 import { 
   Phone,
   Mail,
@@ -97,10 +98,12 @@ const Footer = () => {
             
             <div className="pt-4">
               <Link to="/" className="inline-block group">
-                <span className="text-4xl md:text-5xl font-black tracking-tighter transition-transform group-hover:-translate-y-1 block">
-                  khulna<span className="text-primary">Cart</span>
-                </span>
-                <div className="h-1.5 w-full bg-primary/20 mt-1 rounded-full overflow-hidden">
+                <img 
+                  src={siteSettings?.site_logo || siteLogoAsset} 
+                  alt="Khulna Cart" 
+                  className="h-16 md:h-20 w-auto transition-transform group-hover:-translate-y-1"
+                />
+                <div className="h-1.5 w-full bg-primary/20 mt-2 rounded-full overflow-hidden">
                   <div className="h-full w-1/3 bg-primary group-hover:w-full transition-all duration-500" />
                 </div>
               </Link>

@@ -87,27 +87,39 @@ const Header = () => {
     }`}>
       {/* Main Header */}
       <div className="container-custom py-4">
-        <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
-            {siteLogo ? (
-              <img
-                src={siteLogo}
-                alt={siteName || 'Site Logo'}
-                className="h-10 w-auto object-contain"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  if (target.src !== defaultLogo) {
-                    target.src = defaultLogo;
-                  }
-                }}
-              />
-            ) : (
-              <span className="text-base md:text-lg font-semibold text-foreground leading-none">
-                {siteName}
-              </span>
-            )}
-          </Link>
+        <div className="flex items-center justify-between gap-4 relative">
+          {/* Mobile Menu Toggle */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="md:hidden z-10"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+
+          {/* Logo - Centered on Mobile */}
+          <div className="flex-1 md:flex-none flex items-center justify-center md:justify-start">
+            <Link to="/" className="flex-shrink-0 md:static absolute left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0">
+              {siteLogo ? (
+                <img
+                  src={siteLogo}
+                  alt={siteName || 'Site Logo'}
+                  className="h-8 md:h-10 w-auto object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src !== defaultLogo) {
+                      target.src = defaultLogo;
+                    }
+                  }}
+                />
+              ) : (
+                <span className="text-base md:text-lg font-semibold text-foreground leading-none">
+                  {siteName}
+                </span>
+              )}
+            </Link>
+          </div>
 
           {/* Search Bar - Desktop */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">
@@ -131,7 +143,7 @@ const Header = () => {
           </form>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1 md:gap-4 z-10">
             {/* Mobile Search Toggle */}
             <Button 
               variant="ghost" 
@@ -143,7 +155,7 @@ const Header = () => {
             </Button>
 
             {/* Wishlist */}
-            <Link to="/wishlist">
+            <Link to="/wishlist" className="hidden sm:block">
               <Button variant="ghost" size="icon" className="relative">
                 <Heart className="h-5 w-5" />
                 {wishlistItems.length > 0 && (
@@ -170,57 +182,49 @@ const Header = () => {
             </Button>
 
             {/* Account */}
-            {user ? (
-              <div className="relative group">
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
-                <div className="absolute top-full right-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div className="bg-card rounded-lg shadow-xl border border-border p-3 min-w-[160px]">
-                    <p className="text-sm text-muted-foreground mb-2 px-2 truncate">
-                      {user.email}
-                    </p>
-                    {isAdmin && (
+            <div className="hidden sm:block">
+              {user ? (
+                <div className="relative group">
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                  <div className="absolute top-full right-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <div className="bg-card rounded-lg shadow-xl border border-border p-3 min-w-[160px]">
+                      <p className="text-sm text-muted-foreground mb-2 px-2 truncate">
+                        {user.email}
+                      </p>
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          className="block px-2 py-1.5 text-sm text-foreground hover:text-primary hover:bg-muted rounded transition-colors"
+                        >
+                          অ্যাডমিন প্যানেল
+                        </Link>
+                      )}
                       <Link
-                        to="/admin"
+                        to="/my-account"
                         className="block px-2 py-1.5 text-sm text-foreground hover:text-primary hover:bg-muted rounded transition-colors"
                       >
-                        অ্যাডমিন প্যানেল
+                        আমার অর্ডার
                       </Link>
-                    )}
-                    <Link
-                      to="/my-account"
-                      className="block px-2 py-1.5 text-sm text-foreground hover:text-primary hover:bg-muted rounded transition-colors"
-                    >
-                      আমার অর্ডার
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-destructive hover:bg-muted rounded transition-colors"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      লগআউট
-                    </button>
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-destructive hover:bg-muted rounded transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        লগআউট
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <Link to="/auth">
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
-            )}
-
-            {/* Mobile Menu Toggle */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 
