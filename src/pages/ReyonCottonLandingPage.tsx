@@ -701,7 +701,7 @@ const CheckoutSection = memo(({ products, onSubmit, isSubmitting, selectedProduc
     }
 
     if (variations.length > 0 && !form.selectedVariationId) {
-      toast.error("সাইজ সিলেক্ট করুন");
+      toast.error("ভ্যারিয়েশন সিলেক্ট করুন");
       sizeSelectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -814,7 +814,7 @@ const CheckoutSection = memo(({ products, onSubmit, isSubmitting, selectedProduc
               <div ref={sizeSelectionRef} className="bg-white rounded-xl shadow-lg p-4 border">
                 <p className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-purple-500" />
-                  সাইজ নির্বাচন করুন <span className="text-red-500">*</span>
+                  ভ্যারিয়েশন নির্বাচন করুন <span className="text-red-500">*</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {variations.map((v) => (
@@ -833,7 +833,7 @@ const CheckoutSection = memo(({ products, onSubmit, isSubmitting, selectedProduc
                   ))}
                 </div>
                 {!form.selectedVariationId && (
-                  <p className="text-xs text-red-500 mt-2">* সাইজ সিলেক্ট করুন</p>
+                  <p className="text-xs text-red-500 mt-2">* ভ্যারিয়েশন সিলেক্ট করুন</p>
                 )}
               </div>
             )}

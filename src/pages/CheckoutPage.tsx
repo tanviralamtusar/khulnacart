@@ -358,8 +358,8 @@ const CheckoutPage = () => {
 
     if (missingSize) {
       toast({
-        title: "সাইজ নির্বাচন করুন",
-        description: `${missingSize.product.name} - এর সাইজ সিলেক্ট করুন`,
+        title: "ভ্যারিয়েশন নির্বাচন করুন",
+        description: `${missingSize.product.name} - এর ভ্যারিয়েশন সিলেক্ট করুন`,
         variant: "destructive",
       });
       return false;
@@ -615,7 +615,7 @@ const CheckoutPage = () => {
                                 }}
                               >
                                 <SelectTrigger className="h-8 text-xs">
-                                  <SelectValue placeholder="সাইজ নির্বাচন করুন" />
+                                  <SelectValue placeholder="ভ্যারিয়েশন নির্বাচন করুন" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {variations.map((v) => (

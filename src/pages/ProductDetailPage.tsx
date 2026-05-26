@@ -161,7 +161,7 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (hasVariations && !selectedVariation) {
-      toast.error('সাইজ সিলেক্ট করুন');
+      toast.error('ভ্যারিয়েশন সিলেক্ট করুন');
       return;
     }
     
@@ -194,7 +194,7 @@ const ProductDetailPage = () => {
 
   const handleBuyNow = () => {
     if (hasVariations && !selectedVariation) {
-      toast.error('সাইজ সিলেক্ট করুন');
+      toast.error('ভ্যারিয়েশন সিলেক্ট করুন');
       return;
     }
     
@@ -359,7 +359,7 @@ const ProductDetailPage = () => {
             {hasVariations && (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  সাইজ নির্বাচন করুন: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
+                  অপশন নির্বাচন করুন: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {product.variations!.map((variation) => (

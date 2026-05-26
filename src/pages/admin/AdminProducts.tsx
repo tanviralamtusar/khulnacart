@@ -106,9 +106,7 @@ const initialFormState = {
 };
 
 const defaultVariations: ProductVariation[] = [
-  { clientId: crypto.randomUUID(), name: 'Size 36', price: 0, stock: 100, sort_order: 1, is_active: true },
-  { clientId: crypto.randomUUID(), name: 'Size 38', price: 0, stock: 100, sort_order: 2, is_active: true },
-  { clientId: crypto.randomUUID(), name: 'Size 40', price: 0, stock: 100, sort_order: 3, is_active: true },
+  { clientId: crypto.randomUUID(), name: '', price: 0, stock: 100, sort_order: 1, is_active: true },
 ];
 
 export default function AdminProducts() {
@@ -800,7 +798,7 @@ export default function AdminProducts() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Package className="h-5 w-5 text-primary" />
-                    <Label className="text-base font-semibold">সাইজ ভ্যারিয়েশন (Size Variations)</Label>
+                    <Label className="text-base font-semibold">প্রোডাক্ট ভ্যারিয়েশন (Product Variations - Size, Kg, Ml etc.)</Label>
                   </div>
                   <div className="flex items-center gap-2">
                     <Switch
@@ -820,7 +818,7 @@ export default function AdminProducts() {
                 {hasVariations && (
                   <div className="space-y-3 bg-muted/50 rounded-lg p-4">
                     <div className="grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground mb-2">
-                      <div className="col-span-3">সাইজ (Size)</div>
+                      <div className="col-span-3">ভ্যারিয়েশন (Size/Kg/Ml)</div>
                       <div className="col-span-3">দাম (Price) ৳</div>
                       <div className="col-span-3">আগের দাম</div>
                       <div className="col-span-2">স্টক</div>
@@ -831,7 +829,7 @@ export default function AdminProducts() {
                       <div key={variation.clientId} className="grid grid-cols-12 gap-2 items-center">
                         <Input
                           className="col-span-3"
-                          placeholder="Size 36"
+                          placeholder="যেমন: Size 36, 1kg, 500ml..."
                           value={variation.name}
                           onChange={(e) => handleVariationChange(variation.clientId, 'name', e.target.value)}
                         />

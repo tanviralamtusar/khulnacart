@@ -498,7 +498,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (variations.length > 0 && !form.selectedVariationId) {
-      toast.error("সাইজ সিলেক্ট করুন");
+      toast.error("ভ্যারিয়েশন সিলেক্ট করুন");
       // Scroll to size selection area
       sizeSelectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -550,7 +550,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
                 {/* Size Selection */}
                 {variations.length > 0 && (
                   <div ref={sizeSelectionRef} className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">সাইজ নির্বাচন করুন <span className="text-red-500">*</span></p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">ভ্যারিয়েশন নির্বাচন করুন <span className="text-red-500">*</span></p>
                     <div className="flex flex-wrap gap-2">
                       {variations.map((v) => (
                         <button
@@ -568,7 +568,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
                       ))}
                     </div>
                     {!form.selectedVariationId && (
-                      <p className="text-xs text-red-500 mt-1">* সাইজ সিলেক্ট করুন</p>
+                      <p className="text-xs text-red-500 mt-1">* ভ্যারিয়েশন সিলেক্ট করুন</p>
                     )}
                   </div>
                 )}

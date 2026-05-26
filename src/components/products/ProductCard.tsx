@@ -43,7 +43,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     
     // If product has variations but none selected, show error
     if (hasVariations && !selectedVariation) {
-      toast.error('সাইজ সিলেক্ট করুন');
+      toast.error('ভ্যারিয়েশন সিলেক্ট করুন');
       return;
     }
     
@@ -81,7 +81,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     
     // If product has variations but none selected, show error
     if (hasVariations && !selectedVariation) {
-      toast.error('সাইজ সিলেক্ট করুন');
+      toast.error('ভ্যারিয়েশন সিলেক্ট করুন');
       return;
     }
     
@@ -239,10 +239,10 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
             {hasVariations && (
               <div className="mb-3">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-xs font-medium text-muted-foreground shrink-0">Size:</span>
+                  <span className="text-xs font-medium text-muted-foreground shrink-0">Option:</span>
                   {product.variations!.map((variation) => {
-                    // Extract just the number from the size name (e.g., "Size 36" -> "36")
-                    const sizeNumber = variation.name.replace(/[^0-9]/g, '') || variation.name;
+                    // Remove 'Size ' prefix if present, but keep other custom variation strings like 1kg, 500ml etc.
+                    const sizeNumber = variation.name.replace(/^(Size\s*)/i, '');
                     return (
                       <button
                         key={variation.id}
