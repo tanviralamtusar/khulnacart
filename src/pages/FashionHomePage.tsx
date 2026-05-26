@@ -415,64 +415,6 @@ export default function FashionHomePage() {
                 </Button>
               </div>
             </div>
-            
-            {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                হোম
-              </Link>
-              <Link to="/products?category=two-piece" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                টু পিস
-              </Link>
-              <Link to="/products?category=three-piece" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                থ্রি পিস
-              </Link>
-              <Link to="/products" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                সব প্রোডাক্ট
-              </Link>
-            </nav>
-
-            {/* Actions */}
-            <div className="flex items-center gap-1 md:gap-2">
-              {/* Mobile Search */}
-              <Button variant="ghost" size="icon" className="lg:hidden hover:bg-primary/10">
-                <Search className="h-5 w-5" />
-              </Button>
-
-              {/* Wishlist */}
-              <Link to="/wishlist">
-                <Button variant="ghost" size="icon" className="relative hover:bg-primary/10">
-                  <Heart className={`h-5 w-5 ${wishlistItems.length > 0 ? 'fill-destructive text-destructive' : ''}`} />
-                  {wishlistItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center font-bold">
-                      {wishlistItems.length}
-                    </span>
-                  )}
-                </Button>
-              </Link>
-
-              {/* Cart */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative hover:bg-primary/10"
-                onClick={() => dispatch(toggleCart())}
-              >
-                <ShoppingBag className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center font-bold">
-                    {cartCount}
-                  </span>
-                )}
-              </Button>
-
-              {/* Account */}
-              <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'}>
-                <Button variant="ghost" size="icon" className="hover:bg-primary/10">
-                  {user && isAdmin ? <LayoutDashboard className="h-5 w-5" /> : <User className="h-5 w-5" />}
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
 
@@ -536,120 +478,6 @@ export default function FashionHomePage() {
           )}
         </AnimatePresence>
       </header>
-
-      {/* Hero Slider */}
-      <section className="relative h-[50vh] md:h-[70vh] overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent z-10" />
-            <img
-              src={heroSlides[currentSlide].image}
-              alt={heroSlides[currentSlide].title}
-              className="w-full h-full object-cover"
-            />
-            
-            <div className="absolute inset-0 z-20 flex items-center">
-              <div className="container-custom">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                  className="max-w-xl text-white"
-                >
-                  <Badge className="mb-4 bg-primary text-primary-foreground">
-                    {heroSlides[currentSlide].badge}
-                  </Badge>
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-                    {heroSlides[currentSlide].title}
-                  </h1>
-                  <p className="text-lg md:text-xl text-white/90 mb-6">
-                    {heroSlides[currentSlide].subtitle}
-                  </p>
-                  <div className="flex gap-4">
-                    <Button 
-                      size="lg"
-                      onClick={() => navigate(heroSlides[currentSlide].link)}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8"
-                    >
-                      এখনই কিনুন <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="lg"
-                      onClick={() => navigate('/products')}
-                      className="border-white text-white hover:bg-white hover:text-foreground rounded-full px-8"
-                    >
-                      সব দেখুন
-                    </Button>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Slider Controls */}
-        {heroSlides.length > 1 && (
-          <>
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-colors"
-            >
-              <ChevronLeft className="w-6 h-6 text-white" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-colors"
-            >
-              <ChevronRight className="w-6 h-6 text-white" />
-            </button>
-
-            {/* Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
-              {heroSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all ${
-                    index === currentSlide 
-                      ? 'bg-white w-8' 
-                      : 'bg-white/50 hover:bg-white/70'
-                  }`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </section>
-
-      {/* Features Bar */}
-      <section className="py-6 bg-secondary/50 border-y border-border">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {featuresBarItems.map((feature: any, index: number) => {
-              const IconComponent = getIconComponent(feature.icon);
-              return (
-                <div key={index} className="flex items-center gap-3 justify-center">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <IconComponent className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{feature.title}</p>
-                    <p className="text-xs text-muted-foreground hidden md:block">{feature.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* Categories Section */}
       <section className="py-12 md:py-16 bg-background">
@@ -869,25 +697,6 @@ export default function FashionHomePage() {
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
-
-                      {/* Quick Add / Buy Now Buttons */}
-                      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform">
-                        <div className="flex flex-col gap-2">
-                          <Button
-                            className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-                            onClick={(e) => handleAddToCart(product, e)}
-                          >
-                            <ShoppingBag className="w-4 h-4 mr-2" /> কার্টে যোগ করুন
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            className="w-full rounded-full"
-                            onClick={(e) => handleBuyNow(product, e)}
-                          >
-                            <Zap className="w-4 h-4 mr-2" /> এখনই কিনুন
-                          </Button>
-                        </div>
-                      </div>
                     </div>
 
                     {/* Product Info */}
@@ -979,26 +788,6 @@ export default function FashionHomePage() {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                    </div>
-
-                    {/* Quick Add / Buy Now Buttons */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform">
-                      <div className="flex flex-col gap-2">
-                        <Button
-                          className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-                          onClick={(e) => handleAddToCart(product, e)}
-                        >
-                          <ShoppingBag className="w-4 h-4 mr-2" />
-                          কার্টে যোগ করুন
-                        </Button>
-                        <Button
-                          className="w-full rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
-                          onClick={(e) => handleBuyNow(product, e)}
-                        >
-                          <Zap className="w-4 h-4 mr-2" />
-                          এখনই কিনুন
-                        </Button>
-                      </div>
                     </div>
                   </div>
 
@@ -1134,23 +923,6 @@ export default function FashionHomePage() {
                   >
                     <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-destructive text-destructive' : ''}`} />
                   </Button>
-
-                  <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        className="w-full rounded-full bg-primary/90 backdrop-blur-md text-primary-foreground hover:bg-primary"
-                        onClick={(e) => handleAddToCart(product, e)}
-                      >
-                        কার্টে যোগ করুন
-                      </Button>
-                      <Button
-                        className="w-full rounded-full bg-accent/90 backdrop-blur-md text-accent-foreground hover:bg-accent"
-                        onClick={(e) => handleBuyNow(product, e)}
-                      >
-                        এখনই কিনুন
-                      </Button>
-                    </div>
-                  </div>
                 </div>
 
                 <h3 className="font-medium text-foreground mb-1 line-clamp-1">{product.name}</h3>

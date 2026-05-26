@@ -6,44 +6,56 @@
 
 @layer base {
   :root {
-    /* Elegant Bengali Theme - Burgundy & Gold */
-    --background: 45 30% 97%;
-    --foreground: 340 40% 10%;
+    /* Elegant Theme - Orange & Cream */
+    --background: 36 100% 98%;
+    --foreground: 36 100% 5%;
 
     --card: 0 0% 100%;
-    --card-foreground: 340 40% 10%;
+    --card-foreground: 36 100% 5%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 340 40% 10%;
+    --popover-foreground: 36 100% 5%;
 
-    /* Primary - Deep Burgundy/Maroon */
-    --primary: 340 70% 35%;
-    --primary-foreground: 45 30% 97%;
+    /* Primary - Orange */
+    --primary: 36 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Warm Cream */
-    --secondary: 45 40% 92%;
-    --secondary-foreground: 340 40% 15%;
+    /* Secondary - Light Orange */
+    --secondary: 36 100% 95%;
+    --secondary-foreground: 36 100% 15%;
 
-    /* Muted - Soft Beige */
-    --muted: 40 25% 94%;
-    --muted-foreground: 340 20% 40%;
+    /* Muted */
+    --muted: 36 40% 94%;
+    --muted-foreground: 36 20% 40%;
 
-    /* Accent - Rich Gold */
-    --accent: 38 80% 50%;
-    --accent-foreground: 340 40% 10%;
+    /* Accent */
+    --accent: 36 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 30% 88%;
-    --input: 40 30% 88%;
-    --ring: 340 70% 35%;
+    --border: 36 40% 88%;
+    --input: 36 40% 88%;
+    --ring: 36 100% 50%;
 
     --radius: 0.75rem;
 
     /* Custom tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(340 70% 35%) 0%, hsl(38 80% 50%) 100%);
-    --gradient-cta: linear-gradient(135deg, hsl(340 75% 30%) 0%, hsl(340 60% 45%) 100%);
+    --color-50: #FFF5E6;
+    --color-100: #FFE2B8;
+    --color-200: #FFD08A;
+    --color-300: #FFBE5C;
+    --color-400: #FFAB2E;
+    --color-500: #FF9900;
+    --color-600: #D17D00;
+    --color-700: #A36200;
+    --color-800: #754600;
+    --color-900: #472B00;
+    --color-950: #1A0F00;
+
+    --gradient-hero: linear-gradient(135deg, var(--color-600) 0%, var(--color-400) 100%);
+    --gradient-cta: linear-gradient(135deg, var(--color-700) 0%, var(--color-500) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(45 30% 97%) 100%);
     --gradient-dark: linear-gradient(135deg, hsl(340 40% 8%) 0%, hsl(340 30% 15%) 100%);
     --gradient-elegant: linear-gradient(135deg, hsl(45 30% 97%) 0%, hsl(340 15% 96%) 50%, hsl(38 35% 95%) 100%);
