@@ -1,6 +1,9 @@
 name: Build and Deploy to Hostinger
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:  # Manual trigger only - go to GitHub Actions tab and click "Run workflow"
 
 # Required so the workflow can push to the `deploy` branch
