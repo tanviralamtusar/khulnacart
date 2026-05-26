@@ -50,21 +50,11 @@ const adminNavItems = [
   { title: 'Categories', url: '/admin/categories', icon: FolderTree },
   { title: 'Orders', url: '/admin/orders', icon: ShoppingCart },
   { title: 'Incomplete Orders', url: '/admin/incomplete-orders', icon: ShoppingCart },
-  { title: 'Order Protection', url: '/admin/order-protection', icon: Shield },
-  { title: 'Contact Messages', url: '/admin/contact-submissions', icon: MessageSquare },
-  { title: 'Landing Pages', url: '/admin/landing-pages', icon: Megaphone },
-  { title: 'Courier History', url: '/admin/courier-history', icon: History },
-  { title: 'Courier Settings', url: '/admin/courier-settings', icon: Truck },
   { title: 'Users', url: '/admin/users', icon: Users },
   { title: 'Inventory', url: '/admin/inventory', icon: Boxes },
-  { title: 'Slider Settings', url: '/admin/banners', icon: Image },
-  { title: 'Marketing', url: '/admin/marketing', icon: Megaphone },
-  { title: 'SMS', url: '/admin/sms', icon: MessageSquare },
-  { title: 'Social Media', url: '/admin/social-media', icon: Share2 },
   { title: 'Shop Settings', url: '/admin/shop-settings', icon: Settings },
   { title: 'Site Settings', url: '/admin/site-settings', icon: Settings },
   { title: 'Home Page Edit', url: '/admin/home-page-edit', icon: Home },
-  { title: 'Landing Video', url: '/admin/landing-video-settings', icon: Video },
   
 ];
 

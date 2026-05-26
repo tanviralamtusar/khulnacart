@@ -511,11 +511,15 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate(`/products?category=${category.slug}`)}
                 >
-                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
-                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
-                      <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
+                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
+                    <img 
+                      src={categoryImage} 
+                      alt={category.name} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
+                      <span className="font-semibold text-white text-center text-sm md:text-base">{category.name}</span>
                     </div>
-                    <span className="font-semibold text-foreground text-center text-sm md:text-base">{category.name}</span>
                   </div>
                 </motion.div>
               );
@@ -529,11 +533,15 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?category=two-piece')}
                 >
-                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
-                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
-                      <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
+                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
+                    <img 
+                      src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80" 
+                      alt="টু পিস" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
+                      <span className="font-semibold text-white text-center text-sm md:text-base">টু পিস</span>
                     </div>
-                    <span className="font-semibold text-foreground text-center text-sm md:text-base">টু পিস</span>
                   </div>
                 </motion.div>
 
@@ -542,11 +550,15 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?category=three-piece')}
                 >
-                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
-                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
-                      <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
+                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
+                    <img 
+                      src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80" 
+                      alt="থ্রি পিস" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
+                      <span className="font-semibold text-white text-center text-sm md:text-base">থ্রি পিস</span>
                     </div>
-                    <span className="font-semibold text-foreground text-center text-sm md:text-base">থ্রি পিস</span>
                   </div>
                 </motion.div>
 
@@ -555,11 +567,15 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?filter=new')}
                 >
-                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
-                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
-                      <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
+                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
+                    <img 
+                      src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80" 
+                      alt="নতুন আগমন" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
+                      <span className="font-semibold text-white text-center text-sm md:text-base">নতুন আগমন</span>
                     </div>
-                    <span className="font-semibold text-foreground text-center text-sm md:text-base">নতুন আগমন</span>
                   </div>
                 </motion.div>
 
@@ -568,11 +584,15 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?filter=sale')}
                 >
-                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
-                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
-                      <Zap className="w-6 h-6 md:w-8 md:h-8" />
+                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
+                    <img 
+                      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" 
+                      alt="সেল" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
+                      <span className="font-semibold text-white text-center text-sm md:text-base">সেল 🔥</span>
                     </div>
-                    <span className="font-semibold text-foreground text-center text-sm md:text-base">সেল 🔥</span>
                   </div>
                 </motion.div>
               </>
