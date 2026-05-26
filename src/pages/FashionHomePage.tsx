@@ -337,20 +337,8 @@ export default function FashionHomePage() {
     return Math.round(((originalPrice - price) / originalPrice) * 100);
   };
 
-  // Placeholder products if no data
-  const placeholderProducts = [
-    { id: '1', name: 'ফ্লোরাল প্রিন্ট টু পিস', price: 2450, original_price: 3200, images: ['https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&q=80'], slug: 'floral-two-pcs' },
-    { id: '2', name: 'এমব্রয়ডারি থ্রি পিস', price: 3850, original_price: 4500, images: ['https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&q=80'], slug: 'embroidery-three-pcs' },
-    { id: '3', name: 'কটন টু পিস সেট', price: 1950, original_price: 2400, images: ['https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&q=80'], slug: 'cotton-two-pcs' },
-    { id: '4', name: 'সিল্ক থ্রি পিস', price: 4250, original_price: 5000, images: ['https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=400&q=80'], slug: 'silk-three-pcs' },
-    { id: '5', name: 'প্রিন্টেড টু পিস', price: 2150, original_price: 2800, images: ['https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&q=80'], slug: 'printed-two-pcs' },
-    { id: '6', name: 'ডিজাইনার থ্রি পিস', price: 5200, original_price: 6500, images: ['https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&q=80'], slug: 'designer-three-pcs' },
-    { id: '7', name: 'ক্যাজুয়াল টু পিস', price: 1850, original_price: 2200, images: ['https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&q=80'], slug: 'casual-two-pcs' },
-    { id: '8', name: 'পার্টি থ্রি পিস', price: 4800, original_price: 5800, images: ['https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=400&q=80'], slug: 'party-three-pcs' },
-  ];
-
-  const displayProducts = featuredProducts.length > 0 ? featuredProducts : placeholderProducts;
-  const displayNewArrivals = newArrivals.length > 0 ? newArrivals : placeholderProducts.slice(0, 4);
+  const displayProducts = featuredProducts;
+  const displayNewArrivals = newArrivals;
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
@@ -486,23 +474,7 @@ export default function FashionHomePage() {
           <div className={`grid grid-cols-3 gap-3 md:gap-6 ${categories.length <= 3 ? 'md:grid-cols-3' : 'md:grid-cols-6'}`}>
             {/* Dynamic categories from database */}
             {categories.map((category, index) => {
-              // Define fallback images for categories - using reliable Unsplash images
-              const fallbackImages = [
-                'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80',
-                'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80',
-                'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80',
-                'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80',
-              ];
-              
-              const gradientColors = [
-                'from-rose-100 to-rose-50',
-                'from-violet-100 to-violet-50',
-                'from-amber-100 to-amber-50',
-                'from-emerald-100 to-emerald-50',
-              ];
-
-              // Priority: category image_url > product image > fallback
-              const categoryImage = category.image_url || category.productImage || fallbackImages[index % fallbackImages.length];
+              const categoryImage = category.image_url || category.productImage;
               
               return (
                 <motion.div
@@ -512,11 +484,17 @@ export default function FashionHomePage() {
                   onClick={() => navigate(`/products?category=${category.slug}`)}
                 >
                   <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
-                    <img 
-                      src={categoryImage} 
-                      alt={category.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    />
+                    {categoryImage ? (
+                      <img 
+                        src={categoryImage} 
+                        alt={category.name} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <ShoppingBag className="w-12 h-12 text-muted-foreground/30" />
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
                       <span className="font-semibold text-white text-center text-sm md:text-base">{category.name}</span>
                     </div>
@@ -525,78 +503,7 @@ export default function FashionHomePage() {
               );
             })}
 
-            {/* Show placeholders if no categories exist */}
-            {categories.length === 0 && (
-              <>
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  className="group cursor-pointer"
-                  onClick={() => navigate('/products?category=two-piece')}
-                >
-                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
-                    <img 
-                      src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80" 
-                      alt="টু পিস" 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
-                      <span className="font-semibold text-white text-center text-sm md:text-base">টু পিস</span>
-                    </div>
-                  </div>
-                </motion.div>
 
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  className="group cursor-pointer"
-                  onClick={() => navigate('/products?category=three-piece')}
-                >
-                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
-                    <img 
-                      src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80" 
-                      alt="থ্রি পিস" 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
-                      <span className="font-semibold text-white text-center text-sm md:text-base">থ্রি পিস</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  className="group cursor-pointer"
-                  onClick={() => navigate('/products?filter=new')}
-                >
-                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
-                    <img 
-                      src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80" 
-                      alt="নতুন আগমন" 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
-                      <span className="font-semibold text-white text-center text-sm md:text-base">নতুন আগমন</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  className="group cursor-pointer"
-                  onClick={() => navigate('/products?filter=sale')}
-                >
-                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
-                    <img 
-                      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" 
-                      alt="সেল" 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
-                      <span className="font-semibold text-white text-center text-sm md:text-base">সেল 🔥</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </>
-            )}
           </div>
         </div>
       </section>
@@ -634,7 +541,7 @@ export default function FashionHomePage() {
                     {/* Product Image */}
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <img
-                        src={product.images?.[0] || `https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&q=80`}
+                        src={product.images?.[0]}
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
@@ -695,7 +602,10 @@ export default function FashionHomePage() {
           </div>
         </section>
       )}
-      <section className="py-12 md:py-16 bg-secondary/30">
+      {/* Best Selling Section */}
+      {displayProducts.length > 0 && (
+        <section className="py-12 md:py-16 bg-secondary/30">
+          {/* ... existing best selling header ... */}
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -726,7 +636,7 @@ export default function FashionHomePage() {
                   {/* Product Image */}
                   <div className="relative aspect-[3/4] overflow-hidden">
                     <img
-                      src={product.images?.[0] || `https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&q=80`}
+                      src={product.images?.[0]}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -801,10 +711,11 @@ export default function FashionHomePage() {
           </div>
         </div>
       </section>
+      )}
 
-      {/* New Arrivals */}
-      <section className="py-12 md:py-16 bg-secondary/30">
-        <div className="container-custom">
+      {displayNewArrivals.length > 0 && (
+        <section className="py-12 md:py-16 bg-secondary/30">
+          <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
               <span className="text-primary font-medium text-sm tracking-wider uppercase">নতুন সংযোজন</span>
@@ -831,7 +742,7 @@ export default function FashionHomePage() {
                 <div className="relative overflow-hidden rounded-2xl bg-card mb-3">
                   <div className="aspect-[3/4] overflow-hidden">
                     <img
-                      src={product.images?.[0] || `https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&q=80`}
+                      src={product.images?.[0]}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -860,9 +771,10 @@ export default function FashionHomePage() {
                 </div>
               </motion.div>
             ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="bg-slate-50 text-foreground pt-20 pb-10 border-t border-border/50">
@@ -905,9 +817,7 @@ export default function FashionHomePage() {
                 {[
                   { label: "Login", to: "/auth" },
                   { label: "Register", to: "/auth" },
-                  { label: "Contact Us", to: "/contact" },
-                  { label: "Shipping Policy", to: "/contact" },
-                  { label: "Return Policy", to: "/contact" }
+                  { label: "Contact Us", to: "/contact" }
                 ].map((link, i) => (
                   <li key={i}>
                     <Link to={link.to} className="text-muted-foreground hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">

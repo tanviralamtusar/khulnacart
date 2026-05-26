@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import siteLogoAsset from '@/assets/site-logo.png';
-import { 
+import {
   Phone,
   Mail,
   MapPin
@@ -17,14 +17,14 @@ const Footer = () => {
         .from('admin_settings')
         .select('key, value')
         .in('key', ['site_name', 'site_logo', 'header_phone', 'whatsapp_number', 'call_number']);
-      
+
       if (error) throw error;
-      
+
       const settingsMap: Record<string, string> = {};
       data?.forEach(item => {
         settingsMap[item.key] = item.value;
       });
-      
+
       return settingsMap;
     },
     staleTime: 5 * 60 * 1000,
@@ -75,8 +75,6 @@ const Footer = () => {
                 { label: "Login", to: "/auth" },
                 { label: "Register", to: "/auth" },
                 { label: "Contact Us", to: "/contact" },
-                { label: "Shipping Policy", to: "/contact" },
-                { label: "Return Policy", to: "/contact" }
               ].map((link, i) => (
                 <li key={i}>
                   <Link to={link.to} className="text-muted-foreground hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">
@@ -95,28 +93,28 @@ const Footer = () => {
                 Just place the order, we will be at your door soon. <span className="font-semibold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
               </p>
             </div>
-            
+
             <div className="pt-4">
               <Link to="/" className="inline-block group">
-                <img 
-                  src={siteSettings?.site_logo || siteLogoAsset} 
-                  alt="Khulna Cart" 
+                <img
+                  src={siteSettings?.site_logo || siteLogoAsset}
+                  alt="Khulna Cart"
                   className="h-16 md:h-20 w-auto transition-transform group-hover:-translate-y-1"
                 />
               </Link>
             </div>
           </div>
         </div>
-        
+
         <div className="border-t border-border/50 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs font-medium text-muted-foreground tracking-wide">
             © {new Date().getFullYear()} KHULNA CART. POWERED BY <a href="https://khulnacart.com" className="text-primary hover:underline">KHULNACART.COM</a>
           </p>
-          
+
           <div className="flex items-center gap-6">
-             <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Privacy</Link>
-             <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Terms</Link>
-             <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">FAQ</Link>
+            <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Privacy</Link>
+            <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Terms</Link>
+            <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">FAQ</Link>
           </div>
         </div>
       </div>

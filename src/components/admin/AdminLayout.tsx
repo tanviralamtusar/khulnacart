@@ -3,12 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  LayoutDashboard, 
-  Package, 
-  FolderTree, 
-  ShoppingCart, 
-  Users, 
+import {
+  LayoutDashboard,
+  Package,
+  FolderTree,
+  ShoppingCart,
+  Users,
   Boxes,
   Image,
   LogOut,
@@ -24,7 +24,7 @@ import {
   Home,
   Video,
   Shield,
-  
+
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
@@ -54,8 +54,8 @@ const adminNavItems = [
   { title: 'Inventory', url: '/admin/inventory', icon: Boxes },
   { title: 'Shop Settings', url: '/admin/shop-settings', icon: Settings },
   { title: 'Site Settings', url: '/admin/site-settings', icon: Settings },
-  { title: 'Home Page Edit', url: '/admin/home-page-edit', icon: Home },
-  
+
+
 ];
 
 function AdminSidebar() {
@@ -71,7 +71,7 @@ function AdminSidebar() {
         .from('contact_submissions')
         .select('*', { count: 'planned', head: true })
         .eq('is_read', false);
-      
+
       if (error) throw error;
       return count || 0;
     },
@@ -89,7 +89,7 @@ function AdminSidebar() {
         .from('orders')
         .select('*', { count: 'planned', head: true })
         .eq('status', 'pending');
-      
+
       if (error) throw error;
       return count || 0;
     },
@@ -119,20 +119,19 @@ function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {adminNavItems.map((item) => {
-                const isActive = location.pathname === item.url || 
+                const isActive = location.pathname === item.url ||
                   (item.url !== '/admin' && location.pathname.startsWith(item.url));
-                
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
+                      <NavLink
+                        to={item.url}
                         end={item.url === '/admin'}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                          isActive 
-                            ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium' 
+                        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${isActive
+                            ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
                             : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
-                        }`}
+                          }`}
                         activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                       >
                         <item.icon className="h-4 w-4" />
@@ -158,8 +157,8 @@ function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <div className="mt-auto p-4 border-t border-sidebar-border">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive"
           onClick={handleSignOut}
         >
