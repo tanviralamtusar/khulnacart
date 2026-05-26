@@ -96,7 +96,7 @@ export default function FashionHomePage() {
     refetchOnWindowFocus: false,
   });
 
-  const siteName = headerSettings?.site_name || 'Modessi';
+  const siteName = headerSettings?.site_name || 'Khulna Cart';
   const siteLogo = headerSettings?.site_logo || headerSettings?.shop_logo_url || defaultLogo;
 
   useEffect(() => {
@@ -522,21 +522,11 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate(`/products?category=${category.slug}`)}
                 >
-                  <div className={`relative overflow-hidden rounded-2xl aspect-square bg-gradient-to-br ${gradientColors[index % gradientColors.length]}`}>
-                    <img
-                      src={categoryImage}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = fallbackImages[index % fallbackImages.length];
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-bold text-white">{category.name}</h3>
-                      <p className="text-white/80 text-sm">{category.description || 'প্রোডাক্ট দেখুন'}</p>
+                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
+                      <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
+                    <span className="font-semibold text-foreground text-center text-sm md:text-base">{category.name}</span>
                   </div>
                 </motion.div>
               );
@@ -550,17 +540,11 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?category=two-piece')}
                 >
-                  <div className="relative overflow-hidden rounded-2xl aspect-square bg-gradient-to-br from-pink-100 to-pink-50">
-                    <img
-                      src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&q=80"
-                      alt="টু পিস"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-bold text-white">টু পিস</h3>
-                      <p className="text-white/80 text-sm">১২০+ প্রোডাক্ট</p>
+                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
+                      <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
+                    <span className="font-semibold text-foreground text-center text-sm md:text-base">টু পিস</span>
                   </div>
                 </motion.div>
 
@@ -569,17 +553,11 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?category=three-piece')}
                 >
-                  <div className="relative overflow-hidden rounded-2xl aspect-square bg-gradient-to-br from-purple-100 to-purple-50">
-                    <img
-                      src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&q=80"
-                      alt="থ্রি পিস"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-bold text-white">থ্রি পিস</h3>
-                      <p className="text-white/80 text-sm">৮৫+ প্রোডাক্ট</p>
+                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
+                      <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
+                    <span className="font-semibold text-foreground text-center text-sm md:text-base">থ্রি পিস</span>
                   </div>
                 </motion.div>
 
@@ -588,17 +566,11 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?filter=new')}
                 >
-                  <div className="relative overflow-hidden rounded-2xl aspect-square bg-gradient-to-br from-amber-100 to-amber-50">
-                    <img
-                      src="https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=400&q=80"
-                      alt="নতুন আগমন"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-bold text-white">নতুন আগমন</h3>
-                      <p className="text-white/80 text-sm">এই সপ্তাহে</p>
+                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
+                      <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
+                    <span className="font-semibold text-foreground text-center text-sm md:text-base">নতুন আগমন</span>
                   </div>
                 </motion.div>
 
@@ -607,17 +579,11 @@ export default function FashionHomePage() {
                   className="group cursor-pointer"
                   onClick={() => navigate('/products?filter=sale')}
                 >
-                  <div className="relative overflow-hidden rounded-2xl aspect-square bg-gradient-to-br from-red-100 to-red-50">
-                    <img
-                      src="https://images.unsplash.com/photo-1596783074918-c84cb06531ca?w=400&q=80"
-                      alt="সেল"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-lg font-bold text-white">সেল 🔥</h3>
-                      <p className="text-white/80 text-sm">৫০% পর্যন্ত ছাড়</p>
+                  <div className="bg-card hover:border-primary border border-border rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-colors h-32 md:h-40">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full group-hover:scale-110 transition-transform">
+                      <Zap className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
+                    <span className="font-semibold text-foreground text-center text-sm md:text-base">সেল 🔥</span>
                   </div>
                 </motion.div>
               </>
@@ -827,55 +793,6 @@ export default function FashionHomePage() {
         </div>
       </section>
 
-      {/* Promo Banner */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Banner 1 */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 p-8 md:p-10 cursor-pointer group"
-              onClick={() => navigate('/products?category=two-piece')}
-            >
-              <div className="relative z-10">
-                <Badge className="mb-3 bg-white/20 text-white border-0">সীমিত অফার</Badge>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                  টু পিস কালেকশন
-                </h3>
-                <p className="text-white/90 mb-4">৩০% পর্যন্ত ছাড়</p>
-                <Button className="bg-white text-rose-600 hover:bg-white/90 rounded-full">
-                  এখনই কিনুন <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-              <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-            </motion.div>
-
-            {/* Banner 2 */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-500 to-purple-500 p-8 md:p-10 cursor-pointer group"
-              onClick={() => navigate('/products?category=three-piece')}
-            >
-              <div className="relative z-10">
-                <Badge className="mb-3 bg-white/20 text-white border-0">নতুন আগমন</Badge>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                  থ্রি পিস স্পেশাল
-                </h3>
-                <p className="text-white/90 mb-4">প্রিমিয়াম কোয়ালিটি</p>
-                <Button className="bg-white text-purple-600 hover:bg-white/90 rounded-full">
-                  এখনই কিনুন <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-              <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* New Arrivals */}
       <section className="py-12 md:py-16 bg-secondary/30">
         <div className="container-custom">
@@ -938,102 +855,69 @@ export default function FashionHomePage() {
         </div>
       </section>
 
-      {/* Newsletter / CTA */}
-      <section className="py-16 md:py-20 bg-background">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-accent p-8 md:p-16 text-center"
-          >
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl" />
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full blur-3xl" />
-            </div>
-
-            <div className="relative z-10">
-              <h2 className="text-2xl md:text-4xl font-bold text-primary-foreground mb-4">
-                ৩০% ছাড় পান প্রথম অর্ডারে!
-              </h2>
-              <p className="text-lg text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-                আজই সাবস্ক্রাইব করুন এবং এক্সক্লুসিভ অফার, নতুন কালেকশন আপডেট পান।
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                <Input
-                  type="text"
-                  placeholder="আপনার ফোন নম্বর"
-                  className="flex-1 px-6 py-6 rounded-full bg-white/20 backdrop-blur-md border-white/30 text-primary-foreground placeholder:text-primary-foreground/60 focus:border-white"
-                />
-                <Button 
-                  size="lg"
-                  className="bg-white text-primary hover:bg-white/90 rounded-full px-8"
-                >
-                  সাবস্ক্রাইব
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-[#1a1a2e] text-white py-12 md:py-16">
+      <footer className="bg-[#F8F5F0] text-foreground pt-12 pb-8 border-t border-border">
         <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">এলিগ্যান্স</span>
-              </div>
-              <p className="text-gray-400 text-sm">
-                প্রিমিয়াম কোয়ালিটি টু পিস ও থ্রি পিস কালেকশন। <span className="text-pink-400">আপনার স্টাইল, আপনার পছন্দ।</span>
+          {/* Top Promise Bar */}
+          <div className="text-center mb-12 max-w-4xl mx-auto px-4">
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+              Never worry about <span className="font-bold text-foreground">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-bold text-foreground">expiry date</span> of every product before delivery.
+            </p>
+          </div>
+
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Why We are Best?</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 items-start">
+            {/* Why We Are Best List */}
+            <div className="flex flex-col items-center md:items-start">
+              <ul className="space-y-3 text-sm md:text-base font-medium">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                  Fastest Delivery [Same Day]
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                  Verified & Authentic Products
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                  Customer Support
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                  Easy return policy
+                </li>
+              </ul>
+            </div>
+
+            {/* Customer Support Links */}
+            <div className="flex flex-col items-center">
+              <h4 className="font-bold text-lg mb-6 tracking-tight uppercase">CUSTOMER SUPPORT</h4>
+              <ul className="space-y-4 text-center">
+                <li><Link to="/auth" className="text-sm md:text-base hover:text-primary transition-colors">Login</Link></li>
+                <li><Link to="/auth" className="text-sm md:text-base hover:text-primary transition-colors">Register</Link></li>
+                <li><Link to="/contact" className="text-sm md:text-base hover:text-primary transition-colors">Contact Us</Link></li>
+              </ul>
+            </div>
+
+            {/* About & Branding */}
+            <div className="flex flex-col items-center md:items-end text-center md:text-right">
+              <p className="text-sm md:text-base text-muted-foreground max-w-xs mb-8 leading-relaxed">
+                Just place the order, we will be at your door soon. <span className="font-bold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback.
               </p>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4 text-white">কুইক লিংক</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/products" className="hover:text-pink-400 transition-colors">সব প্রোডাক্ট</Link></li>
-                <li><Link to="/products?category=two-piece" className="hover:text-pink-400 transition-colors">টু পিস</Link></li>
-                <li><Link to="/products?category=three-piece" className="hover:text-pink-400 transition-colors">থ্রি পিস</Link></li>
-                <li><Link to="/about" className="hover:text-pink-400 transition-colors">আমাদের সম্পর্কে</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4 text-white">সাহায্য</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/contact" className="hover:text-pink-400 transition-colors">যোগাযোগ</Link></li>
-                <li><Link to="/contact" className="hover:text-pink-400 transition-colors">শিপিং পলিসি</Link></li>
-                <li><Link to="/contact" className="hover:text-pink-400 transition-colors">রিটার্ন পলিসি</Link></li>
-                <li><Link to="/contact" className="hover:text-pink-400 transition-colors">FAQ</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4 text-white">যোগাযোগ</h4>
-              <ul className="space-y-3 text-sm text-gray-400">
-                <li className="flex items-center gap-2">
-                  <span className="text-pink-400">📞</span>
-                  <a href="tel:+8801995909243" className="hover:text-pink-400 transition-colors">01995-909243</a>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-pink-400">✉️</span>
-                  <a href="https://www.facebook.com/messages/t/282687191604098/" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">Facebook Inbox</a>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-pink-400">📍</span>
-                  <span>Mirpur-13, Dhaka-1216</span>
-                </li>
-              </ul>
+              
+              <div className="flex items-center justify-center md:justify-end">
+                <span className="text-5xl md:text-6xl font-extrabold tracking-tighter">
+                  khulna<span className="text-primary">Cart</span>
+                </span>
+              </div>
             </div>
           </div>
           
-          <div className="border-t border-gray-700/50 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} এলিগ্যান্স। সর্বস্বত্ব সংরক্ষিত।</p>
+          <div className="border-t border-border pt-8 text-center text-xs md:text-sm text-muted-foreground">
+            <p>Powered by khulnacart.com, All rights reserved, 2026.</p>
           </div>
         </div>
       </footer>

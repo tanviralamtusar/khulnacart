@@ -29,130 +29,72 @@ const Footer = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const siteName = siteSettings?.site_name || 'এলিগ্যান্স';
+  const siteName = siteSettings?.site_name || 'খুলনা কার্ট';
   const siteLogo = siteSettings?.site_logo;
 
   return (
-    <footer className="bg-[#1a1a2e] text-white">
-      {/* Main Footer */}
-      <div className="container mx-auto px-4 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              {siteLogo ? (
-                <img 
-                  src={siteLogo} 
-                  alt={siteName} 
-                  className="h-10 w-auto"
-                />
-              ) : (
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center">
-                  <span className="text-white text-lg">✦</span>
-                </div>
-              )}
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
-                {siteName}
-              </h2>
-            </div>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              প্রিমিয়াম কোয়ালিটি টু পিস ও থ্রি পিস কালেকশন। 
-              <span className="block text-pink-400 mt-1">আপনার স্টাইল, আপনার পছন্দ।</span>
+    <footer className="bg-[#F8F5F0] text-foreground pt-12 pb-8 border-t border-border">
+      <div className="container mx-auto px-4">
+        {/* Top Promise Bar */}
+        <div className="text-center mb-12 max-w-4xl mx-auto">
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+            Never worry about <span className="font-bold text-foreground">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-bold text-foreground">expiry date</span> of every product before delivery.
+          </p>
+        </div>
+
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground">Why We are Best?</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 items-start">
+          {/* Why We Are Best List */}
+          <div className="flex flex-col items-center md:items-start">
+            <ul className="space-y-3 text-sm md:text-base font-medium">
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                Fastest Delivery [Same Day]
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                Verified & Authentic Products
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                Customer Support
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                Easy return policy
+              </li>
+            </ul>
+          </div>
+
+          {/* Customer Support Links */}
+          <div className="flex flex-col items-center">
+            <h4 className="font-bold text-lg mb-6 tracking-tight uppercase">CUSTOMER SUPPORT</h4>
+            <ul className="space-y-4 text-center">
+              <li><Link to="/auth" className="text-sm md:text-base hover:text-primary transition-colors">Login</Link></li>
+              <li><Link to="/auth" className="text-sm md:text-base hover:text-primary transition-colors">Register</Link></li>
+              <li><Link to="/contact" className="text-sm md:text-base hover:text-primary transition-colors">Contact Us</Link></li>
+            </ul>
+          </div>
+
+          {/* About & Branding */}
+          <div className="flex flex-col items-center md:items-end text-center md:text-right">
+            <p className="text-sm md:text-base text-muted-foreground max-w-xs mb-8 leading-relaxed">
+              Just place the order, we will be at your door soon. <span className="font-bold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback.
             </p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-5 text-white">কুইক লিংক</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/products" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  সব প্রোডাক্ট
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=two-piece" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  টু পিস
-                </Link>
-              </li>
-              <li>
-                <Link to="/products?category=three-piece" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  থ্রি পিস
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  আমাদের সম্পর্কে
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="text-lg font-semibold mb-5 text-white">সাহায্য</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/contact" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  যোগাযোগ
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  শিপিং পলিসি
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  রিটার্ন পলিসি
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h3 className="text-lg font-semibold mb-5 text-white">যোগাযোগ</h3>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-pink-400 flex-shrink-0" />
-                <a href="tel:+8801995909243" className="text-gray-400 hover:text-pink-400 transition-colors text-sm">
-                  01995-909243
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-pink-400 flex-shrink-0" />
-                <a 
-                  href="https://www.facebook.com/messages/t/282687191604098/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-gray-400 hover:text-pink-400 transition-colors text-sm"
-                >
-                  Facebook Inbox
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-pink-400 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-400 text-sm">
-                  Mirpur-13, Dhaka-1216, Bangladesh
-                </span>
-              </li>
-            </ul>
+            
+            <div className="flex items-center justify-center md:justify-end">
+              <span className="text-5xl md:text-6xl font-extrabold tracking-tighter">
+                khulna<span className="text-primary">Cart</span>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-700/50">
-        <div className="container mx-auto px-4 py-5">
-          <p className="text-gray-500 text-sm text-center">
-            © {new Date().getFullYear()} {siteName}। সর্বস্বত্ব সংরক্ষিত।
-          </p>
+        
+        <div className="border-t border-border pt-8 text-center text-xs md:text-sm text-muted-foreground">
+          <p>Powered by khulnacart.com, All rights reserved, 2026.</p>
         </div>
       </div>
     </footer>

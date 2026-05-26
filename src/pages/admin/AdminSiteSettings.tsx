@@ -21,7 +21,7 @@ const AdminSiteSettings = () => {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [headerSettings, setHeaderSettings] = useState<HeaderSettings>({
-    site_name: 'খেজুর বাজার',
+    site_name: 'Khulna Cart',
     site_logo: '',
     header_phone: '+880 1234-567890',
     header_promo_text: 'Free shipping on orders over ৳2000',
