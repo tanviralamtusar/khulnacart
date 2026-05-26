@@ -11,6 +11,8 @@ import {
   X,
   ChevronDown,
   LogOut,
+  Home,
+  Grid
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +21,6 @@ import { selectCartCount, toggleCart } from '@/store/slices/cartSlice';
 import { selectWishlistItems } from '@/store/slices/wishlistSlice';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { categories } from '@/data/mockData';
 import defaultLogo from '@/assets/site-logo.png';
 
 const Header = () => {
@@ -52,7 +53,6 @@ const Header = () => {
 
       return settingsMap;
     },
-    // Don't keep stale for minutes — we want header to reflect admin changes quickly
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
   });
@@ -86,27 +86,28 @@ const Header = () => {
       isScrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-background'
     }`}>
       {/* Main Header */}
-      <div className="container-custom py-4">
-        <div className="grid grid-cols-3 md:flex items-center justify-between gap-4">
+      <div className="container-custom py-3">
+        <div className="grid grid-cols-3 items-center justify-between gap-4">
           {/* Left: Mobile Menu Toggle */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="hover:bg-transparent"
             >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
 
           {/* Center: Logo */}
-          <div className="flex items-center justify-center md:justify-start">
+          <div className="flex items-center justify-center">
             <Link to="/" className="flex-shrink-0">
               {siteLogo ? (
                 <img
                   src={siteLogo}
                   alt={siteName || 'Site Logo'}
-                  className="h-8 md:h-10 w-auto object-contain"
+                  className="h-10 md:h-12 w-auto object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     if (target.src !== defaultLogo) {
@@ -115,136 +116,43 @@ const Header = () => {
                   }}
                 />
               ) : (
-                <span className="text-base md:text-lg font-semibold text-foreground leading-none whitespace-nowrap">
+                <span className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap leading-none">
                   {siteName}
                 </span>
               )}
             </Link>
           </div>
 
-          {/* Search Bar - Desktop */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">
-            <div className="relative w-full">
-              <Input
-                type="text"
-                placeholder="পণ্য খুঁজুন..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-12"
-              />
-              <Button 
-                type="submit"
-                variant="ghost" 
-                size="icon" 
-                className="absolute right-1 top-1/2 -translate-y-1/2"
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-            </div>
-          </form>
-
-          {/* Actions / Right side mobile */}
-          <div className="flex items-center justify-end gap-1 md:gap-4">
-            {/* Mobile Search Toggle */}
+          {/* Right: Search */}
+          <div className="flex items-center justify-end">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="md:hidden"
+              className="hover:bg-transparent"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-6 w-6" />
             </Button>
-
-            {/* Wishlist - Hidden on small mobile */}
-            <Link to="/wishlist" className="hidden sm:block">
-              <Button variant="ghost" size="icon" className="relative">
-                <Heart className="h-5 w-5" />
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-secondary-foreground text-xs flex items-center justify-center font-bold">
-                    {wishlistItems.length}
-                  </span>
-                )}
-              </Button>
-            </Link>
-
-            {/* Cart */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative"
-              onClick={() => dispatch(toggleCart())}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-secondary-foreground text-[10px] flex items-center justify-center font-bold">
-                  {cartCount}
-                </span>
-              )}
-            </Button>
-
-            {/* Account - Hidden on small mobile */}
-            <div className="hidden sm:block">
-              {user ? (
-                <div className="relative group">
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
-                  <div className="absolute top-full right-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <div className="bg-card rounded-lg shadow-xl border border-border p-3 min-w-[160px]">
-                      <p className="text-sm text-muted-foreground mb-2 px-2 truncate">
-                        {user.email}
-                      </p>
-                      {isAdmin && (
-                        <Link
-                          to="/admin"
-                          className="block px-2 py-1.5 text-sm text-foreground hover:text-primary hover:bg-muted rounded transition-colors"
-                        >
-                          অ্যাডমিন প্যানেল
-                        </Link>
-                      )}
-                      <Link
-                        to="/my-account"
-                        className="block px-2 py-1.5 text-sm text-foreground hover:text-primary hover:bg-muted rounded transition-colors"
-                      >
-                        আমার অর্ডার
-                      </Link>
-                      <button
-                        onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-destructive hover:bg-muted rounded transition-colors"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        লগআউট
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <Link to="/auth">
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </Link>
-              )}
-            </div>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Search */}
-        <AnimatePresence>
-          {isSearchOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4"
-            >
+      {/* Mobile Search Input Overlay */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="border-t border-border bg-background overflow-hidden px-4 py-3"
+          >
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
                 placeholder="পণ্য খুঁজুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-12"
+                className="pr-12 rounded-full"
               />
               <Button 
                 type="submit"
@@ -255,103 +163,100 @@ const Header = () => {
                 <Search className="h-5 w-5" />
               </Button>
             </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Navigation - Desktop */}
+      {/* Navigation - Desktop (Simplified) */}
       <nav className="hidden md:block border-t border-border">
         <div className="container-custom">
-          <ul className="flex items-center gap-8 py-3">
+          <ul className="flex items-center justify-center gap-12 py-3">
             <li>
-              <Link 
-                to="/" 
-                className="text-foreground hover:text-primary font-medium transition-colors"
-              >
-                Home
-              </Link>
+              <Link to="/" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Home</Link>
             </li>
             <li>
-              <Link 
-                to="/products" 
-                className="text-foreground hover:text-primary font-medium transition-colors"
-              >
-                Products
-              </Link>
+              <Link to="/products" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Products</Link>
             </li>
             <li>
-              <Link 
-                to="/about" 
-                className="text-foreground hover:text-primary font-medium transition-colors"
-              >
-                About Us
-              </Link>
+              <Link to="/about" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">About Us</Link>
             </li>
             <li>
-              <Link 
-                to="/contact" 
-                className="text-foreground hover:text-primary font-medium transition-colors"
-              >
-                Contact Us
-              </Link>
+              <Link to="/contact" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Contact Us</Link>
             </li>
           </ul>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Sidebar-like Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-border bg-background"
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            className="md:hidden fixed inset-0 z-[60] bg-background"
           >
-            <nav className="container-custom py-4">
-              <ul className="space-y-2">
-                <li>
-                  <Link 
-                    to="/" 
-                    className="block py-2 text-foreground hover:text-primary font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    to="/products" 
-                    className="block py-2 text-foreground hover:text-primary font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Products
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    to="/about" 
-                    className="block py-2 text-foreground hover:text-primary font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    to="/contact" 
-                    className="block py-2 text-foreground hover:text-primary font-medium"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Contact Us
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+            <div className="container-custom py-6">
+              <div className="flex items-center justify-between mb-8">
+                <span className="text-2xl font-bold">{siteName}</span>
+                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
+                  <X className="h-6 w-6" />
+                </Button>
+              </div>
+              <nav className="space-y-6">
+                <Link to="/" className="block text-xl font-semibold text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                <Link to="/products" className="block text-xl font-semibold text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
+                <Link to="/about" className="block text-xl font-semibold text-foreground" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                <Link to="/contact" className="block text-xl font-semibold text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</Link>
+                <div className="pt-6 border-t border-border">
+                  <Link to="/auth" className="block text-xl font-semibold text-primary" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
+                </div>
+              </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Bottom Navigation (Mobile Only) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border px-4 py-2 pb-safe">
+        <div className="flex items-center justify-between relative">
+          <Link to="/" className="flex flex-col items-center gap-1 group">
+            <Home className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Home</span>
+          </Link>
+          
+          <Link to="/products" className="flex flex-col items-center gap-1 group">
+            <Grid className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Categories</span>
+          </Link>
+
+          {/* Large Cart Button */}
+          <div className="relative -mt-8">
+            <Button 
+              size="icon" 
+              className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90 transition-transform active:scale-95"
+              onClick={() => dispatch(toggleCart())}
+            >
+              <ShoppingCart className="w-6 h-6 text-primary-foreground" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-primary shadow-sm">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+          </div>
+
+          <Link to="/wishlist" className="flex flex-col items-center gap-1 group">
+            <Heart className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Wishlist</span>
+          </Link>
+
+          <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'} className="flex flex-col items-center gap-1 group">
+            <User className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Log In</span>
+          </Link>
+        </div>
+      </div>
     </header>
   );
 };

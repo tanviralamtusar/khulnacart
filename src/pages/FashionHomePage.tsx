@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingBag, Heart, User, LayoutDashboard, ChevronRight, ChevronLeft,
   Sparkles, Truck, Shield, RotateCcw, Star, ArrowRight, Headphones,
-  Search, Menu, X, Eye, Zap
+  Search, Menu, X, Eye, Zap, Home, Grid
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -353,7 +353,7 @@ export default function FashionHomePage() {
   const displayNewArrivals = newArrivals.length > 0 ? newArrivals : placeholderProducts.slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Top Bar */}
       {headerPromoEnabled && (
         <div className="bg-primary text-primary-foreground py-2 text-center text-sm">
@@ -367,81 +367,50 @@ export default function FashionHomePage() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
         <div className="container-custom py-3">
-          <div className="grid grid-cols-3 md:flex items-center justify-between gap-4">
+          <div className="grid grid-cols-3 items-center justify-between gap-4">
             {/* Left: Mobile Menu Toggle */}
-            <div className="flex items-center md:hidden">
+            <div className="flex items-center">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="hover:bg-transparent"
               >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
             </div>
 
             {/* Center: Logo */}
-            <div className="flex items-center justify-center md:justify-start">
+            <div className="flex items-center justify-center">
               <Link to="/" className="flex items-center gap-2">
                 <img
                   src={siteLogo}
                   alt={siteName}
-                  className="h-8 md:h-10 w-auto object-contain"
+                  className="h-10 md:h-12 w-auto object-contain"
                   loading="eager"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     if (target.src !== defaultLogo) target.src = defaultLogo;
                   }}
                 />
-                {/* Only show text if logo is missing */}
                 {!siteLogo && (
-                  <span className="text-lg md:text-2xl font-bold tracking-tight text-foreground whitespace-nowrap">
+                  <span className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
                     {siteName}
                   </span>
                 )}
               </Link>
             </div>
 
-            {/* Right: Mobile Search & Cart */}
-            <div className="flex items-center justify-end gap-1 md:hidden">
+            {/* Right: Search */}
+            <div className="flex items-center justify-end">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="hover:bg-primary/10"
+                className="hover:bg-transparent"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-6 w-6" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative hover:bg-primary/10"
-                onClick={() => dispatch(toggleCart())}
-              >
-                <ShoppingBag className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center font-bold">
-                    {cartCount}
-                  </span>
-                )}
-              </Button>
-            </div>
-
-            {/* Desktop Search Bar */}
-            <div className="hidden lg:flex flex-1 max-w-xl mx-8">
-              <div className="relative w-full">
-                <Input
-                  type="text"
-                  placeholder="পণ্য খুঁজুন..."
-                  className="pr-12 rounded-full border-2 focus:border-primary"
-                />
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-primary/10"
-                >
-                  <Search className="h-5 w-5 text-muted-foreground" />
-                </Button>
-              </div>
             </div>
           </div>
         </div>
@@ -974,6 +943,47 @@ export default function FashionHomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Bottom Navigation (Mobile Only) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border px-4 py-2">
+        <div className="flex items-center justify-between relative">
+          <Link to="/" className="flex flex-col items-center gap-1 group">
+            <Home className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Home</span>
+          </Link>
+          
+          <Link to="/products" className="flex flex-col items-center gap-1 group">
+            <Grid className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Categories</span>
+          </Link>
+
+          {/* Large Cart Button */}
+          <div className="relative -mt-8">
+            <Button 
+              size="icon" 
+              className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90"
+              onClick={() => dispatch(toggleCart())}
+            >
+              <ShoppingBag className="w-6 h-6 text-primary-foreground" />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 w-5 h-5 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-primary">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+          </div>
+
+          <Link to="/wishlist" className="flex flex-col items-center gap-1 group">
+            <Heart className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Wishlist</span>
+          </Link>
+
+          <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'} className="flex flex-col items-center gap-1 group">
+            <User className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Log In</span>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

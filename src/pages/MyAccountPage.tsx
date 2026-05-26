@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { bn } from 'date-fns/locale';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 interface OrderItem {
   id: string;
@@ -134,113 +136,117 @@ const MyAccountPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 py-8">
-      <div className="container max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">আমার অ্যাকাউন্ট</h1>
-            <p className="text-muted-foreground mt-1">
-              স্বাগতম, {profile?.full_name || user.email}
-            </p>
+    <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0">
+      <Header />
+      <main className="flex-1 py-8">
+        <div className="container max-w-6xl mx-auto px-4 pt-20">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">আমার অ্যাকাউন্ট</h1>
+              <p className="text-muted-foreground mt-1">
+                স্বাগতম, {profile?.full_name || user.email}
+              </p>
+            </div>
+            <Button variant="outline" onClick={handleSignOut} className="w-fit">
+              <LogOut className="h-4 w-4 mr-2" />
+              লগআউট
+            </Button>
           </div>
-          <Button variant="outline" onClick={handleSignOut} className="w-fit">
-            <LogOut className="h-4 w-4 mr-2" />
-            লগআউট
-          </Button>
-        </div>
 
-        <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="orders" className="flex items-center gap-2">
-              <ShoppingBag className="h-4 w-4" />
-              অর্ডার সমূহ
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              প্রোফাইল
-            </TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue="orders" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsTrigger value="orders" className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4" />
+                অর্ডার সমূহ
+              </TabsTrigger>
+              <TabsTrigger value="profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                প্রোফাইল
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Orders Tab */}
-          <TabsContent value="orders" className="space-y-4">
-            {isLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map(i => (
-                  <Card key={i}>
-                    <CardContent className="p-6">
-                      <Skeleton className="h-6 w-48 mb-4" />
-                      <Skeleton className="h-4 w-full mb-2" />
-                      <Skeleton className="h-4 w-3/4" />
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : orders.length === 0 ? (
+            {/* Orders Tab */}
+            <TabsContent value="orders" className="space-y-4">
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <Card key={i}>
+                      <CardContent className="p-6">
+                        <Skeleton className="h-6 w-48 mb-4" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-3/4" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : orders.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">কোনো অর্ডার নেই</h3>
+                    <p className="text-muted-foreground mb-4">আপনি এখনো কোনো অর্ডার করেননি</p>
+                    <Button asChild>
+                      <Link to="/products">পণ্য দেখুন</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  {orders.map(order => (
+                    <OrderCard key={order.id} order={order} />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Profile Tab */}
+            <TabsContent value="profile">
               <Card>
-                <CardContent className="py-12 text-center">
-                  <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">কোনো অর্ডার নেই</h3>
-                  <p className="text-muted-foreground mb-4">আপনি এখনো কোনো অর্ডার করেননি</p>
-                  <Button asChild>
-                    <Link to="/products">পণ্য দেখুন</Link>
-                  </Button>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    প্রোফাইল তথ্য
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {(() => {
+                    // Extract phone from email if it's in phone.local format
+                    const isPhoneEmail = user.email?.endsWith('@phone.local');
+                    const displayEmail = isPhoneEmail ? null : (profile?.email || user.email);
+                    const displayPhone = profile?.phone || (isPhoneEmail ? user.email?.replace('@phone.local', '') : null);
+                    const displayName = profile?.full_name || user.user_metadata?.full_name;
+                    
+                    return (
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">নাম</p>
+                          <p className="font-medium">{displayName || 'সেট করা হয়নি'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">ইমেইল</p>
+                          <p className="font-medium">{displayEmail || 'সেট করা হয়নি'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">ফোন</p>
+                          <p className="font-medium">{displayPhone || 'সেট করা হয়নি'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">অ্যাকাউন্ট তৈরি</p>
+                          <p className="font-medium">
+                            {format(new Date(user.created_at), 'dd MMMM, yyyy', { locale: bn })}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </CardContent>
               </Card>
-            ) : (
-              <div className="space-y-4">
-                {orders.map(order => (
-                  <OrderCard key={order.id} order={order} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Profile Tab */}
-          <TabsContent value="profile">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  প্রোফাইল তথ্য
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {(() => {
-                  // Extract phone from email if it's in phone.local format
-                  const isPhoneEmail = user.email?.endsWith('@phone.local');
-                  const displayEmail = isPhoneEmail ? null : (profile?.email || user.email);
-                  const displayPhone = profile?.phone || (isPhoneEmail ? user.email?.replace('@phone.local', '') : null);
-                  const displayName = profile?.full_name || user.user_metadata?.full_name;
-                  
-                  return (
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">নাম</p>
-                        <p className="font-medium">{displayName || 'সেট করা হয়নি'}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">ইমেইল</p>
-                        <p className="font-medium">{displayEmail || 'সেট করা হয়নি'}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">ফোন</p>
-                        <p className="font-medium">{displayPhone || 'সেট করা হয়নি'}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">অ্যাকাউন্ট তৈরি</p>
-                        <p className="font-medium">
-                          {format(new Date(user.created_at), 'dd MMMM, yyyy', { locale: bn })}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 };
