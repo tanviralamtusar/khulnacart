@@ -922,9 +922,6 @@ export default function FashionHomePage() {
                     alt="Khulna Cart" 
                     className="h-16 md:h-20 w-auto transition-transform group-hover:-translate-y-1"
                   />
-                  <div className="h-1.5 w-full bg-primary/20 mt-2 rounded-full overflow-hidden">
-                    <div className="h-full w-1/3 bg-primary group-hover:w-full transition-all duration-500" />
-                  </div>
                 </Link>
               </div>
             </div>
