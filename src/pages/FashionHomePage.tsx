@@ -367,20 +367,21 @@ export default function FashionHomePage() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
         <div className="container-custom py-3">
-          <div className="flex items-center justify-between gap-4 relative">
-            {/* Mobile Menu Toggle */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden z-10"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+          <div className="grid grid-cols-3 md:flex items-center justify-between gap-4">
+            {/* Left: Mobile Menu Toggle */}
+            <div className="flex items-center md:hidden">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+            </div>
 
-            {/* Logo - Centered on Mobile */}
-            <div className="flex-1 md:flex-none flex items-center justify-center md:justify-start">
-              <Link to="/" className="flex items-center gap-2 md:static absolute left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0">
+            {/* Center: Logo */}
+            <div className="flex items-center justify-center md:justify-start">
+              <Link to="/" className="flex items-center gap-2">
                 <img
                   src={siteLogo}
                   alt={siteName}
@@ -400,8 +401,8 @@ export default function FashionHomePage() {
               </Link>
             </div>
 
-            {/* Mobile Search & Cart (Right Side) */}
-            <div className="flex items-center gap-1 md:hidden z-10">
+            {/* Right: Mobile Search & Cart */}
+            <div className="flex items-center justify-end gap-1 md:hidden">
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -425,7 +426,7 @@ export default function FashionHomePage() {
               </Button>
             </div>
 
-            {/* Search Bar - Desktop */}
+            {/* Desktop Search Bar */}
             <div className="hidden lg:flex flex-1 max-w-xl mx-8">
               <div className="relative w-full">
                 <Input

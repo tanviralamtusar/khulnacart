@@ -87,20 +87,21 @@ const Header = () => {
     }`}>
       {/* Main Header */}
       <div className="container-custom py-4">
-        <div className="flex items-center justify-between gap-4 relative">
-          {/* Mobile Menu Toggle */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="md:hidden z-10"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+        <div className="grid grid-cols-3 md:flex items-center justify-between gap-4">
+          {/* Left: Mobile Menu Toggle */}
+          <div className="flex items-center md:hidden">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
 
-          {/* Logo - Centered on Mobile */}
-          <div className="flex-1 md:flex-none flex items-center justify-center md:justify-start">
-            <Link to="/" className="flex-shrink-0 md:static absolute left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0">
+          {/* Center: Logo */}
+          <div className="flex items-center justify-center md:justify-start">
+            <Link to="/" className="flex-shrink-0">
               {siteLogo ? (
                 <img
                   src={siteLogo}
@@ -114,7 +115,7 @@ const Header = () => {
                   }}
                 />
               ) : (
-                <span className="text-base md:text-lg font-semibold text-foreground leading-none">
+                <span className="text-base md:text-lg font-semibold text-foreground leading-none whitespace-nowrap">
                   {siteName}
                 </span>
               )}
@@ -142,8 +143,8 @@ const Header = () => {
             </div>
           </form>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1 md:gap-4 z-10">
+          {/* Actions / Right side mobile */}
+          <div className="flex items-center justify-end gap-1 md:gap-4">
             {/* Mobile Search Toggle */}
             <Button 
               variant="ghost" 
@@ -154,7 +155,7 @@ const Header = () => {
               <Search className="h-5 w-5" />
             </Button>
 
-            {/* Wishlist */}
+            {/* Wishlist - Hidden on small mobile */}
             <Link to="/wishlist" className="hidden sm:block">
               <Button variant="ghost" size="icon" className="relative">
                 <Heart className="h-5 w-5" />
@@ -175,13 +176,13 @@ const Header = () => {
             >
               <ShoppingCart className="h-5 w-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-secondary-foreground text-xs flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-secondary-foreground text-[10px] flex items-center justify-center font-bold">
                   {cartCount}
                 </span>
               )}
             </Button>
 
-            {/* Account */}
+            {/* Account - Hidden on small mobile */}
             <div className="hidden sm:block">
               {user ? (
                 <div className="relative group">
