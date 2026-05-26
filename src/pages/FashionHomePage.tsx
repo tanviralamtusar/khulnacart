@@ -354,15 +354,7 @@ export default function FashionHomePage() {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
-      {/* Top Bar */}
-      {headerPromoEnabled && (
-        <div className="bg-primary text-primary-foreground py-2 text-center text-sm">
-          <div className="container-custom flex items-center justify-center gap-2">
-            <Truck className="w-4 h-4" />
-            <span>{headerPromoText}</span>
-          </div>
-        </div>
-      )}
+
 
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
