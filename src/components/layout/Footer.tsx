@@ -33,68 +33,91 @@ const Footer = () => {
   const siteLogo = siteSettings?.site_logo;
 
   return (
-    <footer className="bg-[#F8F5F0] text-foreground pt-12 pb-8 border-t border-border">
-      <div className="container mx-auto px-4">
+    <footer className="bg-slate-50 text-foreground pt-20 pb-10 border-t border-border/50">
+      <div className="container mx-auto px-6">
         {/* Top Promise Bar */}
-        <div className="text-center mb-12 max-w-4xl mx-auto">
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-            Never worry about <span className="font-bold text-foreground">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-bold text-foreground">expiry date</span> of every product before delivery.
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <div className="inline-flex items-center justify-center p-1 px-4 mb-6 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
+            Our Promise
+          </div>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+            Never worry about <span className="font-semibold text-foreground">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-semibold text-foreground italic">expiry date</span> of every product before delivery.
           </p>
         </div>
 
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">Why We are Best?</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 items-start">
-          {/* Why We Are Best List */}
-          <div className="flex flex-col items-center md:items-start">
-            <ul className="space-y-3 text-sm md:text-base font-medium">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                Fastest Delivery [Same Day]
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                Verified & Authentic Products
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                Customer Support
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                Easy return policy
-              </li>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-20">
+          {/* Column 1: Why We Are Best */}
+          <div className="md:col-span-4 space-y-6">
+            <h3 className="text-2xl font-bold tracking-tight text-foreground">Why We are Best?</h3>
+            <ul className="space-y-4">
+              {[
+                "Fastest Delivery [Same Day]",
+                "Verified & Authentic Products",
+                "Dedicated Customer Support",
+                "Hassle-free Return Policy"
+              ].map((item, i) => (
+                <li key={i} className="flex items-center gap-3 text-muted-foreground group">
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm border border-border flex items-center justify-center group-hover:border-primary/50 transition-colors">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  </div>
+                  <span className="font-medium group-hover:text-foreground transition-colors">{item}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Customer Support Links */}
-          <div className="flex flex-col items-center">
-            <h4 className="font-bold text-lg mb-6 tracking-tight uppercase">CUSTOMER SUPPORT</h4>
-            <ul className="space-y-4 text-center">
-              <li><Link to="/auth" className="text-sm md:text-base hover:text-primary transition-colors">Login</Link></li>
-              <li><Link to="/auth" className="text-sm md:text-base hover:text-primary transition-colors">Register</Link></li>
-              <li><Link to="/contact" className="text-sm md:text-base hover:text-primary transition-colors">Contact Us</Link></li>
+          {/* Column 2: Customer Support */}
+          <div className="md:col-span-3 space-y-6">
+            <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Customer Support</h4>
+            <ul className="space-y-3">
+              {[
+                { label: "Login", to: "/auth" },
+                { label: "Register", to: "/auth" },
+                { label: "Contact Us", to: "/contact" },
+                { label: "Shipping Policy", to: "/contact" },
+                { label: "Return Policy", to: "/contact" }
+              ].map((link, i) => (
+                <li key={i}>
+                  <Link to={link.to} className="text-muted-foreground hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* About & Branding */}
-          <div className="flex flex-col items-center md:items-end text-center md:text-right">
-            <p className="text-sm md:text-base text-muted-foreground max-w-xs mb-8 leading-relaxed">
-              Just place the order, we will be at your door soon. <span className="font-bold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback.
-            </p>
+          {/* Column 3: About & Branding */}
+          <div className="md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right space-y-8">
+            <div className="space-y-4">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Our Mission</h4>
+              <p className="text-muted-foreground max-w-sm leading-relaxed">
+                Just place the order, we will be at your door soon. <span className="font-semibold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
+              </p>
+            </div>
             
-            <div className="flex items-center justify-center md:justify-end">
-              <span className="text-5xl md:text-6xl font-extrabold tracking-tighter">
-                khulna<span className="text-primary">Cart</span>
-              </span>
+            <div className="pt-4">
+              <Link to="/" className="inline-block group">
+                <span className="text-4xl md:text-5xl font-black tracking-tighter transition-transform group-hover:-translate-y-1 block">
+                  khulna<span className="text-primary">Cart</span>
+                </span>
+                <div className="h-1.5 w-full bg-primary/20 mt-1 rounded-full overflow-hidden">
+                  <div className="h-full w-1/3 bg-primary group-hover:w-full transition-all duration-500" />
+                </div>
+              </Link>
             </div>
           </div>
         </div>
         
-        <div className="border-t border-border pt-8 text-center text-xs md:text-sm text-muted-foreground">
-          <p>Powered by khulnacart.com, All rights reserved, 2026.</p>
+        <div className="border-t border-border/50 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-xs font-medium text-muted-foreground tracking-wide">
+            © {new Date().getFullYear()} KHULNA CART. POWERED BY <a href="https://khulnacart.com" className="text-primary hover:underline">KHULNACART.COM</a>
+          </p>
+          
+          <div className="flex items-center gap-6">
+             <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Privacy</Link>
+             <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Terms</Link>
+             <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">FAQ</Link>
+          </div>
         </div>
       </div>
     </footer>
