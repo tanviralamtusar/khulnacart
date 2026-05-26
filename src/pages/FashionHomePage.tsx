@@ -483,7 +483,7 @@ export default function FashionHomePage() {
             </Button>
           </div>
 
-          <div className={`grid grid-cols-2 gap-4 md:gap-6 ${categories.length <= 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'}`}>
+          <div className={`grid grid-cols-3 gap-3 md:gap-6 ${categories.length <= 3 ? 'md:grid-cols-3' : 'md:grid-cols-6'}`}>
             {/* Dynamic categories from database */}
             {categories.map((category, index) => {
               // Define fallback images for categories - using reliable Unsplash images
