@@ -52,6 +52,7 @@ const adminNavItems = [
   { title: 'Incomplete Orders', url: '/admin/incomplete-orders', icon: ShoppingCart },
   { title: 'Users', url: '/admin/users', icon: Users },
   { title: 'Inventory', url: '/admin/inventory', icon: Boxes },
+  { title: 'Marketing', url: '/admin/marketing', icon: Megaphone },
   { title: 'Shop Settings', url: '/admin/shop-settings', icon: Settings },
   { title: 'Site Settings', url: '/admin/site-settings', icon: Settings },
 
