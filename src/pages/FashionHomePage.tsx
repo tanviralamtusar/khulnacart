@@ -77,28 +77,45 @@ export default function FashionHomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // States and effect for the sliding categories carousel
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
+   // States and effect for the sliding categories carousel
+   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+   const [canScrollPrev, setCanScrollPrev] = useState(false);
+   const [canScrollNext, setCanScrollNext] = useState(false);
 
-  useEffect(() => {
-    if (!carouselApi) return;
+   useEffect(() => {
+     if (!carouselApi) return;
 
-    const onSelect = () => {
-      setCanScrollPrev(carouselApi.canScrollPrev());
-      setCanScrollNext(carouselApi.canScrollNext());
-    };
+     const onSelect = () => {
+       setCanScrollPrev(carouselApi.canScrollPrev());
+       setCanScrollNext(carouselApi.canScrollNext());
+     };
 
-    onSelect();
-    carouselApi.on("select", onSelect);
-    carouselApi.on("reInit", onSelect);
+     onSelect();
+     carouselApi.on("select", onSelect);
+     carouselApi.on("reInit", onSelect);
 
-    return () => {
-      carouselApi.off("select", onSelect);
-      carouselApi.off("reInit", onSelect);
-    };
-  }, [carouselApi]);
+     return () => {
+       carouselApi.off("select", onSelect);
+       carouselApi.off("reInit", onSelect);
+     };
+   }, [carouselApi]);
+
+   // Auto-scroll for categories carousel
+   useEffect(() => {
+     if (!carouselApi || categories.length <= 1) return;
+     
+     const interval = setInterval(() => {
+       // Check if we can scroll next before attempting
+       if (carouselApi.canScrollNext()) {
+         carouselApi.scrollNext();
+       } else {
+         // If we're at the end, go back to the beginning
+         carouselApi.scrollTo(0);
+       }
+     }, 5000); // Scroll every 5 seconds
+     
+     return () => clearInterval(interval);
+   }, [carouselApi, categories.length]);
 
   const cartCount = useAppSelector(selectCartCount);
   const wishlistItems = useAppSelector(selectWishlistItems);
