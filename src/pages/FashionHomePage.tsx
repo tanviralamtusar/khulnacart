@@ -21,6 +21,12 @@ import { selectCartCount, toggleCart, addToCart, openCart } from '@/store/slices
 import { selectWishlistItems, toggleWishlist } from '@/store/slices/wishlistSlice';
 import { toast } from 'sonner';
 import { Product as ProductType } from '@/types';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi
+} from '@/components/ui/carousel';
 
 interface Product {
   id: string;
@@ -70,6 +76,29 @@ export default function FashionHomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // States and effect for the sliding categories carousel
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+
+    const onSelect = () => {
+      setCanScrollPrev(carouselApi.canScrollPrev());
+      setCanScrollNext(carouselApi.canScrollNext());
+    };
+
+    onSelect();
+    carouselApi.on("select", onSelect);
+    carouselApi.on("reInit", onSelect);
+
+    return () => {
+      carouselApi.off("select", onSelect);
+      carouselApi.off("reInit", onSelect);
+    };
+  }, [carouselApi]);
 
   const cartCount = useAppSelector(selectCartCount);
   const wishlistItems = useAppSelector(selectWishlistItems);
@@ -179,7 +208,7 @@ export default function FashionHomePage() {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [banners]);
+  }, [heroSlides.length]);
 
   const formatPrice = (price: number) => {
     return `৳${price.toLocaleString('bn-BD')}`;
@@ -457,54 +486,123 @@ export default function FashionHomePage() {
       </header>
 
       {/* Categories Section */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="container-custom">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <span className="text-primary font-medium text-sm tracking-wider uppercase">ক্যাটাগরি</span>
-              <h2 className="text-2xl md:text-3xl font-bold mt-1">
-                শপ বাই <span className="text-primary">ক্যাটাগরি</span>
+      <section className="py-12 md:py-16 bg-muted/20 relative overflow-hidden">
+        {/* Background decorative accents */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/3 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container-custom relative z-10">
+          {/* Section Header: Premium "Exploring" Style */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="h-1 w-6 bg-primary rounded-full animate-pulse" />
+                <span className="text-primary font-bold text-xs tracking-widest uppercase">Exploring</span>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-foreground">
+                শপ বাই <span className="text-primary relative inline-block">ক্যাটাগরি<span className="absolute bottom-1.5 left-0 w-full h-1.5 bg-primary/20 -z-10 rounded-full" /></span>
               </h2>
+              <p className="text-muted-foreground text-sm mt-1">
+                আমাদের প্রিমিয়াম কালেকশন থেকে আপনার পছন্দের ক্যাটাগরি বেছে নিন
+              </p>
             </div>
-            <Button variant="ghost" onClick={() => navigate('/products')} className="hidden md:flex">
-              সব দেখুন <ChevronRight className="ml-1 w-4 h-4" />
-            </Button>
-          </div>
 
-          <div className={`grid grid-cols-3 gap-3 md:gap-6 ${categories.length <= 3 ? 'md:grid-cols-3' : 'md:grid-cols-6'}`}>
-            {/* Dynamic categories from database */}
-            {categories.map((category, index) => {
-              const categoryImage = category.image_url || category.productImage;
+            {/* Slider Controls + View All */}
+            <div className="flex items-center gap-4 self-end md:self-auto">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/products')} 
+                className="text-muted-foreground hover:text-primary transition-colors text-sm font-semibold flex items-center gap-1 group"
+              >
+                সব দেখুন 
+                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Button>
               
-              return (
-                <motion.div
-                  key={category.id}
-                  whileHover={{ y: -5 }}
-                  className="group cursor-pointer"
-                  onClick={() => navigate(`/products?category=${category.slug}`)}
+              <div className="flex items-center gap-1.5 bg-background p-1 rounded-full border border-border shadow-sm">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full hover:bg-muted hover:text-primary transition-colors disabled:opacity-30"
+                  disabled={!canScrollPrev}
+                  onClick={() => carouselApi?.scrollPrev()}
                 >
-                  <div className="relative rounded-xl overflow-hidden aspect-[4/3] group-hover:shadow-lg transition-all border border-border">
-                    {categoryImage ? (
-                      <img 
-                        src={categoryImage} 
-                        alt={category.name} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center">
-                        <ShoppingBag className="w-12 h-12 text-muted-foreground/30" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-4">
-                      <span className="font-semibold text-white text-center text-sm md:text-base">{category.name}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-
-
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <div className="w-px h-4 bg-border" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full hover:bg-muted hover:text-primary transition-colors disabled:opacity-30"
+                  disabled={!canScrollNext}
+                  onClick={() => carouselApi?.scrollNext()}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
+
+          {/* Carousel Layout */}
+          <Carousel
+            setApi={setCarouselApi}
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-3 md:-ml-4">
+              {categories.map((category, index) => {
+                const categoryImage = category.image_url || category.productImage;
+                
+                return (
+                  <CarouselItem 
+                    key={category.id} 
+                    className="pl-3 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/3 lg:basis-1/4"
+                  >
+                    <motion.div
+                      whileHover={{ y: -6 }}
+                      transition={{ duration: 0.3 }}
+                      className="group cursor-pointer h-full"
+                      onClick={() => navigate(`/products?category=${category.slug}`)}
+                    >
+                      <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group-hover:shadow-xl transition-all duration-300 border border-border bg-card">
+                        {categoryImage ? (
+                          <img 
+                            src={categoryImage} 
+                            alt={category.name} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted flex items-center justify-center">
+                            <ShoppingBag className="w-10 h-10 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
+                          </div>
+                        )}
+                        
+                        {/* Shimmer Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                        
+                        {/* Decorative Accent Ring */}
+                        <div className="absolute inset-2 border border-white/10 rounded-xl pointer-events-none group-hover:border-white/30 transition-all duration-300" />
+
+                        {/* Content Area */}
+                        <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6 text-center">
+                          <h3 className="font-bold text-white text-base md:text-lg tracking-tight group-hover:text-primary transition-colors mb-1 drop-shadow-md">
+                            {category.name}
+                          </h3>
+                          <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-primary/90 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                            <span>Explore Category</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+          </Carousel>
         </div>
       </section>
 
