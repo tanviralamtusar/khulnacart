@@ -578,45 +578,45 @@ export default function FashionHomePage() {
                 return (
                    <CarouselItem 
                      key={category.id} 
-                     className="pl-3 md:pl-4 basis-1/4"
+                     className="pl-3 md:pl-4 basis-1/4 sm:basis-1/3 md:basis-1/3 lg:basis-1/4"
                    >
-                    <motion.div
-                      whileHover={{ y: -6 }}
-                      transition={{ duration: 0.3 }}
-                      className="group cursor-pointer h-full"
-                      onClick={() => navigate(`/products?category=${category.slug}`)}
-                    >
-                      <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group-hover:shadow-xl transition-all duration-300 border border-border bg-card">
-                        {categoryImage ? (
-                          <img 
-                            src={categoryImage} 
-                            alt={category.name} 
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted flex items-center justify-center">
-                            <ShoppingBag className="w-10 h-10 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
-                          </div>
-                        )}
-                        
-                        {/* Shimmer Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-                        
-                        {/* Decorative Accent Ring */}
-                        <div className="absolute inset-2 border border-white/10 rounded-xl pointer-events-none group-hover:border-white/30 transition-all duration-300" />
+                      <motion.div
+                        whileHover={{ y: -6 }}
+                        transition={{ duration: 0.3 }}
+                        className="group cursor-pointer h-full"
+                        onClick={() => navigate(`/products?category=${category.slug}`)}
+                      >
+                        <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group-hover:shadow-xl transition-all duration-300 border border-border bg-card">
+                          {categoryImage ? (
+                            <img 
+                              src={categoryImage} 
+                              alt={category.name} 
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-muted flex items-center justify-center">
+                              <ShoppingBag className="w-10 h-10 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
+                            </div>
+                          )}
+                          
+                          {/* Shimmer Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                          
+                          {/* Decorative Accent Ring */}
+                          <div className="absolute inset-2 border border-white/10 rounded-xl pointer-events-none group-hover:border-white/30 transition-all duration-300" />
 
-                        {/* Content Area */}
-                        <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6 text-center">
-                          <h3 className="font-bold text-white text-base md:text-lg tracking-tight group-hover:text-primary transition-colors mb-1 drop-shadow-md">
-                            {category.name}
-                          </h3>
-                          <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-primary/90 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                            <span>Explore Category</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
+                          {/* Content Area */}
+                          <div className="absolute inset-0 flex flex-col justify-center items-center p-4 md:p-6 text-center z-10">
+                            <h3 className="font-bold text-white text-base md:text-lg tracking-tight group-hover:text-primary transition-colors drop-shadow-md">
+                              {category.name}
+                            </h3>
+                            <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-primary/90 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                              <span>Explore Category</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </motion.div>
+                      </motion.div>
                   </CarouselItem>
                 );
               })}
