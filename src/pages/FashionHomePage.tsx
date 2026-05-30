@@ -201,201 +201,6 @@ export default function FashionHomePage() {
     fetchData();
   }, []);
 
-  // Auto-slide for hero carousel
-  useEffect(() => {
-    if (heroSlides.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroSlides.length]);
-
-  const formatPrice = (price: number) => {
-    return `৳${price.toLocaleString('bn-BD')}`;
-  };
-
-  // Get icon component from string name
-  const getIconComponent = (iconName: string) => {
-    const icons: { [key: string]: any } = { Truck, RotateCcw, Shield, Headphones };
-    return icons[iconName] || Truck;
-  };
-
-  // Features from home content or defaults
-  const featuresBarItems = homeContent.features_bar?.items || [
-    { icon: 'Truck', title: 'দ্রুত ডেলিভারি', desc: 'সারাদেশে ফ্রি ডেলিভারি' },
-    { icon: 'RotateCcw', title: 'ইনস্ট্যান্ট চেক', desc: 'রিটার্ন পলিসি' },
-    { icon: 'Shield', title: 'ক্যাশ অন ডেলিভারি', desc: 'পণ্য হাতে পেয়ে পেমেন্ট' },
-    { icon: 'Headphones', title: '২৪/৭ সাপোর্ট', desc: 'যেকোনো সময় যোগাযোগ' },
-  ];
-
-  // Header promo text from home content
-  const headerPromoText = homeContent.header_promo?.text || '৳২০০০+ অর্ডারে সারাদেশে ফ্রি ডেলিভারি | ৭ দিনের ইজি রিটার্ন';
-  const headerPromoEnabled = homeContent.header_promo?.enabled !== false;
-
-  // Hero slides from home content, banners, or defaults
-  const defaultSlides = [
-    {
-      id: '1',
-      title: 'নতুন টু পিস কালেকশন',
-      subtitle: 'এক্সক্লুসিভ ডিজাইন, প্রিমিয়াম কোয়ালিটি - ৩০% পর্যন্ত ছাড়',
-      image: heroSlide1,
-      link: '/products?category=two-piece',
-      badge: '৩০% ছাড়'
-    },
-    {
-      id: '2',
-      title: 'থ্রি পিস স্পেশাল',
-      subtitle: 'প্রিমিয়াম ফেব্রিক, এলিগ্যান্ট ডিজাইন - নতুন আগমন',
-      image: heroSlide2,
-      link: '/products?category=three-piece',
-      badge: 'নতুন'
-    },
-    {
-      id: '3',
-      title: 'সামার কালেকশন ২০২৬',
-      subtitle: 'কমফোর্টেবল এবং স্টাইলিশ - গরমের জন্য পারফেক্ট',
-      image: heroSlide3,
-      link: '/products',
-      badge: 'ট্রেন্ডিং'
-    }
-  ];
-
-  // Priority: home_page_content hero_slides > banners > defaultSlides
-  const getHeroSlides = () => {
-    const contentSlides = homeContent.hero_slides?.slides;
-    if (contentSlides && contentSlides.length > 0 && contentSlides.some((s: any) => s.image)) {
-      return contentSlides.map((s: any, index: number) => ({
-        id: s.id || String(index),
-        title: s.title || '',
-        subtitle: s.subtitle || '',
-        image: s.image || defaultSlides[index]?.image || heroSlide1,
-        link: s.link || '/products',
-        badge: s.badge || ''
-      }));
-    }
-    if (banners.length > 0) {
-      return banners.map(b => ({
-        id: b.id,
-        title: b.title,
-        subtitle: b.subtitle || '',
-        image: b.image_url,
-        link: b.link_url || '/products',
-        badge: 'নতুন'
-      }));
-    }
-    };
-
-    onSelect();
-    carouselApi.on("select", onSelect);
-    carouselApi.on("reInit", onSelect);
-
-    return () => {
-      carouselApi.off("select", onSelect);
-      carouselApi.off("reInit", onSelect);
-    };
-  }, [carouselApi]);
-
-  const cartCount = useAppSelector(selectCartCount);
-  const wishlistItems = useAppSelector(selectWishlistItems);
-
-  // Site header settings (logo + name)
-  const { data: headerSettings } = useQuery({
-    queryKey: ['header-settings'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('admin_settings')
-        .select('key, value')
-        .in('key', ['site_name', 'site_logo', 'shop_logo_url']);
-
-      if (error) throw error;
-
-      const settingsMap: Record<string, string> = {};
-      data?.forEach(item => {
-        settingsMap[item.key] = item.value;
-      });
-
-      return settingsMap;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
-
-  const siteName = headerSettings?.site_name || 'Khulna Cart';
-  const siteLogo = headerSettings?.site_logo || headerSettings?.shop_logo_url || defaultLogo;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Run all independent queries in parallel for speed
-        const [
-          { data: homePageData },
-          { data: bannersData },
-          { data: categoriesData },
-          { data: featuredData },
-          { data: newData },
-          { data: recentData },
-        ] = await Promise.all([
-          supabase.from('home_page_content').select('*'),
-          supabase.from('banners').select('*').eq('is_active', true).order('sort_order', { ascending: true }),
-          supabase.from('categories').select('*').order('sort_order', { ascending: true }),
-          supabase.from('products').select('*').eq('is_featured', true).eq('is_active', true).limit(8),
-          supabase.from('products').select('*').eq('is_new', true).eq('is_active', true).limit(8),
-          supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }).limit(8),
-        ]);
-
-        if (homePageData) {
-          const contentMap: HomePageContent = {};
-          homePageData.forEach((item: any) => {
-            contentMap[item.section_key] = item.content;
-          });
-          setHomeContent(contentMap);
-        }
-
-        if (bannersData && bannersData.length > 0) {
-          setBanners(bannersData);
-        }
-
-        if (categoriesData) {
-          // For categories without images, fetch first product image in parallel
-          const catsNeedingImages = categoriesData.filter(cat => !cat.image_url);
-          let productImages: Record<string, string | null> = {};
-          
-          if (catsNeedingImages.length > 0) {
-            const imageResults = await Promise.all(
-              catsNeedingImages.map(cat =>
-                supabase
-                  .from('products')
-                  .select('images')
-                  .eq('category_id', cat.id)
-                  .eq('is_active', true)
-                  .not('images', 'is', null)
-                  .limit(1)
-                  .single()
-                  .then(({ data }) => ({ catId: cat.id, image: data?.images?.[0] || null }))
-              )
-            );
-            imageResults.forEach(r => { productImages[r.catId] = r.image; });
-          }
-
-          setCategories(categoriesData.map(cat => ({
-            ...cat,
-            productImage: cat.image_url ? null : (productImages[cat.id] || null)
-          })));
-        }
-
-        if (featuredData) setFeaturedProducts(featuredData);
-        if (newData) setNewArrivals(newData);
-        if (recentData) setRecentProducts(recentData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   const formatPrice = (price: number) => {
     return `৳${price.toLocaleString('bn-BD')}`;
   };
@@ -481,6 +286,12 @@ export default function FashionHomePage() {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(interval);
+  }, [heroSlides.length]);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  }, [heroSlides.length]);
+
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   }, [heroSlides.length]);
@@ -986,10 +797,10 @@ export default function FashionHomePage() {
           </div>
         </section>
       )}
+      
       {/* Best Selling Section */}
       {displayProducts.length > 0 && (
         <section className="py-12 md:py-16 bg-secondary/30">
-          {/* ... existing best selling header ... */}
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
