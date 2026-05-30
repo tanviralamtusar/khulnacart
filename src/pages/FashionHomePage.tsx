@@ -576,10 +576,10 @@ export default function FashionHomePage() {
                 const categoryImage = category.image_url || category.productImage;
                 
                 return (
-                  <CarouselItem 
-                    key={category.id} 
-                    className="pl-3 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/3 lg:basis-1/4"
-                  >
+                   <CarouselItem 
+                     key={category.id} 
+                     className="pl-3 md:pl-4 basis-1/4"
+                   >
                     <motion.div
                       whileHover={{ y: -6 }}
                       transition={{ duration: 0.3 }}
