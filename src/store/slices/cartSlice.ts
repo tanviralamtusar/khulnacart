@@ -8,8 +8,15 @@ interface CartState {
 
 const loadCartFromStorage = (): CartItem[] => {
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('cart');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error('Error parsing cart from localStorage:', e);
+      try {
+        localStorage.removeItem('cart');
+      } catch (err) {}
+    }
   }
   return [];
 };

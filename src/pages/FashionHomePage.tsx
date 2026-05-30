@@ -399,7 +399,8 @@ export default function FashionHomePage() {
                   loading="eager"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    if (target.src !== defaultLogo) target.src = defaultLogo;
+                    target.onerror = null;
+                    target.src = defaultLogo;
                   }}
                 />
                 {!siteLogo && (

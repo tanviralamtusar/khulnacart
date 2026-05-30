@@ -7,8 +7,15 @@ interface WishlistState {
 
 const loadWishlistFromStorage = (): Product[] => {
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('wishlist');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error('Error parsing wishlist from localStorage:', e);
+      try {
+        localStorage.removeItem('wishlist');
+      } catch (err) {}
+    }
   }
   return [];
 };
