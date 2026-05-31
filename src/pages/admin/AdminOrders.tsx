@@ -31,7 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer, Globe, UserPlus, Plus, Check, Tag, RefreshCw, RotateCcw, Loader2, UserCheck, History, Trash2, Calendar, Edit, MapPin } from 'lucide-react';
+import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer, Globe, UserPlus, Plus, Check, Tag, RefreshCw, RotateCcw, Loader2, UserCheck, History, Trash2, Calendar, Edit, MapPin, Download, CheckSquare, ShoppingCart } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { supabase } from '@/integrations/supabase/client';
@@ -133,7 +133,7 @@ const DHAKA_KEYWORDS = [
 ];
 
 const isInsideDhaka = (order: Order): boolean => {
-  const text = `${order.shipping_street} ${order.shipping_city} ${order.shipping_district}`.toLowerCase();
+  const text = `${order.shipping_street || ''} ${order.shipping_city || ''} ${order.shipping_district || ''}`.toLowerCase();
   return DHAKA_KEYWORDS.some(k => text.includes(k.toLowerCase()));
 };
 
@@ -1153,9 +1153,34 @@ export default function AdminOrders() {
     );
   }
 
+  const handleExport = () => {
+    const csvContent = [
+      ['Order Number', 'Date', 'Customer', 'Phone', 'Total', 'Status'],
+      ...filteredOrders.map(o => [
+        o.order_number,
+        format(new Date(o.created_at), 'yyyy-MM-dd'),
+        o.shipping_name,
+        o.shipping_phone,
+        o.total.toString(),
+        o.status
+      ])
+    ].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `orders_export_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      {/* Desktop Header */}
+      <div className="hidden md:flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-display font-bold">Orders</h1>
           <p className="text-muted-foreground">Manage and track customer orders</p>
@@ -1166,412 +1191,307 @@ export default function AdminOrders() {
         </Button>
       </div>
 
-      {/* Source Tabs */}
-      <Tabs value={sourceFilter} onValueChange={setSourceFilter} className="w-full">
-        <TabsList className="h-auto p-1 bg-muted/50">
-          <TabsTrigger 
-            value="all" 
-            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4"
-          >
-            All Orders
-            <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
-              {orders.length}
-            </Badge>
-          </TabsTrigger>
-          {sourceOptions.map((source) => {
-            const Icon = source.icon;
-            return (
-              <TabsTrigger 
-                key={source.value} 
-                value={source.value}
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 gap-1.5"
-              >
-                <Icon className="h-4 w-4" />
-                {source.label}
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {getSourceCount(source.value)}
-                </Badge>
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
-      </Tabs>
-
-      {/* Status Tabs */}
-      <div className="overflow-x-auto">
-        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
-          <TabsList className="h-auto p-1 bg-muted/50 inline-flex w-auto min-w-full">
-            {statusOptions.map((status) => (
-              <TabsTrigger 
-                key={status.value} 
-                value={status.value}
-                className="data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none px-4"
-              >
-                {status.label}
-                <Badge variant="outline" className="ml-2 h-5 px-1.5 text-xs">
-                  {getStatusCount(status.value)}
-                </Badge>
-              </TabsTrigger>
-            ))}
-            <TabsTrigger 
-              value="all" 
-              className="data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none px-4"
+      {/* Mobile Header (from image) */}
+      <div className="md:hidden flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Orders</h1>
+          <div className="flex items-center gap-2">
+            <Select value={sourceFilter} onValueChange={setSourceFilter}>
+              <SelectTrigger className="w-[100px] h-9 border-primary text-primary font-medium">
+                <SelectValue placeholder="Source" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="web">Online</SelectItem>
+                <SelectItem value="manual">Manual</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button 
+              size="icon" 
+              className="bg-primary hover:bg-primary/90 h-9 w-9"
+              onClick={() => setIsManualOrderOpen(true)}
             >
-              All
-              <Badge variant="outline" className="ml-2 h-5 px-1.5 text-xs">
-                {sourceFilter === 'all' ? orders.length : (sourceCounts[sourceFilter] || 0)}
-              </Badge>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-
-      {/* Steadfast Status Filters */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-sm font-medium text-muted-foreground">Steadfast Status:</span>
-        <div className="flex gap-2">
-          <Button
-            variant={steadfastFilter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSteadfastFilter('all')}
-          >
-            All
-          </Button>
-          <Button
-            variant={steadfastFilter === 'returned' ? 'destructive' : 'outline'}
-            size="sm"
-            onClick={() => setSteadfastFilter('returned')}
-            className="gap-1"
-          >
-            <RotateCcw className="h-3 w-3" />
-            Returned ({getSteadfastCount('returned')})
-          </Button>
-          <Button
-            variant={steadfastFilter === 'delivered' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSteadfastFilter('delivered')}
-            className="gap-1 bg-green-600 hover:bg-green-700 data-[active=true]:bg-green-600"
-            data-active={steadfastFilter === 'delivered'}
-          >
-            <CheckCircle className="h-3 w-3" />
-            Delivered ({getSteadfastCount('delivered')})
-          </Button>
-          <Button
-            variant={steadfastFilter === 'in_transit' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSteadfastFilter('in_transit')}
-            className="gap-1"
-          >
-            <Truck className="h-3 w-3" />
-            In Transit ({getSteadfastCount('in_transit')})
-          </Button>
+              <Plus className="h-5 w-5" />
+            </Button>
+            <Button 
+              size="icon" 
+              variant="outline" 
+              className={`h-9 w-9 border-primary text-primary ${selectedOrderIds.size > 0 ? 'bg-primary/10' : ''}`}
+              onClick={toggleSelectAll}
+            >
+              <CheckSquare className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => fetchSteadfastStatuses()}
-          disabled={loadingStatuses}
-          className="gap-1 ml-auto"
-        >
-          {loadingStatuses ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <RefreshCw className="h-4 w-4" />
-          )}
-          Refresh Status
-        </Button>
-      </div>
 
-      {/* Location Filter - Inside/Outside Dhaka */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-sm font-medium text-muted-foreground">Location:</span>
-        <div className="flex gap-2">
-          <Button
-            variant={locationFilter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setLocationFilter('all')}
-          >
-            All
-          </Button>
-          <Button
-            variant={locationFilter === 'inside_dhaka' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setLocationFilter('inside_dhaka')}
-            className="gap-1"
-          >
-            <MapPin className="h-3 w-3" />
-            Inside Dhaka ({ordersBeforeLocation.filter(o => isInsideDhaka(o)).length})
-          </Button>
-          <Button
-            variant={locationFilter === 'outside_dhaka' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setLocationFilter('outside_dhaka')}
-            className="gap-1"
-          >
-            <MapPin className="h-3 w-3" />
-            Outside Dhaka ({ordersBeforeLocation.filter(o => !isInsideDhaka(o)).length})
-          </Button>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-[10px] uppercase text-muted-foreground ml-1">Status</Label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="h-10 border-muted-foreground/20">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                {statusOptions.map(s => (
+                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col justify-end">
+            <Button 
+              variant="outline" 
+              className="h-10 border-primary text-primary gap-2"
+              onClick={handleExport}
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search customer phone"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 h-11 border-muted-foreground/30 rounded-lg shadow-sm"
+          />
         </div>
       </div>
-      <Card>
-        <CardHeader>
-        <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex items-center gap-2 flex-1">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by order number, customer, or phone..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="max-w-sm"
-              />
-            </div>
-            
-            {/* Date Filter */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Calendar className="h-4 w-4" />
-                    {dateFrom ? format(dateFrom, 'dd MMM yyyy') : 'From Date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={dateFrom}
-                    onSelect={setDateFrom}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Calendar className="h-4 w-4" />
-                    {dateTo ? format(dateTo, 'dd MMM yyyy') : 'To Date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={dateTo}
-                    onSelect={setDateTo}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              
-              {(dateFrom || dateTo) && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
-                  className="text-muted-foreground"
+
+      {/* Desktop Tabs (hidden on mobile) */}
+      <div className="hidden md:block space-y-6">
+        {/* Source Tabs */}
+        <div className="overflow-x-auto pb-2 scrollbar-hide">
+          <Tabs value={sourceFilter} onValueChange={setSourceFilter} className="w-full">
+            <TabsList className="h-auto p-1 bg-muted/50 flex w-max min-w-full">
+              <TabsTrigger 
+                value="all" 
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 shrink-0"
+              >
+                All Orders
+                <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
+                  {orders.length}
+                </Badge>
+              </TabsTrigger>
+              {sourceOptions.map((source) => {
+                const Icon = source.icon;
+                return (
+                  <TabsTrigger 
+                    key={source.value} 
+                    value={source.value}
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 gap-1.5 shrink-0"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {source.label}
+                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                      {getSourceCount(source.value)}
+                    </Badge>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </Tabs>
+        </div>
+
+        {/* Status Tabs */}
+        <div className="overflow-x-auto scrollbar-hide">
+          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
+            <TabsList className="h-auto p-1 bg-muted/50 flex w-max min-w-full">
+              {statusOptions.map((status) => (
+                <TabsTrigger 
+                  key={status.value} 
+                  value={status.value}
+                  className="data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none px-4 shrink-0"
                 >
-                  <XCircle className="h-4 w-4 mr-1" />
-                  Clear
-                </Button>
+                  {status.label}
+                  <Badge variant="outline" className="ml-2 h-5 px-1.5 text-xs">
+                    {getStatusCount(status.value)}
+                  </Badge>
+                </TabsTrigger>
+              ))}
+              <TabsTrigger 
+                value="all" 
+                className="data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none px-4 shrink-0"
+              >
+                All
+                <Badge variant="outline" className="ml-2 h-5 px-1.5 text-xs">
+                  {sourceFilter === 'all' ? orders.length : (sourceCounts[sourceFilter] || 0)}
+                </Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
+        {/* Filter Rows */}
+        <div className="flex flex-col gap-4">
+          {/* Steadfast Status Filters */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Steadfast Status:</span>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant={steadfastFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSteadfastFilter('all')}
+              >
+                All
+              </Button>
+              <Button
+                variant={steadfastFilter === 'returned' ? 'destructive' : 'outline'}
+                size="sm"
+                onClick={() => setSteadfastFilter('returned')}
+                className="gap-1"
+              >
+                <RotateCcw className="h-3 w-3" />
+                Returned ({getSteadfastCount('returned')})
+              </Button>
+              <Button
+                variant={steadfastFilter === 'delivered' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSteadfastFilter('delivered')}
+                className="gap-1 bg-green-600 hover:bg-green-700 data-[active=true]:bg-green-600"
+                data-active={steadfastFilter === 'delivered'}
+              >
+                <CheckCircle className="h-3 w-3" />
+                Delivered ({getSteadfastCount('delivered')})
+              </Button>
+              <Button
+                variant={steadfastFilter === 'in_transit' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSteadfastFilter('in_transit')}
+                className="gap-1"
+              >
+                <Truck className="h-3 w-3" />
+                In Transit ({getSteadfastCount('in_transit')})
+              </Button>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => fetchSteadfastStatuses()}
+              disabled={loadingStatuses}
+              className="gap-1 ml-auto"
+            >
+              {loadingStatuses ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
               )}
+              Refresh Status
+            </Button>
+          </div>
+
+          {/* Location Filter - Inside/Outside Dhaka */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Location:</span>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant={locationFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLocationFilter('all')}
+              >
+                All
+              </Button>
+              <Button
+                variant={locationFilter === 'inside_dhaka' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLocationFilter('inside_dhaka')}
+                className="gap-1"
+              >
+                <MapPin className="h-3 w-3" />
+                Inside Dhaka ({ordersBeforeLocation.filter(o => isInsideDhaka(o)).length})
+              </Button>
+              <Button
+                variant={locationFilter === 'outside_dhaka' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLocationFilter('outside_dhaka')}
+                className="gap-1"
+              >
+                <MapPin className="h-3 w-3" />
+                Outside Dhaka ({ordersBeforeLocation.filter(o => !isInsideDhaka(o)).length})
+              </Button>
             </div>
           </div>
-          
-          <div className="flex gap-2 flex-wrap mt-4">
-              {selectedOrderIds.size > 0 && (
-                <>
-                  <Select
-                    onValueChange={handleBulkStatusChange}
-                    disabled={bulkStatusChanging}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder={bulkStatusChanging ? 'Updating...' : `Change ${selectedOrderIds.size} Status`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.map((status) => {
-                        const Icon = status.icon;
-                        return (
-                          <SelectItem key={status.value} value={status.value}>
-                            <div className="flex items-center gap-2">
-                              <Icon className="h-4 w-4" />
-                              {status.label}
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsInvoiceDialogOpen(true)}
-                    className="gap-2"
-                  >
-                    <Printer className="h-4 w-4" />
-                    Print {selectedOrderIds.size} Invoice{selectedOrderIds.size > 1 ? 's' : ''}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsStickerDialogOpen(true)}
-                    className="gap-2"
-                  >
-                    <Tag className="h-4 w-4" />
-                    Print {selectedOrderIds.size} Sticker{selectedOrderIds.size > 1 ? 's' : ''}
-                  </Button>
-                   <Button
-                    onClick={handleBulkSendToSteadfast}
-                    disabled={bulkSending}
-                    className="gap-2"
-                  >
-                    <Send className="h-4 w-4" />
-                    {bulkSending ? 'Sending...' : `Send ${selectedOrderIds.size} to Steadfast`}
-                  </Button>
-                  <Button
-                    onClick={handleBulkSendToCarrybee}
-                    disabled={bulkSendingCarrybee}
-                    variant="outline"
-                    className="gap-2"
-                  >
-                    <Send className="h-4 w-4" />
-                    {bulkSendingCarrybee ? 'Sending...' : `Send ${selectedOrderIds.size} to Carrybee`}
-                  </Button>
-                </>
-              )}
-            </div>
-        </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <Table className="min-w-[1400px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-10">
-                  <Checkbox
-                    checked={displayedOrders.length > 0 && selectedOrderIds.size > 0 && selectedOrderIds.size === displayedOrders.length}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </TableHead>
-                <TableHead>Order</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Products</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Payment</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Steadfast Status</TableHead>
-                <TableHead>Print</TableHead>
-                <TableHead>Change Status</TableHead>
-                <TableHead>Tracking</TableHead>
-                <TableHead className="text-right sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {displayedOrders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedOrderIds.has(order.id)}
-                      onCheckedChange={() => toggleOrderSelection(order.id)}
+        </div>
+      </div>
+
+      {/* Desktop Content Section */}
+      <div className="hidden md:block">
+        <Card className="overflow-hidden">
+          <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex items-center gap-2 flex-1">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by order number, customer, or phone..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="max-w-sm"
+                />
+              </div>
+              
+              {/* Date Filter */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {dateFrom ? format(dateFrom, 'dd MMM yyyy') : 'From Date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      initialFocus
                     />
-                  </TableCell>
-                  <TableCell 
-                    className="font-medium cursor-pointer hover:text-primary hover:underline"
-                    onClick={() => openOrderDetail(order)}
+                  </PopoverContent>
+                </Popover>
+                
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {dateTo ? format(dateTo, 'dd MMM yyyy') : 'To Date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                
+                {(dateFrom || dateTo) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
+                    className="text-muted-foreground"
                   >
-                    {order.order_number}
-                  </TableCell>
-                  <TableCell>{getSourceBadge(order.order_source)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span 
-                            className="truncate cursor-pointer hover:text-primary hover:underline"
-                            onClick={() => openOrderDetail(order)}
-                          >
-                            {order.shipping_name}
-                          </span>
-                          {getOrderCount(order.shipping_phone) > 1 && (
-                            <Badge variant="secondary" className="gap-1 text-xs bg-amber-100 text-amber-700 hover:bg-amber-200">
-                              <UserCheck className="h-3 w-3" />
-                              Repeat
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="text-sm text-muted-foreground">{order.shipping_phone}</div>
-                        <CombinedCourierHistoryInline phone={order.shipping_phone} autoFetchBdCourier />
-                      </div>
-                      <div className="shrink-0 pt-1">
-                        <CourierHistoryDialog phone={order.shipping_phone} customerName={order.shipping_name} />
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      {order.order_items.slice(0, 3).map((item, idx) => (
-                        <div
-                          key={item.id}
-                          className="relative w-10 h-10 rounded border bg-muted overflow-hidden shrink-0"
-                          title={`${item.product_name}${item.variation_name ? ` (${item.variation_name})` : ''} x${item.quantity}`}
-                        >
-                          {item.product_image ? (
-                            <img
-                              src={item.product_image}
-                              alt={item.product_name}
-                              loading="lazy"
-                              decoding="async"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                              <Package className="h-4 w-4" />
-                            </div>
-                          )}
-                          {item.quantity > 1 && (
-                            <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] px-1 rounded-full min-w-[16px] text-center">
-                              {item.quantity}
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                      {order.order_items.length > 3 && (
-                        <div className="w-10 h-10 rounded border bg-muted flex items-center justify-center text-xs text-muted-foreground shrink-0">
-                          +{order.order_items.length - 3}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>{format(new Date(order.created_at), 'MMM dd, yyyy')}</TableCell>
-                  <TableCell>৳{Number(order.total).toFixed(0)}</TableCell>
-                  <TableCell>
-                    <Badge variant={order.payment_status === 'paid' ? 'default' : 'outline'}>
-                      {order.payment_status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell>{getSteadfastStatusBadge(order.tracking_number)}</TableCell>
-                  <TableCell>
-                    <button
-                      onClick={() => handleTogglePrinted(order.id, order.is_printed)}
-                      className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                        order.is_printed 
-                          ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                          : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                      }`}
-                      title={order.is_printed ? 'Printed - Click to unmark' : 'Not printed - Click to mark as printed'}
-                    >
-                      {order.is_printed ? (
-                        <Check className="h-5 w-5" />
-                      ) : (
-                        <Printer className="h-4 w-4" />
-                      )}
-                    </button>
-                  </TableCell>
-                  <TableCell>
+                    <XCircle className="h-4 w-4 mr-1" />
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex gap-2 flex-wrap mt-4">
+                {selectedOrderIds.size > 0 && (
+                  <>
                     <Select
-                      value={order.status}
-                      onValueChange={(value) => handleStatusChange(order.id, value)}
-                      disabled={updating}
+                      onValueChange={handleBulkStatusChange}
+                      disabled={bulkStatusChanging}
                     >
-                      <SelectTrigger className="w-[130px] h-8 text-xs">
-                        <SelectValue placeholder="Change" />
+                      <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder={bulkStatusChanging ? 'Updating...' : `Change ${selectedOrderIds.size} Status`} />
                       </SelectTrigger>
                       <SelectContent>
                         {statusOptions.map((status) => {
@@ -1579,7 +1499,7 @@ export default function AdminOrders() {
                           return (
                             <SelectItem key={status.value} value={status.value}>
                               <div className="flex items-center gap-2">
-                                <Icon className="h-3 w-3" />
+                                <Icon className="h-4 w-4" />
                                 {status.label}
                               </div>
                             </SelectItem>
@@ -1587,61 +1507,368 @@ export default function AdminOrders() {
                         })}
                       </SelectContent>
                     </Select>
-                  </TableCell>
-                  <TableCell>
-                    {order.tracking_number ? (
-                      <a 
-                        href={/^\d+$/.test(order.tracking_number) ? `https://steadfast.com.bd/t/${order.tracking_number}` : `https://merchant.carrybee.com/order-track/${order.tracking_number}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex"
-                      >
-                        <Badge variant="secondary" className="gap-1 cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
-                          <Truck className="h-3 w-3" />
-                          {order.tracking_number}
-                        </Badge>
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">Not sent</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openOrderDetail(order)}
-                        title="View order details"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDeleteDialog(order)}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        title="Delete order"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredOrders.length === 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsInvoiceDialogOpen(true)}
+                      className="gap-2 w-full sm:w-auto"
+                    >
+                      <Printer className="h-4 w-4" />
+                      Print {selectedOrderIds.size} Invoice{selectedOrderIds.size > 1 ? 's' : ''}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsStickerDialogOpen(true)}
+                      className="gap-2 w-full sm:w-auto"
+                    >
+                      <Tag className="h-4 w-4" />
+                      Print {selectedOrderIds.size} Sticker{selectedOrderIds.size > 1 ? 's' : ''}
+                    </Button>
+                     <Button
+                      onClick={handleBulkSendToSteadfast}
+                      disabled={bulkSending}
+                      className="gap-2 w-full sm:w-auto"
+                    >
+                      <Send className="h-4 w-4" />
+                      {bulkSending ? 'Sending...' : `Send ${selectedOrderIds.size} to Steadfast`}
+                    </Button>
+                    <Button
+                      onClick={handleBulkSendToCarrybee}
+                      disabled={bulkSendingCarrybee}
+                      variant="outline"
+                      className="gap-2 w-full sm:w-auto"
+                    >
+                      <Send className="h-4 w-4" />
+                      {bulkSendingCarrybee ? 'Sending...' : `Send ${selectedOrderIds.size} to Carrybee`}
+                    </Button>
+                  </>
+                )}
+              </div>
+          </CardHeader>
+          <CardContent className="overflow-x-auto">
+            <Table className="min-w-[1400px]">
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={13} className="text-center py-8 text-muted-foreground">
-                    No orders found
-                  </TableCell>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={displayedOrders.length > 0 && selectedOrderIds.size > 0 && selectedOrderIds.size === displayedOrders.length}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>Order</TableHead>
+                  <TableHead>Source</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Products</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Payment</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Steadfast Status</TableHead>
+                  <TableHead>Print</TableHead>
+                  <TableHead>Change Status</TableHead>
+                  <TableHead>Tracking</TableHead>
+                  <TableHead className="text-right sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">Actions</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {displayedOrders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedOrderIds.has(order.id)}
+                        onCheckedChange={() => toggleOrderSelection(order.id)}
+                      />
+                    </TableCell>
+                    <TableCell 
+                      className="font-medium cursor-pointer hover:text-primary hover:underline"
+                      onClick={() => openOrderDetail(order)}
+                    >
+                      {order.order_number}
+                    </TableCell>
+                    <TableCell>{getSourceBadge(order.order_source)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span 
+                              className="truncate cursor-pointer hover:text-primary hover:underline"
+                              onClick={() => openOrderDetail(order)}
+                            >
+                              {order.shipping_name}
+                            </span>
+                            {getOrderCount(order.shipping_phone) > 1 && (
+                              <Badge variant="secondary" className="gap-1 text-xs bg-amber-100 text-amber-700 hover:bg-amber-200">
+                                <UserCheck className="h-3 w-3" />
+                                Repeat
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{order.shipping_phone}</div>
+                          <CombinedCourierHistoryInline phone={order.shipping_phone} autoFetchBdCourier />
+                        </div>
+                        <div className="shrink-0 pt-1">
+                          <CourierHistoryDialog phone={order.shipping_phone} customerName={order.shipping_name} />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {order.order_items.slice(0, 3).map((item, idx) => (
+                          <div
+                            key={item.id}
+                            className="relative w-10 h-10 rounded border bg-muted overflow-hidden shrink-0"
+                            title={`${item.product_name}${item.variation_name ? ` (${item.variation_name})` : ''} x${item.quantity}`}
+                          >
+                            {item.product_image ? (
+                              <img
+                                src={item.product_image}
+                                alt={item.product_name}
+                                loading="lazy"
+                                decoding="async"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                                <Package className="h-4 w-4" />
+                              </div>
+                            )}
+                            {item.quantity > 1 && (
+                              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] px-1 rounded-full min-w-[16px] text-center">
+                                {item.quantity}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                        {order.order_items.length > 3 && (
+                          <div className="w-10 h-10 rounded border bg-muted flex items-center justify-center text-xs text-muted-foreground shrink-0">
+                            +{order.order_items.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{format(new Date(order.created_at), 'MMM dd, yyyy')}</TableCell>
+                    <TableCell>৳{Number(order.total).toFixed(0)}</TableCell>
+                    <TableCell>
+                      <Badge variant={order.payment_status === 'paid' ? 'default' : 'outline'}>
+                        {order.payment_status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(order.status)}</TableCell>
+                    <TableCell>{getSteadfastStatusBadge(order.tracking_number)}</TableCell>
+                    <TableCell>
+                      <button
+                        onClick={() => handleTogglePrinted(order.id, order.is_printed)}
+                        className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
+                          order.is_printed 
+                            ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+                            : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                        }`}
+                        title={order.is_printed ? 'Printed - Click to unmark' : 'Not printed - Click to mark as printed'}
+                      >
+                        {order.is_printed ? (
+                          <Check className="h-5 w-5" />
+                        ) : (
+                          <Printer className="h-4 w-4" />
+                        )}
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={order.status}
+                        onValueChange={(value) => handleStatusChange(order.id, value)}
+                        disabled={updating}
+                      >
+                        <SelectTrigger className="w-[130px] h-8 text-xs">
+                          <SelectValue placeholder="Change" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statusOptions.map((status) => {
+                            const Icon = status.icon;
+                            return (
+                              <SelectItem key={status.value} value={status.value}>
+                                <div className="flex items-center gap-2">
+                                  <Icon className="h-3 w-3" />
+                                  {status.label}
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      {order.tracking_number ? (
+                        <a 
+                          href={/^\d+$/.test(order.tracking_number) ? `https://steadfast.com.bd/t/${order.tracking_number}` : `https://merchant.carrybee.com/order-track/${order.tracking_number}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex"
+                        >
+                          <Badge variant="secondary" className="gap-1 cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
+                            <Truck className="h-3 w-3" />
+                            {order.tracking_number}
+                          </Badge>
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Not sent</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openOrderDetail(order)}
+                          title="View order details"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openDeleteDialog(order)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          title="Delete order"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredOrders.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={13} className="text-center py-8 text-muted-foreground">
+                      No orders found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Mobile Card List (from image) */}
+      <div className="md:hidden space-y-4">
+        {selectedOrderIds.size > 0 && (
+          <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md shadow-sm">
+            <span className="text-sm font-medium">{selectedOrderIds.size} orders selected</span>
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setSelectedOrderIds(new Set())} className="h-8 text-xs">Cancel</Button>
+              <Select onValueChange={handleBulkStatusChange}>
+                <SelectTrigger className="h-8 w-24 text-[10px] bg-background">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map(s => (
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+        
+        {displayedOrders.map((order, idx) => {
+          const serialNo = orders.length - orders.findIndex(o => o.id === order.id);
+          const status = statusOptions.find(s => s.value === order.status);
+          
+          return (
+            <Card 
+              key={order.id} 
+              className={`relative overflow-hidden transition-all duration-200 border shadow-sm ${
+                selectedOrderIds.has(order.id) 
+                  ? 'ring-2 ring-primary border-primary bg-primary/5' 
+                  : 'border-muted-foreground/10'
+              }`}
+            >
+              <CardContent className="p-4">
+                <div className="flex gap-4">
+                  {/* Selection Checkbox Overlay */}
+                  <div 
+                    className="absolute top-2 right-2 z-10 p-1"
+                    onClick={(e) => { e.stopPropagation(); toggleOrderSelection(order.id); }}
+                  >
+                     <Checkbox checked={selectedOrderIds.has(order.id)} className="h-5 w-5 border-muted-foreground/30" />
+                  </div>
+
+                  {/* Product Image */}
+                  <div 
+                    className="shrink-0 w-16 h-16 rounded-xl overflow-hidden border border-muted bg-muted shadow-inner"
+                    onClick={() => openOrderDetail(order)}
+                  >
+                    {order.order_items[0]?.product_image ? (
+                      <img 
+                        src={order.order_items[0].product_image} 
+                        alt={order.order_items[0].product_name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted/50">
+                        <Package className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Order Details */}
+                  <div className="flex-1 min-w-0" onClick={() => openOrderDetail(order)}>
+                    <div className="flex justify-between items-start mb-0.5">
+                      <p className="text-[#6366f1] font-bold text-base leading-tight">Serial No. #{serialNo}</p>
+                      <p className="text-[10px] text-right font-semibold text-black/80 mt-1 whitespace-nowrap">
+                        {format(new Date(order.created_at), 'MMMM d, yyyy h:mm:ss a')}
+                      </p>
+                    </div>
+                    
+                    <p className="text-[#6366f1] font-semibold text-sm mb-2">Order ID:{order.order_number}</p>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center text-xs">
+                        <span className="font-semibold text-foreground/70 w-16">Customer</span>
+                        <span className="text-muted-foreground mx-1">:</span>
+                        <span className="text-foreground font-medium truncate">{order.shipping_name}</span>
+                      </div>
+                      <div className="flex items-center text-xs">
+                        <span className="font-semibold text-foreground/70 w-16">Phone</span>
+                        <span className="text-muted-foreground mx-1">:</span>
+                        <span className="text-foreground font-medium">{order.shipping_phone}</span>
+                      </div>
+                      <div className="flex items-center text-xs">
+                        <span className="font-semibold text-foreground/70 w-16">Items</span>
+                        <span className="text-muted-foreground mx-1">:</span>
+                        <span className="text-foreground font-medium">{order.order_items.reduce((sum, i) => sum + i.quantity, 0)}</span>
+                      </div>
+                      <div className="flex items-center text-xs">
+                        <span className="font-semibold text-foreground/70 w-16">Total</span>
+                        <span className="text-muted-foreground mx-1">:</span>
+                        <span className="text-black font-bold text-sm">
+                          {Number(order.total).toFixed(2)} ৳
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end mt-2">
+                      <div className={`${status?.color || 'bg-gray-500'} text-white text-[11px] px-4 py-1.5 rounded-md font-bold shadow-sm`}>
+                        Order {status?.label || order.status}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+
+        {filteredOrders.length === 0 && (
+          <div className="py-24 text-center bg-muted/20 rounded-2xl border-2 border-dashed border-muted-foreground/10">
+            <ShoppingCart className="h-14 w-14 mx-auto mb-4 text-muted-foreground/30" />
+            <p className="text-lg font-medium text-muted-foreground">No orders found</p>
+            <p className="text-sm text-muted-foreground/60 mt-1">Try adjusting your search or filters</p>
+          </div>
+        )}
+      </div>
 
       {hasMoreOrders && (
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-4">
           <Button variant="outline" onClick={() => setVisibleRows((prev) => prev + ORDERS_PAGE_SIZE)}>
             Load More Orders ({filteredOrders.length - displayedOrders.length} remaining)
           </Button>
