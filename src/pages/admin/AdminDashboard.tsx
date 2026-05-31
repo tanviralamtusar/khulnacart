@@ -24,7 +24,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface DashboardStats {
@@ -240,29 +240,32 @@ export default function AdminDashboard() {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
+    return `৳${value.toLocaleString('en-BD', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   };
 
   // Process chart data
   const chartData = useMemo(() => {
-    if (!stats?.recentOrders) return [];
+    if (!stats?.recentOrders || stats.recentOrders.length === 0) return [];
 
-    const byDate = new Map<string, { date: string; orders: number; revenue: number }>();
+    const byDate = new Map<string, { date: string; orders: number; revenue: number; timestamp: number }>();
     for (const order of stats.recentOrders) {
-      const date = new Date(order.created_at).toLocaleDateString('en-US', { weekday: 'short' });
-      const existing = byDate.get(date);
+      const dateObj = new Date(order.created_at);
+      const dateKey = format(dateObj, 'MMM d');
+      const existing = byDate.get(dateKey);
       if (existing) {
         existing.orders += 1;
         existing.revenue += Number(order.total);
       } else {
-        byDate.set(date, { date, orders: 1, revenue: Number(order.total) });
+        byDate.set(dateKey, { 
+          date: dateKey, 
+          orders: 1, 
+          revenue: Number(order.total),
+          timestamp: startOfDay(dateObj).getTime()
+        });
       }
     }
 
-    return Array.from(byDate.values());
+    return Array.from(byDate.values()).sort((a, b) => a.timestamp - b.timestamp);
   }, [stats?.recentOrders]);
 
   if (loading) {
@@ -445,7 +448,7 @@ export default function AdminDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Orders This Week</CardTitle>
+          <CardTitle>Orders Over Time</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">

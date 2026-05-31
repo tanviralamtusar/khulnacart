@@ -52,30 +52,30 @@ export const getDashboardStats = async (dateParams?: DateRangeParams) => {
   const [ordersResult, ordersCountResult, productsResult, usersCountResult, lowStockResult, pendingResult] = await Promise.all([
     // Filtered orders for chart data (only within date range)
     supabase.from('orders')
-      .select('total, created_at, payment_status')
+      .select('total, created_at, payment_status, status')
       .gte('created_at', startISO)
       .lte('created_at', endISO)
       .order('created_at', { ascending: false })
-      .limit(200),
-    // Total count of filtered orders (fast estimate)
+      .limit(1000),
+    // Total count of filtered orders
     supabase.from('orders')
-      .select('*', { count: 'planned', head: true })
+      .select('*', { count: 'exact', head: true })
       .gte('created_at', startISO)
       .lte('created_at', endISO),
-    // Product count only (fast estimate)
+    // Product count only
     supabase.from('products')
-      .select('*', { count: 'planned', head: true }),
-    // User count only (fast estimate)
+      .select('*', { count: 'exact', head: true }),
+    // User count only
     supabase.from('profiles')
-      .select('*', { count: 'planned', head: true }),
-    // Low stock count (fast estimate)
+      .select('*', { count: 'exact', head: true }),
+    // Low stock count
     supabase.from('products')
-      .select('*', { count: 'planned', head: true })
+      .select('*', { count: 'exact', head: true })
       .lt('stock', 10)
       .eq('is_active', true),
-    // Pending orders count (within date range, fast estimate)
+    // Pending orders count (within date range)
     supabase.from('orders')
-      .select('*', { count: 'planned', head: true })
+      .select('*', { count: 'exact', head: true })
       .eq('status', 'pending')
       .gte('created_at', startISO)
       .lte('created_at', endISO),
@@ -84,7 +84,7 @@ export const getDashboardStats = async (dateParams?: DateRangeParams) => {
   const filteredOrders = ordersResult.data || [];
 
   const totalRevenue = filteredOrders
-    .filter(o => o.payment_status === 'paid')
+    .filter(o => o.status !== 'cancelled')
     .reduce((sum, order) => sum + Number(order.total), 0);
 
   return {
