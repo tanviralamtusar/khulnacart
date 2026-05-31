@@ -31,7 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer, Globe, UserPlus, Plus, Check, Tag, RefreshCw, RotateCcw, Loader2, UserCheck, History, Trash2, Calendar, Edit, MapPin, Download, CheckSquare, ShoppingCart } from 'lucide-react';
+import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer, Globe, UserPlus, Plus, Check, Tag, RefreshCw, RotateCcw, Loader2, UserCheck, History, Trash2, Calendar, Edit, MapPin, Download, CheckSquare, ShoppingCart, Save } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { supabase } from '@/integrations/supabase/client';
@@ -1878,62 +1878,62 @@ export default function AdminOrders() {
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Order {selectedOrder?.order_number}</DialogTitle>
+            <DialogTitle className="text-xl sm:text-2xl">Order {selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
-          {selectedOrder && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-medium mb-2 flex items-center gap-2">
+                  <h3 className="font-semibold mb-2 flex items-center gap-2 text-base sm:text-lg">
                     Customer Information
                     {getOrderCount(selectedOrder.shipping_phone) > 1 && (
-                      <Badge variant="secondary" className="gap-1 text-xs bg-amber-100 text-amber-700">
+                      <Badge variant="secondary" className="gap-1 text-[10px] bg-amber-100 text-amber-700 whitespace-nowrap">
                         <UserCheck className="h-3 w-3" />
-                        Repeat Customer
+                        Repeat
                       </Badge>
                     )}
                   </h3>
-                  <div className="text-sm space-y-1 text-muted-foreground">
-                    <p>{selectedOrder.shipping_name}</p>
-                    <p>{selectedOrder.shipping_phone}</p>
-                    <p>{selectedOrder.shipping_street}</p>
-                    <p>{selectedOrder.shipping_district}, {selectedOrder.shipping_city}</p>
-                    {selectedOrder.shipping_postal_code && <p>{selectedOrder.shipping_postal_code}</p>}
+                  <div className="text-sm space-y-1 text-muted-foreground bg-muted/30 p-3 rounded-lg">
+                    <p className="font-medium text-foreground">{selectedOrder?.shipping_name}</p>
+                    <p>{selectedOrder?.shipping_phone}</p>
+                    <p>{selectedOrder?.shipping_street}</p>
+                    <p>{selectedOrder?.shipping_district}, {selectedOrder?.shipping_city}</p>
+                    {selectedOrder?.shipping_postal_code && <p>{selectedOrder.shipping_postal_code}</p>}
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Order Details</h3>
-                  <div className="text-sm space-y-1 text-muted-foreground">
-                    <p>Date: {format(new Date(selectedOrder.created_at), 'PPpp')}</p>
-                    <p>Payment: {selectedOrder.payment_method.toUpperCase()}</p>
-                    <p>Payment Status: {selectedOrder.payment_status}</p>
-                    {selectedOrder.notes && <p>Notes: {selectedOrder.notes}</p>}
+                  <h3 className="font-semibold mb-2 text-base sm:text-lg">Order Details</h3>
+                  <div className="text-sm space-y-1 text-muted-foreground bg-muted/30 p-3 rounded-lg">
+                    <p><span className="font-medium text-foreground">Date:</span> {selectedOrder && format(new Date(selectedOrder.created_at), 'PPpp')}</p>
+                    <p><span className="font-medium text-foreground">Payment:</span> {selectedOrder?.payment_method?.toUpperCase()}</p>
+                    <p><span className="font-medium text-foreground">Status:</span> {selectedOrder?.payment_status}</p>
+                    {selectedOrder?.notes && <p><span className="font-medium text-foreground">Notes:</span> {selectedOrder.notes}</p>}
                   </div>
                 </div>
               </div>
 
               {/* Previous Orders Section */}
               {(() => {
+                if (!selectedOrder) return null;
                 const previousOrders = getPreviousOrders(selectedOrder.shipping_phone, selectedOrder.id);
                 if (previousOrders.length === 0) return null;
                 return (
-                  <div className="border rounded-lg p-3 bg-amber-50">
+                  <div className="border rounded-lg p-3 bg-amber-50/50">
                     <h3 className="font-medium mb-2 flex items-center gap-2 text-amber-800">
                       <History className="h-4 w-4" />
                       Previous Orders ({previousOrders.length})
                     </h3>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                    <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
                       {previousOrders.map((prevOrder) => (
-                        <div key={prevOrder.id} className="flex items-center justify-between text-sm bg-white rounded px-2 py-1.5">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-amber-700">{prevOrder.order_number}</span>
-                            <span className="text-muted-foreground">
+                        <div key={prevOrder.id} className="flex items-center justify-between text-xs sm:text-sm bg-white rounded-md border border-amber-100 p-2 shadow-sm">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                            <span className="font-bold text-amber-700">{prevOrder.order_number}</span>
+                            <span className="text-muted-foreground text-[10px] sm:text-xs">
                               {format(new Date(prevOrder.created_at), 'dd MMM yyyy')}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
                             {getStatusBadge(prevOrder.status)}
-                            <span className="font-medium">৳{Number(prevOrder.total).toFixed(0)}</span>
+                            <span className="font-bold">৳{Number(prevOrder.total).toFixed(0)}</span>
                           </div>
                         </div>
                       ))}
@@ -1943,71 +1943,73 @@ export default function AdminOrders() {
               })()}
 
               <div>
-                <h3 className="font-medium mb-2">Items</h3>
-                <div className="border rounded-lg divide-y">
-                  {selectedOrder.order_items.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3">
+                <h3 className="font-semibold mb-3 text-base sm:text-lg">Items</h3>
+                <div className="border rounded-xl divide-y overflow-hidden">
+                  {selectedOrder?.order_items?.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3 p-3 bg-white">
                       {item.product_image && (
                         <img
                           src={item.product_image}
                           alt={item.product_name}
-                          className="h-12 w-12 rounded object-cover"
+                          className="h-14 w-14 rounded-lg object-cover border"
                         />
                       )}
-                      <div className="flex-1">
-                        <p className="font-medium">{item.product_name}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm sm:text-base truncate">{item.product_name}</p>
                         {item.variation_name && (
-                          <p className="text-sm text-blue-600 font-medium">Size: {item.variation_name}</p>
+                          <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Size: {item.variation_name}</p>
                         )}
-                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                        <p className="text-xs text-muted-foreground font-medium">Qty: {item.quantity} × ৳{Number(item.price).toFixed(0)}</p>
                       </div>
-                      <p className="font-medium">৳{Number(item.price).toFixed(0)}</p>
+                      <p className="font-bold text-sm sm:text-base">৳{Number(item.price * item.quantity).toFixed(0)}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="border-t pt-4">
+              <div className="bg-muted/30 p-4 rounded-xl space-y-2 border">
                 <div className="flex justify-between text-sm">
-                  <span>Subtotal</span>
-                  <span>৳{Number(selectedOrder.subtotal).toFixed(0)}</span>
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-medium">৳{selectedOrder ? Number(selectedOrder.subtotal).toFixed(0) : '0'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Shipping</span>
-                  <span>৳{Number(selectedOrder.shipping_cost || 0).toFixed(0)}</span>
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="font-medium">৳{selectedOrder ? Number(selectedOrder.shipping_cost || 0).toFixed(0) : '0'}</span>
                 </div>
-                {selectedOrder.discount && Number(selectedOrder.discount) > 0 && (
-                  <div className="flex justify-between text-sm text-green-600">
+                {selectedOrder?.discount && Number(selectedOrder.discount) > 0 && (
+                  <div className="flex justify-between text-sm text-green-600 font-medium">
                     <span>Discount</span>
                     <span>-৳{Number(selectedOrder.discount).toFixed(0)}</span>
                   </div>
                 )}
-                <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t">
+                <div className="flex justify-between items-center font-bold text-lg pt-2 border-t mt-2">
                   <span>Total</span>
-                  <span>৳{Number(selectedOrder.total).toFixed(0)}</span>
+                  <span className="text-primary text-xl">৳{selectedOrder ? Number(selectedOrder.total).toFixed(0) : '0'}</span>
                 </div>
               </div>
 
               {/* Notes Section */}
-              <div className="border-t pt-4 space-y-4">
-                <h3 className="font-medium">Order Notes</h3>
-                <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4 pt-2">
+                <h3 className="font-semibold text-base sm:text-lg">Order Notes</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">Invoice Note (shows on invoice)</Label>
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Invoice Note (Public)</Label>
                     <Textarea
                       value={invoiceNote}
                       onChange={(e) => setInvoiceNote(e.target.value)}
                       placeholder="Note to show on printed invoice..."
                       rows={2}
+                      className="resize-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">Steadfast Note (sent to courier)</Label>
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Steadfast Note (Courier)</Label>
                     <Textarea
                       value={steadfastNote}
                       onChange={(e) => setSteadfastNote(e.target.value)}
                       placeholder="Note to send to Steadfast..."
                       rows={2}
+                      className="resize-none"
                     />
                   </div>
                 </div>
@@ -2016,83 +2018,96 @@ export default function AdminOrders() {
                   size="sm" 
                   onClick={handleSaveNotes}
                   disabled={savingNotes}
+                  className="w-full sm:w-auto"
                 >
+                  <Save className="h-4 w-4 mr-2" />
                   {savingNotes ? 'Saving...' : 'Save Notes'}
                 </Button>
               </div>
 
-              <div className="border-t pt-4 space-y-4">
-                <h3 className="font-medium">Update Status</h3>
-                <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4 pt-4 border-t">
+                <h3 className="font-semibold text-base sm:text-lg">Update Status</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Status</Label>
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Status</Label>
                     <Select
-                      value={selectedOrder.status}
-                      onValueChange={(value) => handleStatusChange(selectedOrder.id, value)}
+                      value={selectedOrder?.status}
+                      onValueChange={(value) => selectedOrder && handleStatusChange(selectedOrder.id, value)}
                       disabled={updating}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {statusOptions.map((status) => (
-                          <SelectItem key={status.value} value={status.value}>
-                            {status.label}
-                          </SelectItem>
-                        ))}
+                        {statusOptions.map((option) => {
+                          const Icon = option.icon;
+                          return (
+                            <SelectItem key={option.value} value={option.value}>
+                              <div className="flex items-center gap-2">
+                                <Icon className="h-4 w-4" />
+                                {option.label}
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Tracking Number</Label>
-                    <Input
-                      value={trackingNumber}
-                      onChange={(e) => setTrackingNumber(e.target.value)}
-                      placeholder="Enter tracking number"
-                    />
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Tracking Number</Label>
+                    <div className="relative">
+                      <Input
+                        value={trackingNumber}
+                        onChange={(e) => setTrackingNumber(e.target.value)}
+                        placeholder="Enter tracking number"
+                        className="h-11 pl-9"
+                      />
+                      <Truck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-2 mt-4">
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                   <Button
                     variant="outline"
                     onClick={() => {
+                      if (!selectedOrder) return;
                       setIsDetailOpen(false);
                       openEditDialog(selectedOrder);
                     }}
-                    className="gap-2"
+                    className="gap-2 h-11"
                   >
                     <Edit className="h-4 w-4" />
                     Edit Order
                   </Button>
                   <Button
-                    onClick={() => handleSendToSteadfast(selectedOrder)}
-                    disabled={sendingToSteadfast || !!selectedOrder.tracking_number}
-                    className="flex-1"
+                    variant="destructive"
+                    onClick={() => selectedOrder && openDeleteDialog(selectedOrder)}
+                    className="gap-2 h-11"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete Order
+                  </Button>
+                  <Button
+                    onClick={() => selectedOrder && handleSendToSteadfast(selectedOrder)}
+                    disabled={sendingToSteadfast || !selectedOrder || !!selectedOrder.tracking_number}
+                    className="h-11"
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    {sendingToSteadfast ? 'Sending...' : selectedOrder.tracking_number ? 'Already Sent' : 'Send to Steadfast'}
+                    {sendingToSteadfast ? 'Sending...' : selectedOrder?.tracking_number ? 'Already Sent' : 'Steadfast'}
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleSendToCarrybee(selectedOrder)}
-                    disabled={sendingToCarrybee || !!selectedOrder.tracking_number}
-                    className="flex-1"
+                    onClick={() => selectedOrder && handleSendToCarrybee(selectedOrder)}
+                    disabled={sendingToCarrybee || !selectedOrder || !!selectedOrder.tracking_number}
+                    className="h-11"
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    {sendingToCarrybee ? 'Sending...' : selectedOrder.tracking_number ? 'Already Sent' : 'Send to Carrybee'}
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => openDeleteDialog(selectedOrder)}
-                    className="gap-2"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
+                    {sendingToCarrybee ? 'Sending...' : selectedOrder?.tracking_number ? 'Already Sent' : 'Carrybee'}
                   </Button>
                 </div>
               </div>
             </div>
-          )}
         </DialogContent>
       </Dialog>
 
