@@ -99,12 +99,12 @@ const UrgencyBanner = memo(() => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
           </span>
           <Users className="h-4 w-4" />
-          <span className="font-bold">{viewers} জন</span> এখন দেখছেন
+          <span className="font-bold">{viewers} people</span> are watching now
         </span>
         <span className="hidden sm:block text-white/50">|</span>
         <span className="flex items-center gap-2">
           <Flame className="h-4 w-4 animate-pulse" />
-          মাত্র <span className="font-bold text-white">{stock}টি</span> স্টকে আছে!
+          Only <span className="font-bold text-white">{stock} left</span> in stock!
         </span>
       </div>
     </div>
@@ -135,7 +135,7 @@ const HeroSection = memo(({ product, currentImage, setCurrentImage, onBuyNow }: 
           <div className="relative max-w-lg mx-auto w-full">
             {discount > 0 && (
               <Badge className="absolute top-4 left-4 z-20 bg-destructive text-destructive-foreground text-base px-4 py-2 font-bold shadow-lg">
-                -{discount}% ছাড়
+                -{discount}% Off
               </Badge>
             )}
             
@@ -197,7 +197,7 @@ const HeroSection = memo(({ product, currentImage, setCurrentImage, onBuyNow }: 
           <div className="text-primary-foreground space-y-5 text-center">
             <div>
               <span className="inline-block bg-accent/20 text-accent px-3 py-1 rounded-full text-sm font-medium mb-3">
-                🔥 হট সেলিং প্রোডাক্ট
+                🔥 Hot Selling Product
               </span>
               <h1 className="text-3xl md:text-5xl font-bold leading-tight">{product.name}</h1>
             </div>
@@ -214,7 +214,7 @@ const HeroSection = memo(({ product, currentImage, setCurrentImage, onBuyNow }: 
               )}
               {discount > 0 && (
                 <Badge className="bg-green-500 text-white font-bold px-3 py-1">
-                  ৳{(product.original_price! - product.price).toLocaleString()} সেভ!
+                  ৳{(product.original_price! - product.price).toLocaleString()} Save!
                 </Badge>
               )}
             </div>
@@ -226,16 +226,16 @@ const HeroSection = memo(({ product, currentImage, setCurrentImage, onBuyNow }: 
               className="w-full md:w-auto px-12 py-7 text-xl font-bold bg-gradient-to-r from-accent to-yellow-500 hover:from-yellow-500 hover:to-accent text-foreground rounded-2xl shadow-cta hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
             >
               <ShoppingBag className="mr-2 h-6 w-6" />
-              এখনই অর্ডার করুন
+              Order Now
             </Button>
 
 
             {/* Trust Badges */}
             <div className="grid grid-cols-3 gap-3 pt-3">
               {[
-                { icon: Shield, text: "১০০% গ্যারান্টি", color: "text-green-400" },
-                { icon: Truck, text: "সারাদেশে ডেলিভারি", color: "text-blue-400" },
-                { icon: Gift, text: "ক্যাশ অন ডেলিভারি", color: "text-purple-400" },
+                { icon: Shield, text: "100% Guarantee", color: "text-green-400" },
+                { icon: Truck, text: "Nationwide Delivery", color: "text-blue-400" },
+                { icon: Gift, text: "Cash on Delivery", color: "text-purple-400" },
               ].map((item, idx) => (
                 <div key={idx} className="text-center p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
                   <item.icon className={`h-6 w-6 mx-auto mb-1.5 ${item.color}`} />
@@ -257,10 +257,10 @@ const FeaturesBanner = memo(() => (
     <div className="container mx-auto px-4 relative">
       <div className="flex flex-wrap justify-center gap-4 md:gap-8">
         {[
-          { text: "প্রিমিয়াম কোয়ালিটি", icon: "✨" },
-          { text: "কালার গ্যারান্টি", icon: "🎨" },
-          { text: "কমফোর্টেবল ফিট", icon: "👕" },
-          { text: "ইজি এক্সচেঞ্জ", icon: "🔄" }
+          { text: "Premium Quality", icon: "✨" },
+          { text: "Color Guarantee", icon: "🎨" },
+          { text: "Comfortable Fit", icon: "👕" },
+          { text: "Easy Exchange", icon: "🔄" }
         ].map((item, idx) => (
           <div key={idx} className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full text-foreground font-semibold text-sm shadow-sm hover:bg-white/70 transition-colors">
             <span>{item.icon}</span>
@@ -283,9 +283,9 @@ const GallerySection = memo(({ images }: { images: string[] }) => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <span className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-3">
-              📸 গ্যালারি
+              📸 Gallery
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">প্রোডাক্ট গ্যালারি</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Product Gallery</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {images.slice(0, 6).map((img, idx) => (
@@ -327,9 +327,9 @@ const VideoSection = memo(({ videoUrl }: { videoUrl?: string }) => {
         <div className="text-center mb-8">
           <span className="inline-flex items-center gap-2 bg-primary/20 text-primary-foreground px-4 py-1.5 rounded-full text-sm font-medium mb-3">
             <Play className="h-4 w-4" />
-            ভিডিও দেখুন
+            Watch Video
           </span>
-          <h2 className="text-2xl md:text-3xl font-bold text-white">প্রোডাক্ট ভিডিও</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">Product Video</h2>
         </div>
 
         <div className={`max-w-3xl mx-auto ${aspectInfo.isPortrait ? "max-w-sm" : ""}`}>
@@ -383,16 +383,16 @@ const ProductDescriptionSection = memo(({ description }: { description?: string 
           {/* Header */}
           <div className="text-center mb-8">
             <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-3">
-              📋 বিস্তারিত
+              📋 Details
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground font-bengali">প্রোডাক্ট বিবরণ</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Product Description</h2>
           </div>
           
           {/* Description Cards */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             <div className="bg-gradient-to-r from-primary to-accent p-4">
-              <h3 className="text-lg font-bold text-primary-foreground font-bengali">
-                এই প্রোডাক্টের বৈশিষ্ট্য
+              <h3 className="text-lg font-bold text-primary-foreground">
+                Product Features
               </h3>
             </div>
             
@@ -421,8 +421,8 @@ const ProductDescriptionSection = memo(({ description }: { description?: string 
             
             {/* Trust Footer */}
             <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 border-t border-amber-100">
-              <p className="text-center text-amber-700 font-medium font-bengali">
-                ১০০% কোয়ালিটি গ্যারান্টি সহ
+              <p className="text-center text-amber-700 font-medium">
+                With 100% Quality Guarantee
               </p>
             </div>
           </div>
@@ -437,12 +437,12 @@ ProductDescriptionSection.displayName = 'ProductDescriptionSection';
 const DeliverySection = memo(() => (
   <section className="py-8 md:py-12 bg-white">
     <div className="container mx-auto px-4">
-      <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-6">ডেলিভারি ও পেমেন্ট</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-6">Delivery & Payment</h2>
       <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
         {[
-          { icon: Truck, title: "ঢাকায় ৮০৳", sub: "বাইরে ১৩০৳", color: "bg-blue-500" },
-          { icon: Clock, title: "১-৩ দিনে", sub: "ডেলিভারি", color: "bg-green-500" },
-          { icon: Shield, title: "ক্যাশ অন", sub: "ডেলিভারি", color: "bg-purple-500" },
+          { icon: Truck, title: "Inside Dhaka 80৳", sub: "Outside 130৳", color: "bg-blue-500" },
+          { icon: Clock, title: "1-3 Days", sub: "Delivery", color: "bg-green-500" },
+          { icon: Shield, title: "Cash on", sub: "Delivery", color: "bg-purple-500" },
         ].map((item, idx) => (
           <div key={idx} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
             <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
@@ -498,17 +498,17 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (variations.length > 0 && !form.selectedVariationId) {
-      toast.error("ভ্যারিয়েশন সিলেক্ট করুন");
+      toast.error("Please select a variation");
       // Scroll to size selection area
       sizeSelectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     if (!form.name.trim() || !form.phone.trim() || !form.address.trim()) {
-      toast.error("সব তথ্য পূরণ করুন");
+      toast.error("Please fill in all information");
       return;
     }
     if (!/^01[3-9]\d{8}$/.test(form.phone.replace(/\s/g, ''))) {
-      toast.error("সঠিক মোবাইল নম্বর দিন");
+      toast.error("Please provide a valid mobile number");
       return;
     }
     onSubmit({ ...form, shippingZone, subtotal, shippingCost, total });
@@ -523,8 +523,8 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
       <div className="container mx-auto px-4">
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">অর্ডার করুন</h2>
-            <p className="text-gray-600 text-sm mt-1">পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Order Now</h2>
+            <p className="text-gray-600 text-sm mt-1">Pay after receiving the product</p>
           </div>
 
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
@@ -532,7 +532,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
             <div className="bg-white rounded-xl shadow-lg overflow-hidden border">
               <div className="bg-gray-900 text-white py-3 px-4 font-bold flex items-center gap-2">
                 <ShoppingBag className="h-4 w-4" />
-                প্রোডাক্ট
+                Product
               </div>
               
               <div className="p-4">
@@ -547,10 +547,10 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
                   </div>
                 </div>
 
-                {/* Size Selection */}
+                 {/* Size Selection */}
                 {variations.length > 0 && (
                   <div ref={sizeSelectionRef} className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">ভ্যারিয়েশন নির্বাচন করুন <span className="text-red-500">*</span></p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Select Variation <span className="text-red-500">*</span></p>
                     <div className="flex flex-wrap gap-2">
                       {variations.map((v) => (
                         <button
@@ -568,14 +568,14 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
                       ))}
                     </div>
                     {!form.selectedVariationId && (
-                      <p className="text-xs text-red-500 mt-1">* ভ্যারিয়েশন সিলেক্ট করুন</p>
+                      <p className="text-xs text-red-500 mt-1">* Please select a variation</p>
                     )}
                   </div>
                 )}
 
                 {/* Quantity */}
                 <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                  <span className="font-medium text-gray-700">পরিমাণ</span>
+                  <span className="font-medium text-gray-700">Quantity</span>
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
@@ -597,12 +597,12 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
             <div className="bg-white rounded-xl shadow-lg p-4 border space-y-3">
               <h3 className="font-bold flex items-center gap-2 text-gray-900">
                 <Phone className="h-4 w-4 text-amber-500" />
-                আপনার তথ্য
+                Your Information
               </h3>
               <Input
                 value={form.phone}
                 onChange={(e) => updateForm('phone', e.target.value)}
-                placeholder="মোবাইল নম্বর *"
+                placeholder="Mobile Number *"
                 type="tel"
                 inputMode="numeric"
                 required
@@ -611,7 +611,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
               <Input
                 value={form.name}
                 onChange={(e) => updateForm('name', e.target.value)}
-                placeholder="আপনার নাম *"
+                placeholder="Your Name *"
                 required
                 className="h-12 text-base rounded-lg border-2 focus:border-amber-500"
               />
@@ -620,7 +620,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
                 <Textarea
                   value={form.address}
                   onChange={(e) => updateForm('address', e.target.value)}
-                  placeholder="সম্পূর্ণ ঠিকানা (বাড়ি, রোড, থানা, জেলা) *"
+                  placeholder="Full Address (House, Road, Area, District) *"
                   required
                   rows={2}
                   className="pl-10 text-base rounded-lg border-2 focus:border-amber-500 resize-none"
@@ -632,7 +632,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
             <div className="bg-white rounded-xl shadow-lg p-4 border">
               <h3 className="font-bold flex items-center gap-2 text-gray-900 mb-3">
                 <Truck className="h-4 w-4 text-amber-500" />
-                ডেলিভারি এরিয়া
+                Delivery Area
               </h3>
               <ShippingMethodSelector
                 address={form.address}
@@ -645,15 +645,15 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
             <div className="bg-gray-900 rounded-xl p-4 text-white">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">সাবটোটাল ({form.quantity}টি)</span>
+                  <span className="text-gray-400">Subtotal ({form.quantity})</span>
                   <span>৳{subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">ডেলিভারি</span>
+                  <span className="text-gray-400">Delivery</span>
                   <span>৳{shippingCost}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-700">
-                  <span>সর্বমোট</span>
+                  <span>Total</span>
                   <span className="text-amber-400">৳{total.toLocaleString()}</span>
                 </div>
               </div>
@@ -668,12 +668,12 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
                   <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  প্রসেসিং...
+                  Processing...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5" />
-                  অর্ডার কনফার্ম করুন — ৳{total.toLocaleString()}
+                  Confirm Order — ৳{total.toLocaleString()}
                 </span>
               )}
             </Button>
@@ -681,7 +681,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
             {/* Contact */}
             <div className="text-center text-sm text-gray-600 space-y-1">
               <p>
-                কল করুন: <a href="tel:+8801995909243" className="font-bold text-gray-900">01995909243</a>
+                Call Us: <a href="tel:+8801995909243" className="font-bold text-gray-900">01995909243</a>
               </p>
               <a 
                 href="https://wa.me/8801995909243"
@@ -818,9 +818,9 @@ const ProductLandingPage = () => {
           landingPageSlug: slug,
         }
       });
-    } catch (err) {
+      } catch (err) {
       console.error("Order error:", err);
-      toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      toast.error("Order placement failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -837,8 +837,8 @@ const ProductLandingPage = () => {
   if (error || !product) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <h1 className="text-xl font-bold mb-4">প্রোডাক্ট পাওয়া যায়নি</h1>
-        <Button onClick={() => navigate("/")} className="bg-amber-500 hover:bg-amber-600">হোম পেজে যান</Button>
+        <h1 className="text-xl font-bold mb-4">Product Not Found</h1>
+        <Button onClick={() => navigate("/")} className="bg-amber-500 hover:bg-amber-600">Go to Home</Button>
       </div>
     );
   }
@@ -863,7 +863,7 @@ const ProductLandingPage = () => {
             className="w-full h-12 text-base font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-gray-900 rounded-xl shadow-lg"
           >
             <ShoppingBag className="mr-2 h-5 w-5" />
-            এখনই অর্ডার করুন
+            Order Now
           </Button>
         </div>
       )}

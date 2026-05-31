@@ -30,7 +30,7 @@ const Footer = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const siteName = siteSettings?.site_name || 'খুলনা কার্ট';
+  const siteName = siteSettings?.site_name || 'Khulna Cart';
   const siteLogo = siteSettings?.site_logo;
 
   return (

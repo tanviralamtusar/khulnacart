@@ -149,7 +149,7 @@ const Header = () => {
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
-                placeholder="পণ্য খুঁজুন..."
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pr-12 rounded-full"

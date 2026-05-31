@@ -32,10 +32,10 @@ const CartPage = () => {
       <div className="container-custom">
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-            শপিং কার্ট
+            Shopping Cart
           </h1>
           <p className="text-muted-foreground">
-            আপনার কার্টে {cartItems.length}টি পণ্য আছে
+            You have {cartItems.length} items in your cart
           </p>
         </div>
 
@@ -49,15 +49,15 @@ const CartPage = () => {
               <ShoppingBag className="h-12 w-12 text-muted-foreground/50" />
             </div>
             <h2 className="text-xl font-semibold text-foreground mb-2">
-              আপনার কার্ট খালি
+              Your Cart is Empty
             </h2>
             <p className="text-muted-foreground mb-6">
-              এখনও কোনো পণ্য যোগ করেননি
+              You haven't added any products yet
             </p>
             <Button asChild>
               <Link to="/products">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                কেনাকাটা করুন
+                Start Shopping
               </Link>
             </Button>
           </motion.div>

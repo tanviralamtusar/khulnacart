@@ -230,41 +230,41 @@ export default function FashionHomePage() {
 
   // Features from home content or defaults
   const featuresBarItems = homeContent.features_bar?.items || [
-    { icon: 'Truck', title: 'দ্রুত ডেলিভারি', desc: 'সারাদেশে ফ্রি ডেলিভারি' },
-    { icon: 'RotateCcw', title: 'ইনস্ট্যান্ট চেক', desc: 'রিটার্ন পলিসি' },
-    { icon: 'Shield', title: 'ক্যাশ অন ডেলিভারি', desc: 'পণ্য হাতে পেয়ে পেমেন্ট' },
-    { icon: 'Headphones', title: '২৪/৭ সাপোর্ট', desc: 'যেকোনো সময় যোগাযোগ' },
+    { icon: 'Truck', title: 'Fast Delivery', desc: 'Free delivery nationwide' },
+    { icon: 'RotateCcw', title: 'Instant Check', desc: 'Return policy' },
+    { icon: 'Shield', title: 'Cash on Delivery', desc: 'Payment on delivery' },
+    { icon: 'Headphones', title: '24/7 Support', desc: 'Contact anytime' },
   ];
 
   // Header promo text from home content
-  const headerPromoText = homeContent.header_promo?.text || '৳২০০০+ অর্ডারে সারাদেশে ফ্রি ডেলিভারি | ৭ দিনের ইজি রিটার্ন';
+  const headerPromoText = homeContent.header_promo?.text || 'Free delivery nationwide on orders ৳2000+ | 7 Days Easy Return';
   const headerPromoEnabled = homeContent.header_promo?.enabled !== false;
 
   // Hero slides from home content, banners, or defaults
   const defaultSlides = [
     {
       id: '1',
-      title: 'নতুন টু পিস কালেকশন',
-      subtitle: 'এক্সক্লুসিভ ডিজাইন, প্রিমিয়াম কোয়ালিটি - ৩০% পর্যন্ত ছাড়',
+      title: 'New Two Piece Collection',
+      subtitle: 'Exclusive Design, Premium Quality - Up to 30% Off',
       image: heroSlide1,
       link: '/products?category=two-piece',
-      badge: '৩০% ছাড়'
+      badge: '30% Off'
     },
     {
       id: '2',
-      title: 'থ্রি পিস স্পেশাল',
-      subtitle: 'প্রিমিয়াম ফেব্রিক, এলিগ্যান্ট ডিজাইন - নতুন আগমন',
+      title: 'Three Piece Special',
+      subtitle: 'Premium Fabric, Elegant Design - New Arrival',
       image: heroSlide2,
       link: '/products?category=three-piece',
-      badge: 'নতুন'
+      badge: 'New'
     },
     {
       id: '3',
-      title: 'সামার কালেকশন ২০২৬',
-      subtitle: 'কমফোর্টেবল এবং স্টাইলিশ - গরমের জন্য পারফেক্ট',
+      title: 'Summer Collection 2026',
+      subtitle: 'Comfortable and Stylish - Perfect for Summer',
       image: heroSlide3,
       link: '/products',
-      badge: 'ট্রেন্ডিং'
+      badge: 'Trending'
     }
   ];
 
@@ -288,7 +288,7 @@ export default function FashionHomePage() {
         subtitle: b.subtitle || '',
         image: b.image_url,
         link: b.link_url || '/products',
-        badge: 'নতুন'
+        badge: 'New'
       }));
     }
     return defaultSlides;
@@ -331,7 +331,7 @@ export default function FashionHomePage() {
     };
     dispatch(addToCart({ product: productForCart, quantity: 1 }));
     dispatch(openCart());
-    toast.success('কার্টে যোগ করা হয়েছে');
+    toast.success('Added to cart');
   };
 
   const handleBuyNow = (product: Product, e: React.MouseEvent) => {
@@ -455,18 +455,18 @@ export default function FashionHomePage() {
                 <div className="mb-4">
                   <Input
                     type="text"
-                    placeholder="পণ্য খুঁজুন..."
+                    placeholder="Search products..."
                     className="rounded-full"
                   />
                 </div>
                 <ul className="space-y-2">
                   <li>
                     <Link 
-                      to="/" 
+                       to="/" 
                       className="block py-2 text-foreground hover:text-primary font-medium"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      হোম
+                      Home
                     </Link>
                   </li>
                   <li>
@@ -475,7 +475,7 @@ export default function FashionHomePage() {
                       className="block py-2 text-foreground hover:text-primary font-medium"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      টু পিস
+                      Two Piece
                     </Link>
                   </li>
                   <li>
@@ -484,7 +484,7 @@ export default function FashionHomePage() {
                       className="block py-2 text-foreground hover:text-primary font-medium"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      থ্রি পিস
+                      Three Piece
                     </Link>
                   </li>
                   <li>
@@ -493,7 +493,7 @@ export default function FashionHomePage() {
                       className="block py-2 text-foreground hover:text-primary font-medium"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      সব প্রোডাক্ট
+                      All Products
                     </Link>
                   </li>
                 </ul>
@@ -519,10 +519,10 @@ export default function FashionHomePage() {
                 <span className="text-primary font-bold text-xs tracking-widest uppercase">Exploring</span>
               </div>
               <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-foreground">
-                শপ বাই <span className="text-primary relative inline-block">ক্যাটাগরি<span className="absolute bottom-1.5 left-0 w-full h-1.5 bg-primary/20 -z-10 rounded-full" /></span>
+                Shop By <span className="text-primary relative inline-block">Category<span className="absolute bottom-1.5 left-0 w-full h-1.5 bg-primary/20 -z-10 rounded-full" /></span>
               </h2>
               <p className="text-muted-foreground text-sm mt-1">
-                আমাদের প্রিমিয়াম কালেকশন থেকে আপনার পছন্দের ক্যাটাগরি বেছে নিন
+                Choose your favorite category from our premium collection
               </p>
             </div>
 
@@ -534,7 +534,7 @@ export default function FashionHomePage() {
                 onClick={() => navigate('/products')} 
                 className="text-muted-foreground hover:text-primary transition-colors text-sm font-semibold flex items-center gap-1 group"
               >
-                সব দেখুন 
+                View All 
                 <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
               
@@ -625,19 +625,19 @@ export default function FashionHomePage() {
         </div>
       </section>
 
-      {/* Recent Products - সাম্প্রতিক প্রোডাক্ট */}
+      {/* Recent Products - Recent Products */}
       {recentProducts.length > 0 && (
         <section className="py-12 md:py-16 bg-background">
           <div className="container-custom">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <span className="text-primary font-medium text-sm tracking-wider uppercase">নতুন আপলোড</span>
+                <span className="text-primary font-medium text-sm tracking-wider uppercase">New Upload</span>
                 <h2 className="text-2xl md:text-3xl font-bold mt-1">
-                  সাম্প্রতিক <span className="text-primary">প্রোডাক্ট</span>
+                  Recent <span className="text-primary">Products</span>
                 </h2>
               </div>
               <Button variant="outline" onClick={() => navigate('/products')} className="rounded-full">
-                সব দেখুন <ChevronRight className="ml-1 w-4 h-4" />
+                View All <ChevronRight className="ml-1 w-4 h-4" />
               </Button>
             </div>
 
@@ -673,7 +673,7 @@ export default function FashionHomePage() {
                       {/* New Badge */}
                       {product.is_new && !getDiscount(product.price, product.original_price) && (
                         <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                          নতুন
+                          New
                         </Badge>
                       )}
 
@@ -726,13 +726,13 @@ export default function FashionHomePage() {
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <span className="text-primary font-medium text-sm tracking-wider uppercase">বেস্ট সেলিং</span>
+              <span className="text-primary font-medium text-sm tracking-wider uppercase">Best Selling</span>
               <h2 className="text-2xl md:text-3xl font-bold mt-1">
-                জনপ্রিয় <span className="text-primary">প্রোডাক্ট</span>
+                Popular <span className="text-primary">Products</span>
               </h2>
             </div>
             <Button variant="outline" onClick={() => navigate('/products')} className="rounded-full">
-              সব দেখুন <ChevronRight className="ml-1 w-4 h-4" />
+              View All <ChevronRight className="ml-1 w-4 h-4" />
             </Button>
           </div>
 
@@ -768,7 +768,7 @@ export default function FashionHomePage() {
                     {/* New Badge */}
                     {product.is_new && !getDiscount(product.price, product.original_price) && (
                       <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                        নতুন
+                        New
                       </Badge>
                     )}
 
@@ -835,13 +835,13 @@ export default function FashionHomePage() {
           <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <span className="text-primary font-medium text-sm tracking-wider uppercase">নতুন সংযোজন</span>
+              <span className="text-primary font-medium text-sm tracking-wider uppercase">New Collection</span>
               <h2 className="text-2xl md:text-3xl font-bold mt-1">
-                নিউ <span className="text-primary">অ্যারাইভালস</span>
+                New <span className="text-primary">Arrivals</span>
               </h2>
             </div>
             <Button variant="outline" onClick={() => navigate('/products')} className="rounded-full">
-              সব দেখুন <ChevronRight className="ml-1 w-4 h-4" />
+              View All <ChevronRight className="ml-1 w-4 h-4" />
             </Button>
           </div>
 
@@ -866,7 +866,7 @@ export default function FashionHomePage() {
                   </div>
                   
                   <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                    নতুন
+                    New
                   </Badge>
 
                   <Button

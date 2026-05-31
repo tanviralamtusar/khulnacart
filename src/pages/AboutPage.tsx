@@ -7,41 +7,41 @@ const AboutPage = () => {
   const features = [
     {
       icon: ShieldCheck,
-      title: 'শতভাগ খাঁটি পণ্য',
-      description: 'আমরা প্রতিটি পণ্যের গুণগত মান নিশ্চিত করি এবং নকল পণ্য বর্জন করি।'
+      title: '100% Authentic Products',
+      description: 'We ensure the quality of every product and reject counterfeit items.'
     },
     {
       icon: Sparkles,
-      title: 'সেরা অফার',
-      description: 'সাশ্রয়ী মূল্যে সেরা পণ্য পেতে আমাদের নিয়মিত ডিসকাউন্ট চেক করুন।'
+      title: 'Best Offers',
+      description: 'Check our regular discounts to get the best products at affordable prices.'
     },
     {
       icon: Truck,
-      title: 'দ্রুত ডেলিভারি',
-      description: 'অর্ডার করার পর দ্রুততম সময়ের মধ্যে আপনার পণ্য পৌঁছে দেওয়া হয়।'
+      title: 'Fast Delivery',
+      description: 'Your products are delivered within the shortest possible time after ordering.'
     },
     {
       icon: RefreshCw,
-      title: 'সহজ রিটার্ন',
-      description: 'পণ্যে কোনো ত্রুটি থাকলে খুব সহজেই রিটার্ন বা এক্সচেঞ্জ করতে পারবেন।'
+      title: 'Easy Return',
+      description: 'If there is any defect in the product, you can easily return or exchange it.'
     }
   ];
 
   const goals = [
     {
       icon: Heart,
-      title: 'গ্রাহক সন্তুষ্টি',
-      description: 'আমাদের প্রতিটি কার্যক্রমের কেন্দ্রে থাকে গ্রাহকদের সন্তুষ্টি।'
+      title: 'Customer Satisfaction',
+      description: 'Customer satisfaction is at the center of our every activity.'
     },
     {
       icon: Users,
-      title: 'একটি বড় কমিউনিটি',
-      description: 'আমরা বিশ্বাস করি একা নয়, সবাইকে নিয়ে এগিয়ে যাওয়ার মাধ্যমে বড় হওয়া সম্ভব।'
+      title: 'A Large Community',
+      description: 'We believe that it is possible to grow by moving forward with everyone, not alone.'
     },
     {
       icon: ShieldCheck,
-      title: 'নিরাপদ শপিং',
-      description: 'আপনার তথ্য এবং লেনদেনের নিরাপত্তা নিশ্চিত করা আমাদের দায়িত্ব।'
+      title: 'Safe Shopping',
+      description: 'It is our responsibility to ensure the security of your information and transactions.'
     }
   ];
 
@@ -69,16 +69,16 @@ const AboutPage = () => {
                 transition={{ delay: 0.2 }}
                 className="inline-block px-6 py-3 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-8 border border-primary/20"
               >
-                ✨ আমাদের সম্পর্কে
+                ✨ About Us
               </motion.span>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-8 leading-tight">
-                খুলনা কার্ট: ফ্যাশন ও বিশ্বাসের
-                <span className="block text-primary mt-2">একটি আধুনিক ডিজিটাল ঠিকানা</span>
+                Khulna Cart: A Modern Digital
+                <span className="block text-primary mt-2">Destination for Fashion & Trust</span>
               </h1>
               
               <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                খুলনা থেকে সারা বাংলাদেশে সেরা মানের পণ্য পৌঁছে দেওয়াই আমাদের লক্ষ্য।
+                Our mission is to deliver the best quality products from Khulna to all over Bangladesh.
               </p>
             </motion.div>
           </div>
@@ -96,16 +96,16 @@ const AboutPage = () => {
                 className="text-center mb-16"
               >
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-8">
-                  আমাদের লক্ষ্য ও উদ্দেশ্য
+                  Our Mission & Vision
                 </h2>
                 
                 <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    <span className="text-primary font-semibold">খুলনা কার্ট</span> একটি উদীয়মান ই-কমার্স প্ল্যাটফর্ম যা গ্রাহকদের জীবনযাত্রাকে সহজ এবং আনন্দদায়ক করতে প্রতিশ্রুতিবদ্ধ। আমরা বিশ্বাস করি কেনাকাটা শুধুমাত্র প্রয়োজন নয়, বরং এটি একটি অভিজ্ঞতা।
+                    <span className="text-primary font-semibold">Khulna Cart</span> is an emerging e-commerce platform committed to making customers' lives easier and more enjoyable. We believe that shopping is not just a necessity, but an experience.
                   </p>
                   
                   <p>
-                    আমাদের প্রতিটি পণ্য অত্যন্ত যত্ন সহকারে নির্বাচন করা হয়, যেন আপনি পান <span className="text-primary font-semibold">সেরা গুণমান এবং স্থায়িত্ব</span>। আমরা সরাসরি উৎপাদনকারী এবং নির্ভরযোগ্য ডিস্ট্রিবিউটরদের থেকে পণ্য সংগ্রহ করি, যা আমাদের প্রতিযোগিতামূলক মূল্যে সেরা পণ্য সরবরাহ করতে সাহায্য করে।
+                    Each of our products is selected with great care, so that you get the <span className="text-primary font-semibold">best quality and durability</span>. We collect products directly from manufacturers and reliable distributors, which helps us provide the best products at competitive prices.
                   </p>
                 </div>
               </motion.div>
@@ -122,20 +122,20 @@ const AboutPage = () => {
                     <Package className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
-                    সহজ ও নির্ভরযোগ্য শপিং অভিজ্ঞতা
+                    Easy & Reliable Shopping Experience
                   </h3>
                   <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-                    আমরা শুধু পণ্য বিক্রি করি না, আমরা গ্রাহকদের সাথে একটি দীর্ঘস্থায়ী সম্পর্ক তৈরি করতে চাই—
+                    We don't just sell products, we want to build a long-lasting relationship with our customers—
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
                     <span className="px-5 py-3 bg-primary text-primary-foreground rounded-full font-medium">
-                      সারাদেশে হোম ডেলিভারি
+                      Nationwide Home Delivery
                     </span>
                     <span className="px-5 py-3 bg-accent text-accent-foreground rounded-full font-medium">
-                      সহজ রিটার্ন পলিসি
+                      Easy Return Policy
                     </span>
                     <span className="px-5 py-3 bg-secondary text-secondary-foreground rounded-full font-medium">
-                      ২৪/৭ কাস্টমার সাপোর্ট
+                      24/7 Customer Support
                     </span>
                   </div>
                 </div>
@@ -154,10 +154,10 @@ const AboutPage = () => {
               className="text-center mb-12"
             >
               <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-                🌟 কেন আমরা বিশেষ?
+                🌟 Why are we special?
               </span>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                আমাদের বৈশিষ্ট্য
+                Our Features
               </h2>
             </motion.div>
 
@@ -196,10 +196,10 @@ const AboutPage = () => {
               className="text-center mb-12"
             >
               <span className="inline-block px-4 py-2 bg-accent/10 text-accent-foreground rounded-full text-sm font-medium mb-4">
-                🎯 আমাদের লক্ষ্য
+                🎯 Our Goal
               </span>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-                শুধু পণ্য বিক্রি করা নয়—
+                Not just selling products—
               </h2>
             </motion.div>
 
@@ -243,22 +243,22 @@ const AboutPage = () => {
               className="max-w-4xl mx-auto text-center"
             >
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
-                খুলনা কার্টের সাথে আপনার কেনাকাটা হোক নিরাপদ
+                Keep your shopping safe with Khulna Cart
               </h2>
               <p className="text-xl opacity-90 mb-8 leading-relaxed max-w-2xl mx-auto">
-                আমাদের সাথে যুক্ত হয়ে সেরা শপিং অভিজ্ঞতা উপভোগ করুন। আমরা আপনার আস্থার মর্যাদা দিতে সর্বদা সচেষ্ট।
+                Enjoy the best shopping experience by connecting with us. We are always committed to respecting your trust.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
                 <div className="flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-xl px-6 py-4">
                   <MessageCircle className="w-6 h-6" />
-                  <span className="font-medium">যেকোনো প্রশ্ন বা অর্ডারের জন্য ইনবক্স করুন</span>
+                  <span className="font-medium">Inbox us for any questions or orders</span>
                 </div>
               </div>
               
               <div className="inline-block px-8 py-5 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/20">
                 <p className="text-xl font-display">
-                  🤝 আমাদের সাথে থাকুন—<span className="font-bold">স্টাইল আর বিশ্বাসের পথে</span>
+                  🤝 Stay with us—<span className="font-bold">on the path of style and trust</span>
                 </p>
               </div>
             </motion.div>

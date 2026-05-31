@@ -358,8 +358,8 @@ const CheckoutPage = () => {
 
     if (missingSize) {
       toast({
-        title: "ভ্যারিয়েশন নির্বাচন করুন",
-        description: `${missingSize.product.name} - এর ভ্যারিয়েশন সিলেক্ট করুন`,
+        title: "Please select a variation",
+        description: `Select a variation for ${missingSize.product.name}`,
         variant: "destructive",
       });
       return false;
@@ -450,8 +450,8 @@ const CheckoutPage = () => {
             ? error
             : JSON.stringify(error);
       toast({
-        title: "অর্ডার করতে সমস্যা হয়েছে",
-        description: msg || "আবার চেষ্টা করুন।",
+        title: "Order placement failed",
+        description: msg || "Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -615,7 +615,7 @@ const CheckoutPage = () => {
                                 }}
                               >
                                 <SelectTrigger className="h-8 text-xs">
-                                  <SelectValue placeholder="ভ্যারিয়েশন নির্বাচন করুন" />
+                                  <SelectValue placeholder="Select Variation" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {variations.map((v) => (

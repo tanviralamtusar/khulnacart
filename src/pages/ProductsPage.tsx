@@ -258,7 +258,7 @@ const ProductsPage = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="প্রোডাক্ট খুঁজুন..."
+                  placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => updateFilter('search', e.target.value || null)}
                   className="pl-10 h-10"

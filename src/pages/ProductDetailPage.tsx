@@ -161,7 +161,7 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (hasVariations && !selectedVariation) {
-      toast.error('ভ্যারিয়েশন সিলেক্ট করুন');
+      toast.error('Please select a variation');
       return;
     }
     
@@ -194,7 +194,7 @@ const ProductDetailPage = () => {
 
   const handleBuyNow = () => {
     if (hasVariations && !selectedVariation) {
-      toast.error('ভ্যারিয়েশন সিলেক্ট করুন');
+      toast.error('Please select a variation');
       return;
     }
     
@@ -359,7 +359,7 @@ const ProductDetailPage = () => {
             {hasVariations && (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  অপশন নির্বাচন করুন: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
+                  Select Option: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {product.variations!.map((variation) => (
@@ -463,7 +463,7 @@ const ProductDetailPage = () => {
                 <svg viewBox="0 0 24 24" className="w-5 h-5 mr-2 fill-[#0084FF]">
                   <path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.19 5.44 3.14 7.17.16.13.26.35.27.57l.05 1.78c.02.59.61.98 1.17.78l1.99-.8c.17-.07.36-.08.53-.04.9.24 1.87.37 2.85.37 5.64 0 10-4.13 10-9.7C22 6.13 17.64 2 12 2zm5.89 7.65l-2.83 4.47c-.44.7-1.36.89-2.03.42l-2.25-1.68c-.2-.15-.47-.15-.66 0l-3.04 2.3c-.4.31-.94-.15-.67-.58l2.83-4.47c.44-.7 1.36-.89 2.03-.42l2.25 1.68c.2.15.47.15.66 0l3.04-2.3c.4-.31.94.15.67.58z"/>
                 </svg>
-                ম্যাসেঞ্জার অর্ডার
+                Messenger Order
               </Button>
             )}
 
@@ -484,7 +484,7 @@ const ProductDetailPage = () => {
                   value="description" 
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3 text-base font-medium text-muted-foreground data-[state=active]:text-primary"
                 >
-                  পন্যের বিবরণ
+                  Product Description
                 </TabsTrigger>
               </TabsList>
               

@@ -22,7 +22,6 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { bn } from 'date-fns/locale';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
@@ -54,11 +53,11 @@ interface Order {
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending: { label: 'অপেক্ষমাণ', color: 'bg-yellow-100 text-yellow-800', icon: <Clock className="h-4 w-4" /> },
-  processing: { label: 'প্রসেসিং', color: 'bg-blue-100 text-blue-800', icon: <Package className="h-4 w-4" /> },
-  shipped: { label: 'শিপিং হয়েছে', color: 'bg-purple-100 text-purple-800', icon: <Truck className="h-4 w-4" /> },
-  delivered: { label: 'ডেলিভার হয়েছে', color: 'bg-green-100 text-green-800', icon: <CheckCircle className="h-4 w-4" /> },
-  cancelled: { label: 'বাতিল', color: 'bg-red-100 text-red-800', icon: <XCircle className="h-4 w-4" /> },
+  pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: <Clock className="h-4 w-4" /> },
+  processing: { label: 'Processing', color: 'bg-blue-100 text-blue-800', icon: <Package className="h-4 w-4" /> },
+  shipped: { label: 'Shipped', color: 'bg-purple-100 text-purple-800', icon: <Truck className="h-4 w-4" /> },
+  delivered: { label: 'Delivered', color: 'bg-green-100 text-green-800', icon: <CheckCircle className="h-4 w-4" /> },
+  cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-800', icon: <XCircle className="h-4 w-4" /> },
 };
 
 const MyAccountPage = () => {
@@ -143,14 +142,14 @@ const MyAccountPage = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">আমার অ্যাকাউন্ট</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">My Account</h1>
               <p className="text-muted-foreground mt-1">
-                স্বাগতম, {profile?.full_name || user.email}
+                Welcome, {profile?.full_name || user.email}
               </p>
             </div>
             <Button variant="outline" onClick={handleSignOut} className="w-fit">
               <LogOut className="h-4 w-4 mr-2" />
-              লগআউট
+              Logout
             </Button>
           </div>
 
@@ -158,11 +157,11 @@ const MyAccountPage = () => {
             <TabsList className="grid w-full grid-cols-2 max-w-md">
               <TabsTrigger value="orders" className="flex items-center gap-2">
                 <ShoppingBag className="h-4 w-4" />
-                অর্ডার সমূহ
+                Orders
               </TabsTrigger>
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                প্রোফাইল
+                Profile
               </TabsTrigger>
             </TabsList>
 
@@ -184,10 +183,10 @@ const MyAccountPage = () => {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">কোনো অর্ডার নেই</h3>
-                    <p className="text-muted-foreground mb-4">আপনি এখনো কোনো অর্ডার করেননি</p>
+                    <h3 className="text-lg font-semibold mb-2">No orders found</h3>
+                    <p className="text-muted-foreground mb-4">You haven't placed any orders yet</p>
                     <Button asChild>
-                      <Link to="/products">পণ্য দেখুন</Link>
+                      <Link to="/products">Browse Products</Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -206,7 +205,7 @@ const MyAccountPage = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    প্রোফাইল তথ্য
+                    Profile Information
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -220,21 +219,21 @@ const MyAccountPage = () => {
                     return (
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">নাম</p>
-                          <p className="font-medium">{displayName || 'সেট করা হয়নি'}</p>
+                          <p className="text-sm text-muted-foreground">Name</p>
+                          <p className="font-medium">{displayName || 'Not set'}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">ইমেইল</p>
-                          <p className="font-medium">{displayEmail || 'সেট করা হয়নি'}</p>
+                          <p className="text-sm text-muted-foreground">Email</p>
+                          <p className="font-medium">{displayEmail || 'Not set'}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">ফোন</p>
-                          <p className="font-medium">{displayPhone || 'সেট করা হয়নি'}</p>
+                          <p className="text-sm text-muted-foreground">Phone</p>
+                          <p className="font-medium">{displayPhone || 'Not set'}</p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">অ্যাকাউন্ট তৈরি</p>
+                          <p className="text-sm text-muted-foreground">Account Created</p>
                           <p className="font-medium">
-                            {format(new Date(user.created_at), 'dd MMMM, yyyy', { locale: bn })}
+                            {format(new Date(user.created_at), 'dd MMMM, yyyy')}
                           </p>
                         </div>
                       </div>
@@ -274,12 +273,12 @@ const OrderCard = ({ order }: { order: Order }) => {
               </div>
               <p className="text-sm text-muted-foreground flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                {format(new Date(order.created_at), 'dd MMMM, yyyy - hh:mm a', { locale: bn })}
+                {format(new Date(order.created_at), 'dd MMMM, yyyy - hh:mm a')}
               </p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-primary">৳{order.total.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">{order.order_items.length} টি পণ্য</p>
+              <p className="text-sm text-muted-foreground">{order.order_items.length} Items</p>
             </div>
           </div>
 
@@ -289,7 +288,7 @@ const OrderCard = ({ order }: { order: Order }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Truck className="h-5 w-5 text-primary" />
-                  <span className="font-medium">ট্র্যাকিং নম্বর:</span>
+                  <span className="font-medium">Tracking Number:</span>
                   <span className="font-mono bg-background px-2 py-1 rounded">{order.tracking_number}</span>
                 </div>
                 <a
@@ -299,7 +298,7 @@ const OrderCard = ({ order }: { order: Order }) => {
                   className="text-primary hover:underline flex items-center gap-1"
                   onClick={e => e.stopPropagation()}
                 >
-                  ট্র্যাক করুন
+                  Track Order
                   <ExternalLink className="h-4 w-4" />
                 </a>
               </div>
@@ -312,7 +311,7 @@ const OrderCard = ({ order }: { order: Order }) => {
           <div className="border-t bg-muted/20 p-4 md:p-6 space-y-4">
             {/* Products */}
             <div>
-              <h4 className="font-semibold mb-3">পণ্য সমূহ</h4>
+              <h4 className="font-semibold mb-3">Products</h4>
               <div className="space-y-3">
                 {order.order_items.map(item => (
                   <div key={item.id} className="flex items-center gap-4 p-3 bg-background rounded-lg">
@@ -346,7 +345,7 @@ const OrderCard = ({ order }: { order: Order }) => {
               <div>
                 <h4 className="font-semibold mb-2 flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  ডেলিভারি ঠিকানা
+                  Delivery Address
                 </h4>
                 <div className="bg-background p-3 rounded-lg text-sm space-y-1">
                   <p className="font-medium">{order.shipping_name}</p>
@@ -361,18 +360,18 @@ const OrderCard = ({ order }: { order: Order }) => {
 
               {/* Order Summary */}
               <div>
-                <h4 className="font-semibold mb-2">অর্ডার সামারি</h4>
+                <h4 className="font-semibold mb-2">Order Summary</h4>
                 <div className="bg-background p-3 rounded-lg text-sm space-y-2">
                   <div className="flex justify-between">
-                    <span>সাবটোটাল:</span>
+                    <span>Subtotal:</span>
                     <span>৳{order.subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>ডেলিভারি চার্জ:</span>
+                    <span>Delivery Charge:</span>
                     <span>৳{order.shipping_cost?.toLocaleString() || 0}</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg border-t pt-2">
-                    <span>মোট:</span>
+                    <span>Total:</span>
                     <span className="text-primary">৳{order.total.toLocaleString()}</span>
                   </div>
                 </div>

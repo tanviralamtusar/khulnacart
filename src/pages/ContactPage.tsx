@@ -21,7 +21,7 @@ const ContactPage = () => {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.message.trim()) {
-      toast.error('নাম এবং বার্তা অবশ্যই দিতে হবে');
+      toast.error('Name and message are required');
       return;
     }
 
@@ -39,11 +39,11 @@ const ContactPage = () => {
 
       if (error) throw error;
 
-      toast.success('আপনার বার্তা পাঠানো হয়েছে!');
+      toast.success('Your message has been sent!');
       setFormData({ name: '', email: '', phone: '', message: '' });
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      toast.error('বার্তা পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -52,30 +52,30 @@ const ContactPage = () => {
   const contactCards = [
     {
       icon: MapPin,
-      title: 'ঠিকানা',
+      title: 'Address',
       content: 'Khulna',
       subContent: 'Khulna, Bangladesh',
       color: 'from-red-500 to-rose-600'
     },
     {
       icon: Phone,
-      title: 'মোবাইল / হোয়াটসঅ্যাপ',
+      title: 'Mobile / WhatsApp',
       content: '+8801838636425',
-      subContent: 'সকাল 10টা – রাত 10টা',
+      subContent: '10 AM – 10 PM',
       color: 'from-green-500 to-emerald-600'
     },
     {
       icon: Facebook,
       title: 'Facebook Inbox',
-      content: 'আমাদের পেজে মেসেজ করুন',
-      subContent: 'আমাদের টিম দ্রুত রিপ্লাই দেবে',
+      content: 'Message our page',
+      subContent: 'Our team will reply quickly',
       color: 'from-blue-500 to-indigo-600'
     },
     {
       icon: Clock,
-      title: 'সার্ভিস সময়',
-      content: 'সকাল ১০টা - রাত ১০টা',
-      subContent: 'প্রতিদিন',
+      title: 'Service Hours',
+      content: '10 AM - 10 PM',
+      subContent: 'Everyday',
       color: 'from-purple-500 to-violet-600'
     }
   ];
@@ -83,14 +83,14 @@ const ContactPage = () => {
   const features = [
     {
       icon: Truck,
-      title: 'ডেলিভারি',
-      description: 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে। নির্বাচিত পণ্যে ফ্রি ডেলিভারি প্রযোজ্য।',
+      title: 'Delivery',
+      description: 'Cash on delivery available nationwide. Free delivery on selected products.',
       color: 'bg-orange-500/10 text-orange-600'
     },
     {
       icon: Users,
-      title: 'পাইকারি ও রিসেলার সাপোর্ট',
-      description: 'পাইকারি অর্ডার ও রিসেলার হিসেবে যুক্ত হতে ইনবক্স করুন।',
+      title: 'Wholesale & Reseller Support',
+      description: 'Inbox us to join as a wholesale order or reseller.',
       color: 'bg-teal-500/10 text-teal-600'
     }
   ];
@@ -109,13 +109,13 @@ const ContactPage = () => {
               className="text-center max-w-3xl mx-auto"
             >
               <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-                📞 আমাদের সাথে যোগাযোগ করুন
+                📞 Contact Us
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-6">
-                যোগাযোগ করুন
+                Get in Touch
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                আমরা সবসময় আপনার পাশে। যেকোনো প্রশ্ন বা অর্ডারের জন্য আমাদের সাথে যোগাযোগ করুন।
+                We are always by your side. Contact us for any questions or orders.
               </p>
             </motion.div>
           </div>
@@ -194,7 +194,7 @@ const ContactPage = () => {
                 className="lg:col-span-2 space-y-6"
               >
                 <h2 className="text-2xl font-display font-bold text-foreground mb-6">
-                  দ্রুত যোগাযোগ
+                  Quick Contact
                 </h2>
 
                 {/* WhatsApp Button */}
@@ -210,7 +210,7 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div>
-                    <span className="block font-bold text-lg">WhatsApp এ মেসেজ করুন</span>
+                    <span className="block font-bold text-lg">Message on WhatsApp</span>
                     <span className="text-white/80 text-sm">+8801838636425</span>
                   </div>
                 </a>
@@ -224,8 +224,8 @@ const ContactPage = () => {
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="block font-bold text-lg">সরাসরি কল করুন</span>
-                    <span className="text-white/80 text-sm">সকাল 10টা – রাত 10টা</span>
+                    <span className="block font-bold text-lg">Call Us Directly</span>
+                    <span className="text-white/80 text-sm">10 AM – 10 PM</span>
                   </div>
                 </a>
 
@@ -241,7 +241,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <span className="block font-bold text-lg">Facebook Inbox</span>
-                    <span className="text-white/80 text-sm">দ্রুত রিপ্লাই পাবেন</span>
+                    <span className="text-white/80 text-sm">Get a quick reply</span>
                   </div>
                 </a>
 
@@ -251,7 +251,7 @@ const ContactPage = () => {
                     <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                       <MapPin className="w-5 h-5 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-foreground">আমাদের অবস্থান</h3>
+                    <h3 className="font-semibold text-foreground">Our Location</h3>
                   </div>
                   <p className="text-muted-foreground">
                     <br />
@@ -260,7 +260,7 @@ const ContactPage = () => {
                 </div>
               </motion.div>
 
-              {/* Contact Form */}
+               {/* Contact Form */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -268,28 +268,28 @@ const ContactPage = () => {
               >
                 <div className="bg-card p-8 rounded-2xl border border-border shadow-sm">
                   <h2 className="text-2xl font-display font-bold text-foreground mb-2">
-                    বার্তা পাঠান
+                    Send a Message
                   </h2>
                   <p className="text-muted-foreground mb-6">
-                    যেকোনো প্রশ্ন বা অর্ডারের বিস্তারিত জানাতে ফর্মটি পূরণ করুন
+                    Fill out the form for any questions or order details
                   </p>
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          আপনার নাম *
+                          Your Name *
                         </label>
                         <Input
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="নাম লিখুন"
+                          placeholder="Enter your name"
                           className="h-12"
                           required
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          ফোন নম্বর
+                          Phone Number
                         </label>
                         <Input
                           value={formData.phone}
@@ -301,7 +301,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        ইমেইল
+                        Email
                       </label>
                       <Input
                         type="email"
@@ -313,19 +313,19 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        আপনার বার্তা *
+                        Your Message *
                       </label>
                       <Textarea
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        placeholder="আপনার বার্তা লিখুন..."
+                        placeholder="Write your message here..."
                         rows={5}
                         required
                       />
                     </div>
                     <Button type="submit" size="lg" className="w-full h-12" disabled={isSubmitting}>
                       <Send className="w-5 h-5 mr-2" />
-                      {isSubmitting ? 'পাঠানো হচ্ছে...' : 'বার্তা পাঠান'}
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </Button>
                   </form>
                 </div>

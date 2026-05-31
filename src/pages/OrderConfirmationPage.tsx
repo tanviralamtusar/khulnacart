@@ -174,16 +174,16 @@ const OrderConfirmationPage = () => {
           className="bg-white rounded-2xl shadow-xl p-8 text-center"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            🎉 অর্ডার সফল হয়েছে!
+            🎉 Order Successful!
           </h1>
           <p className="text-lg text-gray-600 mb-6">
-            আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে
+            Your order has been successfully received
           </p>
 
           {/* Order Number */}
           {orderNumber && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 mb-6 border border-green-200">
-              <p className="text-sm text-gray-500 mb-1">অর্ডার নম্বর</p>
+              <p className="text-sm text-gray-500 mb-1">Order Number</p>
               <p className="font-mono text-2xl font-bold text-green-700">{orderNumber}</p>
             </div>
           )}
@@ -213,7 +213,7 @@ const OrderConfirmationPage = () => {
           {/* Total */}
           {total && (
             <div className="bg-amber-50 rounded-xl p-4 mb-6 border border-amber-200">
-              <p className="text-sm text-amber-700 mb-1">মোট মূল্য</p>
+              <p className="text-sm text-amber-700 mb-1">Total Price</p>
               <p className="text-3xl font-bold text-amber-800">৳{total.toLocaleString()}</p>
             </div>
           )}
@@ -222,26 +222,26 @@ const OrderConfirmationPage = () => {
           <div className="bg-blue-50 rounded-xl p-6 mb-8 text-left">
             <h3 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
               <Package className="h-5 w-5" />
-              পরবর্তী ধাপসমূহ
+              Next Steps
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-800 text-xs font-bold">১</span>
+                  <span className="text-blue-800 text-xs font-bold">1</span>
                 </div>
-                <span className="text-gray-700">আমাদের টিম শীঘ্রই আপনার সাথে কল করে অর্ডার কনফার্ম করবে</span>
+                <span className="text-gray-700">Our team will call you soon to confirm the order</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-800 text-xs font-bold">২</span>
+                  <span className="text-blue-800 text-xs font-bold">2</span>
                 </div>
-                <span className="text-gray-700">পণ্য প্যাকেজিং করে কুরিয়ারে হস্তান্তর করা হবে</span>
+                <span className="text-gray-700">Product will be packaged and handed over to courier</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-800 text-xs font-bold">৩</span>
+                  <span className="text-blue-800 text-xs font-bold">3</span>
                 </div>
-                <span className="text-gray-700">পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন (ক্যাশ অন ডেলিভারি)</span>
+                <span className="text-gray-700">Pay after receiving the product (Cash on Delivery)</span>
               </li>
             </ul>
           </div>
@@ -250,14 +250,14 @@ const OrderConfirmationPage = () => {
           <div className="flex items-center justify-center gap-4 mb-8 p-4 bg-green-50 rounded-xl border border-green-200">
             <Truck className="h-8 w-8 text-green-600" />
             <div className="text-left">
-              <p className="font-semibold text-green-800">ডেলিভারি সময়</p>
-              <p className="text-sm text-green-700">ঢাকায় ১-২ দিন • ঢাকার বাইরে ৩-৫ দিন</p>
+              <p className="font-semibold text-green-800">Delivery Time</p>
+              <p className="text-sm text-green-700">1-2 days inside Dhaka • 3-5 days outside Dhaka</p>
             </div>
           </div>
 
           {/* Contact */}
           <div className="text-center mb-8 p-4 bg-gray-50 rounded-xl">
-            <p className="text-gray-600 mb-2">যেকোনো প্রশ্নে কল করুন</p>
+            <p className="text-gray-600 mb-2">Call us for any questions</p>
             <a href="tel:+8801838636425" className="text-xl font-bold text-primary hover:underline">
               📞 +880 1838-636425
             </a>
@@ -272,14 +272,14 @@ const OrderConfirmationPage = () => {
               className="gap-2"
             >
               <Home className="h-5 w-5" />
-              হোমপেজে যান
+              Go to Home
             </Button>
             <Button
               onClick={() => navigate('/products')}
               size="lg"
               className="gap-2 bg-green-600 hover:bg-green-700"
             >
-              আরও পণ্য দেখুন
+              View More Products
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
@@ -294,15 +294,15 @@ const OrderConfirmationPage = () => {
         >
           <div className="bg-white p-4 rounded-xl shadow-sm">
             <span className="text-2xl block mb-1">🔒</span>
-            <p className="text-xs text-gray-600">নিরাপদ পেমেন্ট</p>
+            <p className="text-xs text-gray-600">Secure Payment</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-sm">
             <span className="text-2xl block mb-1">📦</span>
-            <p className="text-xs text-gray-600">দ্রুত ডেলিভারি</p>
+            <p className="text-xs text-gray-600">Fast Delivery</p>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-sm">
             <span className="text-2xl block mb-1">✅</span>
-            <p className="text-xs text-gray-600">১০০% গ্যারান্টি</p>
+            <p className="text-xs text-gray-600">100% Guarantee</p>
           </div>
         </motion.div>
       </div>

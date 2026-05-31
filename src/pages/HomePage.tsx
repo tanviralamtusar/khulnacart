@@ -13,10 +13,10 @@ import datesBowl from '@/assets/dates-bowl.png';
 
 // Features data for hero overlay cards
 const heroFeatures = [
-  { icon: Leaf, title: 'খাঁটি ও প্রাকৃতিক' },
-  { icon: Apple, title: 'তাজা ও সুস্বাদু' },
-  { icon: Heart, title: 'পুষ্টিতে ভরপুর' },
-  { icon: Truck, title: 'দ্রুত ডেলিভারি' },
+  { icon: Leaf, title: 'Pure & Natural' },
+  { icon: Apple, title: 'Fresh & Delicious' },
+  { icon: Heart, title: 'Full of Nutrition' },
+  { icon: Truck, title: 'Fast Delivery' },
 ];
 
 interface HomePageContent {
@@ -119,77 +119,77 @@ const HomePage = () => {
 
   // Default values
   const hero = content.hero || {
-    title: 'বিশুদ্ধ খেজুর, সরাসরি',
-    subtitle: 'আপনার দোরগোড়ায়।',
-    description: 'মৌসুমের সেরা খেজুর সংগ্রহ করুন — তাজা, নরম, আর প্রাকৃতিক স্বাদে ভরপুর।',
-    buttonText: 'এখনই অর্ডার করুন',
-    badgeTitle: '১০০% অর্গানিক',
-    badgeSubtitle: 'বিশুদ্ধ ও তাজা',
+    title: 'Pure Dates, Directly',
+    subtitle: 'At Your Doorstep.',
+    description: 'Collect the best dates of the season — fresh, soft, and full of natural flavor.',
+    buttonText: 'Order Now',
+    badgeTitle: '100% Organic',
+    badgeSubtitle: 'Pure & Fresh',
   };
 
   const about = content.about || {
-    tagline: 'যা খাই, তাই বিক্রি করি।',
-    title: 'আমাদের সম্পর্কে',
-    badge1: 'তাজা ও বিশুদ্ধ খেজুর',
-    badge2: 'দ্রুত সারাদেশে ডেলিভারি',
-    paragraph1: 'আমরা বিশ্বাস করি খেজুর শুধু একটি ফল নয় — এটি ঐতিহ্য, পুষ্টি এবং বরকতের প্রতীক। এই বিশ্বাস থেকেই আমাদের যাত্রা শুরু।',
-    paragraph2: 'আমাদের উদ্দেশ্য খুবই সরল — বাংলাদেশের মানুষের কাছে সেরা মানের খেজুর পৌঁছে দেওয়া, যা হবে তাজা, বিশুদ্ধ ও সাশ্রয়ী মূল্যের।',
-    quote: 'যা খাই, তাই বিক্রি করি। বিশ্বাস, মান এবং সন্তুষ্টিই আমাদের আসল পরিচয়।',
-    experienceYears: '৩০+',
-    experienceText: 'বছরের অভিজ্ঞতা',
+    tagline: 'We sell what we eat.',
+    title: 'About Us',
+    badge1: 'Fresh & Pure Dates',
+    badge2: 'Fast Nationwide Delivery',
+    paragraph1: 'We believe dates are not just a fruit — they are a symbol of tradition, nutrition, and blessing. Our journey started from this belief.',
+    paragraph2: 'Our goal is simple — to deliver the best quality dates to the people of Bangladesh, which will be fresh, pure, and affordable.',
+    quote: 'We sell what we eat. Trust, quality, and satisfaction are our true identities.',
+    experienceYears: '30+',
+    experienceText: 'Years of Experience',
   };
 
   const promoBanners = content.promo_banners || {
     banner1: {
       image: '/images/promo-bag.png',
       tagline: '100% Organic',
-      title: '১০০% প্রাকৃতিক',
-      subtitle: 'সেরা মানের খেজুর',
-      buttonText: 'এখনই কিনুন',
+      title: '100% Natural',
+      subtitle: 'Best Quality Dates',
+      buttonText: 'Buy Now',
     },
     banner2: {
       image: '/images/promo-boxes.png',
       tagline: '100% Organic',
-      title: 'প্রতিদিনের সুস্থ ও',
-      subtitle: 'পুষ্টিকর খাবার',
-      buttonText: 'এখনই কিনুন',
+      title: 'Daily Healthy &',
+      subtitle: 'Nutritious Food',
+      buttonText: 'Buy Now',
     },
   };
 
   const featuredSection = content.featured_products || {
-    tagline: 'আমাদের খেজুর',
-    title: 'সরাসরি খামার থেকে বাছাই করা খেজুর',
-    buttonText: 'সব খেজুর দেখুন',
+    tagline: 'Our Dates',
+    title: 'Hand-picked Dates Directly from the Farm',
+    buttonText: 'View All Dates',
   };
 
   const whyChooseUs = content.why_choose_us || {
-    tagline: 'কেন আমাদের খেজুর বেছে নেবেন?',
-    title: 'আমাদের খেজুরের গুণমান ও সতেজতার জন্য হাজারো মানুষ আমাদের বেছে নিচ্ছেন।',
+    tagline: 'Why Choose Our Dates?',
+    title: 'Thousands of people are choosing us for the quality and freshness of our dates.',
   };
 
   const testimonials = content.testimonials?.items || [
     {
-      name: 'তৌহিদুল হক',
-      location: 'নারায়ণগঞ্জ',
-      text: 'আগে অনলাইন থেকে খেজুর কিনে ঠকেছি, কিন্তু এখানে একদম টাটকা আর আসল খেজুর পেয়েছি। এখন শুধু এখান থেকেই কিনি।',
+      name: 'Touhidul Haque',
+      location: 'Narayanganj',
+      text: "I've been cheated buying dates online before, but here I got completely fresh and authentic dates. Now I only buy from here.",
     },
     {
-      name: 'শামীম আহমেদ',
-      location: 'চট্টগ্রাম',
-      text: 'প্যাকেজিং দারুণ, খেজুরে কোনো পোকা বা ধুলা ছিল না। খেজুরের মান দেখে বুঝা যায় ভালোভাবে সংরক্ষণ করা হয়েছে।',
+      name: 'Shamim Ahmed',
+      location: 'Chittagong',
+      text: 'Packaging is great, there were no insects or dust in the dates. The quality of the dates shows they were well-preserved.',
     },
     {
-      name: 'রুবিনা ইসলাম',
-      location: 'ঢাকা',
-      text: 'খেজুরগুলো এতটাই মিষ্টি আর নরম ছিল যে মুখে দিলেই গলে যায়। রমজানে ইফতারে খাওয়ার জন্য একদম পারফেক্ট।',
+      name: 'Rubina Islam',
+      location: 'Dhaka',
+      text: 'The dates were so sweet and soft they melt in the mouth. Perfect for Iftar in Ramadan.',
     },
   ];
 
   const features = content.features?.items || [
-    { title: 'তাজা ও প্রিমিয়াম মানের খেজুর', description: 'প্রতিটি খেজুর বাছাই করা হয় যত্নের সাথে' },
-    { title: 'বিশ্বস্ত ফার্ম থেকে সরাসরি সংগ্রহ', description: 'খেজুর সংগ্রহ করা হয় সরাসরি উৎস থেকে' },
-    { title: 'পরিচ্ছন্ন ও নিরাপদ প্যাকেজিং', description: 'খেজুর প্যাক করা হয় স্বাস্থ্যসম্মত উপায়ে' },
-    { title: 'সাশ্রয়ী ও ন্যায্য মূল্য', description: 'আমরা দিই মানসম্মত খেজুর ন্যায্য দামে' },
+    { title: 'Fresh & Premium Quality Dates', description: 'Each date is picked with care' },
+    { title: 'Direct Collection from Trusted Farm', description: 'Dates are collected directly from the source' },
+    { title: 'Clean & Safe Packaging', description: 'Dates are packed in a hygienic way' },
+    { title: 'Affordable & Fair Price', description: 'We provide quality dates at a fair price' },
   ];
 
   if (isLoading) {
@@ -309,14 +309,14 @@ const HomePage = () => {
               className="flex items-center justify-between mb-12"
             >
               <div>
-                <span className="text-secondary font-medium">নতুন আপলোড</span>
+                <span className="text-secondary font-medium">New Arrival</span>
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2">
-                  সাম্প্রতিক প্রোডাক্ট
+                  Recent Products
                 </h2>
               </div>
               <Button variant="outline" size="lg" asChild>
                 <Link to="/products">
-                  সব দেখুন
+                  View All
                   <ArrowRight className="h-5 w-5 mr-2" />
                 </Link>
               </Button>
@@ -386,7 +386,7 @@ const HomePage = () => {
 
               <Button variant="secondary" size="lg" className="mt-6 rounded-full" asChild>
                 <Link to="/products">
-                  আরো জানুন
+                  Learn More
                 </Link>
               </Button>
             </motion.div>
@@ -539,12 +539,12 @@ const HomePage = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="text-secondary font-medium">{content.testimonials?.tagline || 'গ্রাহকদের অভিজ্ঞতা'}</span>
+            <span className="text-secondary font-medium">{content.testimonials?.tagline || 'Customer Experience'}</span>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2">
-              {content.testimonials?.title || 'আমাদের খেজুর নিয়ে সন্তুষ্টি'}
+              {content.testimonials?.title || 'Satisfaction with Our Dates'}
             </h2>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-              আমাদের খেজুর খেয়ে গ্রাহকরা যা অনুভব করছেন, তা পড়ুন। সতেজতা, স্বাদ এবং পরিষেবা—এগুলোই আমাদের কাছে সবচেয়ে গুরুত্বপূর্ণ।
+              Read what customers are feeling after eating our dates. Freshness, taste, and service—these are most important to us.
             </p>
           </motion.div>
 
@@ -578,14 +578,14 @@ const HomePage = () => {
       <section className="py-16 md:py-24 bg-gradient-to-l from-secondary to-secondary/80 text-secondary-foreground">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-            আজই অর্ডার করুন
+            Order Today
           </h2>
           <p className="text-secondary-foreground/80 mb-8 max-w-md mx-auto">
-            বিশুদ্ধ ও তাজা খেজুর পেতে এখনই অর্ডার করুন। সারাদেশে দ্রুত ডেলিভারি।
+            Order now to get pure and fresh dates. Fast delivery nationwide.
           </p>
           <Button size="lg" className="bg-primary-foreground text-foreground hover:bg-primary-foreground/90" asChild>
             <Link to="/products">
-              এখনই কিনুন
+              Buy Now
               <ArrowRight className="h-5 w-5 mr-2" />
             </Link>
           </Button>
