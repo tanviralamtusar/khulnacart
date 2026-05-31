@@ -1880,7 +1880,8 @@ export default function AdminOrders() {
           <DialogHeader>
             <DialogTitle className="text-xl sm:text-2xl">Order {selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
+          {selectedOrder && (
+            <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold mb-2 flex items-center gap-2 text-base sm:text-lg">
@@ -2108,6 +2109,7 @@ export default function AdminOrders() {
                 </div>
               </div>
             </div>
+          )}
         </DialogContent>
       </Dialog>
 
