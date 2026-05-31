@@ -1,46 +1,47 @@
 import { motion } from 'framer-motion';
 import { Heart, ShieldCheck, Truck, RefreshCw, MessageCircle, Users, Sparkles, Package } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 const AboutPage = () => {
   const features = [
     {
       icon: ShieldCheck,
-      title: 'প্রিমিয়াম কোয়ালিটি',
-      description: 'সর্বোচ্চ মানের কাপড় ও সেলাই নিশ্চিত করি প্রতিটি পণ্যে।'
+      title: 'শতভাগ খাঁটি পণ্য',
+      description: 'আমরা প্রতিটি পণ্যের গুণগত মান নিশ্চিত করি এবং নকল পণ্য বর্জন করি।'
     },
     {
       icon: Sparkles,
-      title: 'ট্রেন্ডি ডিজাইন',
-      description: 'সর্বশেষ ফ্যাশন ট্রেন্ড অনুসরণ করে ডিজাইন করা হয়।'
+      title: 'সেরা অফার',
+      description: 'সাশ্রয়ী মূল্যে সেরা পণ্য পেতে আমাদের নিয়মিত ডিসকাউন্ট চেক করুন।'
     },
     {
-      icon: Package,
-      title: '৬ পিসে পাইকারি',
-      description: 'মাত্র ৬ পিসে পাইকারি সুবিধা সহ ডিজাইন চয়েসের স্বাধীনতা।'
+      icon: Truck,
+      title: 'দ্রুত ডেলিভারি',
+      description: 'অর্ডার করার পর দ্রুততম সময়ের মধ্যে আপনার পণ্য পৌঁছে দেওয়া হয়।'
     },
     {
       icon: RefreshCw,
-      title: 'এক্সচেঞ্জ সাপোর্ট',
-      description: 'সহজ এক্সচেঞ্জ পলিসি সহ হ্যাসেল-ফ্রি শপিং।'
+      title: 'সহজ রিটার্ন',
+      description: 'পণ্যে কোনো ত্রুটি থাকলে খুব সহজেই রিটার্ন বা এক্সচেঞ্জ করতে পারবেন।'
     }
   ];
 
   const goals = [
     {
       icon: Heart,
-      title: 'কাস্টমারের বিশ্বাস অর্জন',
-      description: 'প্রতিটি অর্ডারে সন্তুষ্টি নিশ্চিত করা আমাদের প্রধান লক্ষ্য।'
+      title: 'গ্রাহক সন্তুষ্টি',
+      description: 'আমাদের প্রতিটি কার্যক্রমের কেন্দ্রে থাকে গ্রাহকদের সন্তুষ্টি।'
     },
     {
       icon: Users,
-      title: 'রিসেলারদের ব্যবসা সহজ করা',
-      description: 'অল্প পুঁজিতে ব্যবসা শুরু করার সুযোগ তৈরি করা।'
+      title: 'একটি বড় কমিউনিটি',
+      description: 'আমরা বিশ্বাস করি একা নয়, সবাইকে নিয়ে এগিয়ে যাওয়ার মাধ্যমে বড় হওয়া সম্ভব।'
     },
     {
-      icon: Truck,
-      title: 'দ্রুত ও নিরাপদ ডেলিভারি',
-      description: 'সারা বাংলাদেশে দ্রুত ও যত্ন সহকারে পণ্য পৌঁছে দেওয়া।'
+      icon: ShieldCheck,
+      title: 'নিরাপদ শপিং',
+      description: 'আপনার তথ্য এবং লেনদেনের নিরাপত্তা নিশ্চিত করা আমাদের দায়িত্ব।'
     }
   ];
 
@@ -72,12 +73,12 @@ const AboutPage = () => {
               </motion.span>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-8 leading-tight">
-                সুন্দর পোশাক শুধু ফ্যাশন নয়—
-                <span className="block text-primary mt-2">এটা আত্মবিশ্বাসের প্রকাশ</span>
+                খুলনা কার্ট: ফ্যাশন ও বিশ্বাসের
+                <span className="block text-primary mt-2">একটি আধুনিক ডিজিটাল ঠিকানা</span>
               </h1>
               
               <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                এই বিশ্বাস থেকেই আমাদের যাত্রা।
+                খুলনা থেকে সারা বাংলাদেশে সেরা মানের পণ্য পৌঁছে দেওয়াই আমাদের লক্ষ্য।
               </p>
             </motion.div>
           </div>
@@ -95,16 +96,16 @@ const AboutPage = () => {
                 className="text-center mb-16"
               >
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-8">
-                  আমাদের গল্প
+                  আমাদের লক্ষ্য ও উদ্দেশ্য
                 </h2>
                 
                 <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    আমাদের প্রতিষ্ঠানটি মূলত <span className="text-primary font-semibold">প্রিমিয়াম থ্রি-পিস, শাড়ি ও ফ্যাশন ড্রেস</span> সরবরাহ করে থাকে, যেখানে <span className="text-foreground font-medium">কোয়ালিটি, কমফোর্ট ও ট্রেন্ড</span>—এই তিনটির ওপর আমরা সর্বোচ্চ গুরুত্ব দিই।
+                    <span className="text-primary font-semibold">খুলনা কার্ট</span> একটি উদীয়মান ই-কমার্স প্ল্যাটফর্ম যা গ্রাহকদের জীবনযাত্রাকে সহজ এবং আনন্দদায়ক করতে প্রতিশ্রুতিবদ্ধ। আমরা বিশ্বাস করি কেনাকাটা শুধুমাত্র প্রয়োজন নয়, বরং এটি একটি অভিজ্ঞতা।
                   </p>
                   
                   <p>
-                    আমাদের সব পণ্য নিজস্ব ফ্যাক্টরি ও বিশ্বস্ত সোর্স থেকে সংগ্রহ করা হয়, যেন কাস্টমার পান <span className="text-primary font-semibold">সেরা মানের কাপড় ন্যায্য দামে</span>।
+                    আমাদের প্রতিটি পণ্য অত্যন্ত যত্ন সহকারে নির্বাচন করা হয়, যেন আপনি পান <span className="text-primary font-semibold">সেরা গুণমান এবং স্থায়িত্ব</span>। আমরা সরাসরি উৎপাদনকারী এবং নির্ভরযোগ্য ডিস্ট্রিবিউটরদের থেকে পণ্য সংগ্রহ করি, যা আমাদের প্রতিযোগিতামূলক মূল্যে সেরা পণ্য সরবরাহ করতে সাহায্য করে।
                   </p>
                 </div>
               </motion.div>
@@ -121,20 +122,20 @@ const AboutPage = () => {
                     <Package className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
-                    খুচরা ও পাইকারি—দুইভাবেই বিক্রি করি
+                    সহজ ও নির্ভরযোগ্য শপিং অভিজ্ঞতা
                   </h3>
                   <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-                    বিশেষ করে যারা অল্প পুঁজি নিয়ে কাপড়ের ব্যবসা শুরু করতে চান, তাদের জন্য আমাদের রয়েছে—
+                    আমরা শুধু পণ্য বিক্রি করি না, আমরা গ্রাহকদের সাথে একটি দীর্ঘস্থায়ী সম্পর্ক তৈরি করতে চাই—
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
                     <span className="px-5 py-3 bg-primary text-primary-foreground rounded-full font-medium">
-                      মাত্র ৬ পিসে পাইকারি
+                      সারাদেশে হোম ডেলিভারি
                     </span>
                     <span className="px-5 py-3 bg-accent text-accent-foreground rounded-full font-medium">
-                      ডিজাইন চয়েসের স্বাধীনতা
+                      সহজ রিটার্ন পলিসি
                     </span>
                     <span className="px-5 py-3 bg-secondary text-secondary-foreground rounded-full font-medium">
-                      এক্সচেঞ্জ সাপোর্ট
+                      ২৪/৭ কাস্টমার সাপোর্ট
                     </span>
                   </div>
                 </div>
@@ -242,10 +243,10 @@ const AboutPage = () => {
               className="max-w-4xl mx-auto text-center"
             >
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
-                আপনার পাশে আছি আমরা
+                খুলনা কার্টের সাথে আপনার কেনাকাটা হোক নিরাপদ
               </h2>
               <p className="text-xl opacity-90 mb-8 leading-relaxed max-w-2xl mx-auto">
-                আপনি যদি নিজের জন্য সুন্দর পোশাক খুঁজে থাকেন, অথবা ব্যবসার জন্য একটি নির্ভরযোগ্য সাপ্লায়ার চান—আমরা আছি আপনার পাশে।
+                আমাদের সাথে যুক্ত হয়ে সেরা শপিং অভিজ্ঞতা উপভোগ করুন। আমরা আপনার আস্থার মর্যাদা দিতে সর্বদা সচেষ্ট।
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
@@ -264,6 +265,7 @@ const AboutPage = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </>
   );
 };
