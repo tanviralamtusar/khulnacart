@@ -162,7 +162,7 @@ export default function AdminShopSettings() {
       // Reset to default favicon
       const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
       if (link) {
-        link.href = '/favicon.ico';
+        link.href = '/src/assets/favicon1.png';
       }
       
       toast.success('Favicon deleted');
