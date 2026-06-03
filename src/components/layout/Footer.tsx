@@ -85,23 +85,13 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: About & Branding */}
+          {/* Column 3: About & Mission */}
           <div className="md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right space-y-8">
             <div className="space-y-4">
               <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Our Mission</h4>
               <p className="text-muted-foreground max-w-sm leading-relaxed">
-                Just place the order, we will be at your door soon. <span className="font-semibold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
+                Just place the order, we will be at your door soon. <span className="font-semibold text-foreground">Your parcel is safe</span> until we hand it over to you.
               </p>
-            </div>
-
-            <div className="pt-4">
-              <Link to="/" className="inline-block group">
-                <img
-                  src={siteSettings?.site_logo || siteLogoAsset}
-                  alt="Khulna Cart"
-                  className="h-16 md:h-20 w-auto transition-transform group-hover:-translate-y-1"
-                />
-              </Link>
             </div>
           </div>
         </div>

@@ -148,25 +148,7 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Navigation - Desktop (Simplified) */}
-      <nav className="hidden md:block border-t border-border">
-        <div className="container-custom">
-          <ul className="flex items-center justify-center gap-12 py-3">
-            <li>
-              <Link to="/" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Home</Link>
-            </li>
-            <li>
-              <Link to="/products" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Products</Link>
-            </li>
-            <li>
-              <Link to="/about" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">About Us</Link>
-            </li>
-            <li>
-              <Link to="/contact" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Contact Us</Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      {/* Navigation - Desktop (Simplified) removed */}
 
       {/* Mobile Menu Sidebar-like Overlay */}
       <AnimatePresence>
@@ -178,8 +160,7 @@ const Header = () => {
             className="md:hidden fixed inset-0 z-[60] bg-background"
           >
             <div className="container-custom py-6">
-              <div className="flex items-center justify-between mb-8">
-                <span className="text-2xl font-bold">{siteName}</span>
+              <div className="flex items-center justify-end mb-8">
                 <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
                   <X className="h-6 w-6" />
                 </Button>

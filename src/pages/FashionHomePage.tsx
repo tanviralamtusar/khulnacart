@@ -4,16 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import heroSlide1 from '@/assets/hero-slide-1.jpg';
 import heroSlide2 from '@/assets/hero-slide-2.jpg';
 import heroSlide3 from '@/assets/hero-slide-3.jpg';
-import defaultLogo from '@/assets/site-logo.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ShoppingBag, Heart, User, LayoutDashboard, ChevronRight, ChevronLeft,
-  Sparkles, Truck, Shield, RotateCcw, Star, ArrowRight, Headphones,
-  Search, Menu, X, Eye, Zap, Home, Grid
+  ShoppingBag, Heart, User, ChevronRight, ChevronLeft,
+  Truck, Shield, RotateCcw, Star, ArrowRight, Headphones,
+  Eye, Home, Grid
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
@@ -21,6 +19,8 @@ import { selectCartCount, toggleCart, addToCart, openCart } from '@/store/slices
 import { selectWishlistItems, toggleWishlist } from '@/store/slices/wishlistSlice';
 import { toast } from 'sonner';
 import { Product as ProductType } from '@/types';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import {
   Carousel,
   CarouselContent,
@@ -75,7 +75,6 @@ export default function FashionHomePage() {
   const [homeContent, setHomeContent] = useState<HomePageContent>({});
   const [isLoading, setIsLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
    // States and effect for the sliding categories carousel
    const [carouselApi, setCarouselApi] = useState<CarouselApi>();
@@ -143,7 +142,6 @@ export default function FashionHomePage() {
   });
 
   const siteName = headerSettings?.site_name || 'Khulna Cart';
-  const siteLogo = headerSettings?.site_logo || headerSettings?.shop_logo_url || defaultLogo;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -227,14 +225,6 @@ export default function FashionHomePage() {
     const icons: { [key: string]: any } = { Truck, RotateCcw, Shield, Headphones };
     return icons[iconName] || Truck;
   };
-
-  // Features from home content or defaults
-  const featuresBarItems = homeContent.features_bar?.items || [
-    { icon: 'Truck', title: 'Fast Delivery', desc: 'Free delivery nationwide' },
-    { icon: 'RotateCcw', title: 'Instant Check', desc: 'Return policy' },
-    { icon: 'Shield', title: 'Cash on Delivery', desc: 'Payment on delivery' },
-    { icon: 'Headphones', title: '24/7 Support', desc: 'Contact anytime' },
-  ];
 
   // Header promo text from home content
   const headerPromoText = homeContent.header_promo?.text || 'Free delivery nationwide on orders ৳2000+ | 7 Days Easy Return';
@@ -385,124 +375,17 @@ export default function FashionHomePage() {
 
   const displayProducts = featuredProducts;
   const displayNewArrivals = newArrivals;
+  
+  const featuresBarItems = homeContent.features_bar?.items || [
+    { icon: 'Truck', title: 'Fast Delivery', desc: 'Free delivery nationwide' },
+    { icon: 'RotateCcw', title: 'Instant Check', desc: 'Return policy' },
+    { icon: 'Shield', title: 'Cash on Delivery', desc: 'Payment on delivery' },
+    { icon: 'Headphones', title: '24/7 Support', desc: 'Contact anytime' },
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
-
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
-        <div className="container-custom py-3">
-          <div className="grid grid-cols-3 items-center justify-between gap-4">
-            {/* Left: Mobile Menu Toggle */}
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="hover:bg-transparent"
-              >
-                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </Button>
-            </div>
-
-            {/* Center: Logo */}
-            <div className="flex items-center justify-center">
-              <Link to="/" className="flex items-center gap-2">
-                <img
-                  src={siteLogo}
-                  alt={siteName}
-                  className="h-10 md:h-12 w-auto object-contain"
-                  loading="eager"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = defaultLogo;
-                  }}
-                />
-                {!siteLogo && (
-                  <span className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
-                    {siteName}
-                  </span>
-                )}
-              </Link>
-            </div>
-
-            {/* Right: Search */}
-            <div className="flex items-center justify-end">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="hover:bg-transparent"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <Search className="h-6 w-6" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border bg-background"
-            >
-              <nav className="container-custom py-4">
-                <div className="mb-4">
-                  <Input
-                    type="text"
-                    placeholder="Search products..."
-                    className="rounded-full"
-                  />
-                </div>
-                <ul className="space-y-2">
-                  <li>
-                    <Link 
-                       to="/" 
-                      className="block py-2 text-foreground hover:text-primary font-medium"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Home
-                    </Link>
-                  </li>
-                  <li>
-                    <Link 
-                      to="/products?category=two-piece" 
-                      className="block py-2 text-foreground hover:text-primary font-medium"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Two Piece
-                    </Link>
-                  </li>
-                  <li>
-                    <Link 
-                      to="/products?category=three-piece" 
-                      className="block py-2 text-foreground hover:text-primary font-medium"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Three Piece
-                    </Link>
-                  </li>
-                  <li>
-                    <Link 
-                      to="/products" 
-                      className="block py-2 text-foreground hover:text-primary font-medium"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      All Products
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-
+      <Header />
 
       {/* Categories Section */}
       <section className="py-12 md:py-16 bg-muted/20 relative overflow-hidden">
@@ -893,92 +776,7 @@ export default function FashionHomePage() {
         </section>
       )}
 
-      {/* Footer */}
-      <footer className="bg-slate-50 text-foreground pt-20 pb-10 border-t border-border/50">
-        <div className="container-custom">
-          {/* Top Promise Bar */}
-          <div className="text-center mb-16 max-w-3xl mx-auto px-4">
-            <div className="inline-flex items-center justify-center p-1 px-4 mb-6 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
-              Our Promise
-            </div>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              Never worry about <span className="font-semibold text-foreground">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-semibold text-foreground italic">expiry date</span> of every product before delivery.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-20">
-            {/* Column 1: Why We Are Best */}
-            <div className="md:col-span-4 space-y-6">
-              <h3 className="text-2xl font-bold tracking-tight text-foreground">Why We are Best?</h3>
-              <ul className="space-y-4">
-                {[
-                  "Fastest Delivery [Same Day]",
-                  "Verified & Authentic Products",
-                  "Dedicated Customer Support",
-                  "Hassle-free Return Policy"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-muted-foreground group">
-                    <div className="w-8 h-8 rounded-full bg-white shadow-sm border border-border flex items-center justify-center group-hover:border-primary/50 transition-colors">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    </div>
-                    <span className="font-medium group-hover:text-foreground transition-colors">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Column 2: Customer Support Links */}
-            <div className="md:col-span-3 space-y-6">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Customer Support</h4>
-              <ul className="space-y-3">
-                {[
-                  { label: "Login", to: "/auth" },
-                  { label: "Register", to: "/auth" },
-                  { label: "Contact Us", to: "/contact" }
-                ].map((link, i) => (
-                  <li key={i}>
-                    <Link to={link.to} className="text-muted-foreground hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Column 3: About & Branding */}
-            <div className="md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right space-y-8">
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Our Mission</h4>
-                <p className="text-muted-foreground max-w-sm leading-relaxed">
-                  Just place the order, we will be at your door soon. <span className="font-semibold text-foreground">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
-                </p>
-              </div>
-              
-              <div className="pt-4">
-                <Link to="/" className="inline-block group">
-                  <img 
-                    src={siteLogo || defaultLogo} 
-                    alt="Khulna Cart" 
-                    className="h-16 md:h-20 w-auto transition-transform group-hover:-translate-y-1"
-                  />
-                </Link>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-border/50 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-xs font-medium text-muted-foreground tracking-wide">
-              © {new Date().getFullYear()} KHULNA CART. POWERED BY <a href="https://khulnacart.com" className="text-primary hover:underline">KHULNACART.COM</a>
-            </p>
-            
-            <div className="flex items-center gap-6">
-               <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Privacy</Link>
-               <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Terms</Link>
-               <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">FAQ</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Bottom Navigation (Mobile Only) */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border px-4 py-2">
