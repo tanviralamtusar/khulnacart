@@ -205,10 +205,10 @@ const ContactPage = () => {
                   href="https://www.facebook.com/profile.php?id=61589114327578"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-5 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-violet-500/20 transition-all hover:-translate-y-1"
+                  className="flex items-center gap-4 p-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-600/20 transition-all hover:-translate-y-1"
                 >
                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6" />
+                    <Facebook className="w-6 h-6" />
                   </div>
                   <div>
                     <span className="block font-bold text-lg">Facebook Inbox</span>

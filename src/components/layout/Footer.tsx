@@ -46,10 +46,10 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61589114327578', label: 'Facebook Page' },
-    { icon: Users, url: 'https://facebook.com/groups/619302732562688/', label: 'Facebook Group' },
-    { icon: MessageCircle, url: 'https://wa.me/message/7ZV4YUG5ACVGD1', label: 'WhatsApp' },
-    { icon: Instagram, url: 'https://www.instagram.com/khulnacart?igsh=MXRzc3Qwc216eTF5dQ==', label: 'Instagram' },
+    { icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61589114327578', label: 'Facebook Page', color: '#1877F2', bgColor: '#E7F3FF' },
+    { icon: Users, url: 'https://facebook.com/groups/619302732562688/', label: 'Facebook Group', color: '#1877F2', bgColor: '#E7F3FF' },
+    { icon: MessageCircle, url: 'https://wa.me/message/7ZV4YUG5ACVGD1', label: 'WhatsApp', color: '#25D366', bgColor: '#E9F9EF' },
+    { icon: Instagram, url: 'https://www.instagram.com/khulnacart?igsh=MXRzc3Qwc216eTF5dQ==', label: 'Instagram', color: '#E4405F', bgColor: '#FDF0F2' },
   ];
 
   return (
@@ -131,16 +131,17 @@ const Footer = () => {
             
             <div className="space-y-6">
               <div className="flex items-center justify-center md:justify-end gap-3">
-                {socialLinks.map(({ icon: Icon, url, label }, i) => (
+                {socialLinks.map(({ icon: Icon, url, label, color, bgColor }, i) => (
                   <a 
                     key={i} 
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
                     title={label}
-                    className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm hover:scale-110 group"
+                    style={{ backgroundColor: bgColor }}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color }} />
                   </a>
                 ))}
               </div>
