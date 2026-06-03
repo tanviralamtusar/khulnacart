@@ -2,14 +2,18 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import siteLogoAsset from '@/assets/site-logo.png';
 import {
-  Phone,
-  Mail,
-  MapPin
+  Facebook,
+  Instagram,
+  Twitter,
+  Youtube,
+  ShieldCheck,
+  Truck,
+  RotateCcw,
+  CreditCard
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const Footer = () => {
-  // Fetch site settings
   const { data: siteSettings } = useQuery({
     queryKey: ['footer-settings'],
     queryFn: async () => {
@@ -31,53 +35,75 @@ const Footer = () => {
   });
 
   const siteName = siteSettings?.site_name || 'Khulna Cart';
-  const siteLogo = siteSettings?.site_logo;
+
+  const trustBadges = [
+    { icon: ShieldCheck, text: '100% Authentic' },
+    { icon: Truck, text: 'Fast Delivery' },
+    { icon: RotateCcw, text: 'Easy Returns' },
+    { icon: CreditCard, text: 'Secure Payment' },
+  ];
 
   return (
-    <footer className="bg-slate-50 text-foreground pt-20 pb-10 border-t border-border/50">
-      <div className="container mx-auto px-6">
+    <footer className="bg-white border-t border-slate-100 mt-auto">
+      {/* Trust Badges Bar */}
+      <div className="border-b border-slate-50 bg-slate-50/30">
+        <div className="container-custom py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4">
+            {trustBadges.map((badge, idx) => (
+              <div key={idx} className="flex flex-col md:flex-row items-center justify-center gap-3 text-center md:text-left group">
+                <div className="p-2.5 rounded-2xl bg-white shadow-sm border border-slate-100 text-primary group-hover:scale-110 transition-transform duration-300">
+                  <badge.icon className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-bold text-slate-700 tracking-tight uppercase">{badge.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="container-custom pt-16 pb-12">
         {/* Top Promise Bar */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
+        <div className="text-center mb-16 max-w-3xl mx-auto px-4">
           <div className="inline-flex items-center justify-center p-1 px-4 mb-6 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
             Our Promise
           </div>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-            Never worry about <span className="font-semibold text-foreground">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-semibold text-foreground italic">expiry date</span> of every product before delivery.
+          <p className="text-base md:text-lg text-slate-500 leading-relaxed">
+            Never worry about <span className="font-semibold text-slate-900">quality and authenticity</span>—they are our core promises. We strictly check the <span className="font-semibold text-slate-900 italic">expiry date</span> of every product before delivery.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 mb-20 text-center md:text-left">
           {/* Column 1: Why We Are Best */}
           <div className="md:col-span-4 space-y-6">
-            <h3 className="text-2xl font-bold tracking-tight text-foreground">Why We are Best?</h3>
-            <ul className="space-y-4">
+            <h3 className="text-2xl font-bold tracking-tight text-slate-900">Why We are Best?</h3>
+            <ul className="space-y-4 inline-block text-left">
               {[
                 "Fastest Delivery [Same Day]",
                 "Verified & Authentic Products",
                 "Dedicated Customer Support",
                 "Hassle-free Return Policy"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-muted-foreground group">
-                  <div className="w-8 h-8 rounded-full bg-white shadow-sm border border-border flex items-center justify-center group-hover:border-primary/50 transition-colors">
+                <li key={i} className="flex items-center gap-3 text-slate-500 group">
+                  <div className="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center group-hover:border-primary/50 transition-colors">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   </div>
-                  <span className="font-medium group-hover:text-foreground transition-colors">{item}</span>
+                  <span className="font-medium group-hover:text-slate-900 transition-colors">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 2: Customer Support */}
+          {/* Column 2: Customer Support Links */}
           <div className="md:col-span-3 space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Customer Support</h4>
-            <ul className="space-y-3">
+            <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Customer Support</h4>
+            <ul className="space-y-3 inline-block text-left md:text-left">
               {[
                 { label: "Login", to: "/auth" },
                 { label: "Register", to: "/auth" },
-                { label: "Contact Us", to: "/contact" },
+                { label: "Contact Us", to: "/contact" }
               ].map((link, i) => (
-                <li key={i}>
-                  <Link to={link.to} className="text-muted-foreground hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">
+                <li key={i} className="text-center md:text-left">
+                  <Link to={link.to} className="text-slate-500 hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">
                     {link.label}
                   </Link>
                 </li>
@@ -88,23 +114,41 @@ const Footer = () => {
           {/* Column 3: About & Mission */}
           <div className="md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right space-y-8">
             <div className="space-y-4">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Our Mission</h4>
-              <p className="text-muted-foreground max-w-sm leading-relaxed">
-                Just place the order, we will be at your door soon. <span className="font-semibold text-foreground">Your parcel is safe</span> until we hand it over to you.
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Our Mission</h4>
+              <p className="text-slate-500 max-w-sm leading-relaxed">
+                Just place the order, we will be at your door soon. <span className="font-semibold text-slate-900">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
               </p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="flex items-center justify-center md:justify-end gap-3">
+                {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
+                  <a 
+                    key={i} 
+                    href="#" 
+                    className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                  >
+                    <Icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
+              <Link to="/" className="inline-block group">
+                <img 
+                  src={siteLogoAsset} 
+                  alt={siteName} 
+                  className="h-10 md:h-12 w-auto object-contain"
+                />
+              </Link>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border/50 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs font-medium text-muted-foreground tracking-wide">
-            © {new Date().getFullYear()} KHULNA CART. POWERED BY <a href="https://khulnacart.com" className="text-primary hover:underline">KHULNACART.COM</a>
-          </p>
-
-          <div className="flex items-center gap-6">
-            <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Privacy</Link>
-            <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Terms</Link>
-            <Link to="/contact" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">FAQ</Link>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-xs font-medium text-slate-400 text-center md:text-left">
+            <span>© {new Date().getFullYear()} {siteName.toUpperCase()}. All rights reserved.</span>
+            <div className="hidden md:block w-1 h-1 bg-slate-200 rounded-full" />
+            <span>Powered by <a href="#" className="text-primary hover:underline font-bold">KHULNACART.COM</a></span>
           </div>
         </div>
       </div>

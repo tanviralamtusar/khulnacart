@@ -777,47 +777,6 @@ export default function FashionHomePage() {
       )}
 
       <Footer />
-
-      {/* Bottom Navigation (Mobile Only) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border px-4 py-2">
-        <div className="flex items-center justify-between relative">
-          <Link to="/" className="flex flex-col items-center gap-1 group">
-            <Home className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Home</span>
-          </Link>
-          
-          <Link to="/products" className="flex flex-col items-center gap-1 group">
-            <Grid className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Categories</span>
-          </Link>
-
-          {/* Large Cart Button */}
-          <div className="relative -mt-8">
-            <Button 
-              size="icon" 
-              className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90"
-              onClick={() => dispatch(toggleCart())}
-            >
-              <ShoppingBag className="w-6 h-6 text-primary-foreground" />
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 w-5 h-5 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-primary">
-                  {cartCount}
-                </span>
-              )}
-            </Button>
-          </div>
-
-          <Link to="/wishlist" className="flex flex-col items-center gap-1 group">
-            <Heart className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Wishlist</span>
-          </Link>
-
-          <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'} className="flex flex-col items-center gap-1 group">
-            <User className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Log In</span>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }

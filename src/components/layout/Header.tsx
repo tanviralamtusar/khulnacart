@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
   Search,
-  ShoppingCart,
+  ShoppingBag,
   Heart,
   User,
   Menu,
@@ -82,6 +82,7 @@ const Header = () => {
   };
 
   return (
+    <>
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled ? 'bg-background/95 backdrop-blur-md shadow-md' : 'bg-background'
     }`}>
@@ -179,47 +180,49 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Bottom Navigation (Mobile Only) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border px-4 py-2 pb-safe">
-        <div className="flex items-center justify-between relative">
-          <Link to="/" className="flex flex-col items-center gap-1 group">
-            <Home className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Home</span>
-          </Link>
-          
-          <Link to="/products" className="flex flex-col items-center gap-1 group">
-            <Grid className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Categories</span>
-          </Link>
-
-          {/* Large Cart Button */}
-          <div className="relative -mt-8">
-            <Button 
-              size="icon" 
-              className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90 transition-transform active:scale-95"
-              onClick={() => dispatch(toggleCart())}
-            >
-              <ShoppingCart className="w-6 h-6 text-primary-foreground" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-primary shadow-sm">
-                  {cartCount}
-                </span>
-              )}
-            </Button>
-          </div>
-
-          <Link to="/wishlist" className="flex flex-col items-center gap-1 group">
-            <Heart className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Wishlist</span>
-          </Link>
-
-          <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'} className="flex flex-col items-center gap-1 group">
-            <User className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Log In</span>
-          </Link>
-        </div>
-      </div>
     </header>
+
+    {/* Bottom Navigation (Mobile Only) */}
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-background border-t border-border px-4 py-2 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+      <div className="flex items-center justify-between relative">
+        <Link to="/" className="flex flex-col items-center gap-1 group">
+          <Home className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Home</span>
+        </Link>
+        
+        <Link to="/products" className="flex flex-col items-center gap-1 group">
+          <Grid className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Categories</span>
+        </Link>
+
+        {/* Large Cart Button */}
+        <div className="relative -mt-8">
+          <Button 
+            size="icon" 
+            className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90 transition-transform active:scale-95"
+            onClick={() => dispatch(toggleCart())}
+          >
+            <ShoppingBag className="w-6 h-6 text-primary-foreground" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-primary shadow-sm">
+                {cartCount}
+              </span>
+            )}
+          </Button>
+        </div>
+
+        <Link to="/wishlist" className="flex flex-col items-center gap-1 group">
+          <Heart className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Wishlist</span>
+        </Link>
+
+        <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'} className="flex flex-col items-center gap-1 group">
+          <User className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Log In</span>
+        </Link>
+      </div>
+    </div>
+    </>
   );
 };
 
