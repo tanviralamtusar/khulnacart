@@ -671,6 +671,7 @@ export default function AdminOrders() {
       const order = orders.find(o => o.id === orderId);
       if (order) {
         sendStatusSms(order, newStatus);
+        sendStatusEmail(order, newStatus);
       }
     } catch (error) {
       toast.error('Failed to update order status');
@@ -729,6 +730,70 @@ export default function AdminOrders() {
       }
     } catch (error) {
       console.error('Failed to send status SMS:', error);
+    }
+  };
+
+  const sendStatusEmail = async (order: Order, newStatus: string) => {
+    try {
+      let userEmail = null;
+      if (order.userId) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('user_id', order.userId)
+          .single();
+        userEmail = profile?.email || null;
+      }
+
+      if (!userEmail) {
+        console.log('No registered email found for this customer. Skipping email notification.');
+        return;
+      }
+
+      // Map status to template key
+      const statusTemplateMap: Record<string, string> = {
+        'processing': 'order_processing',
+        'confirmed': 'order_confirmed',
+        'shipped': 'order_shipped',
+        'delivered': 'order_delivered',
+        'cancelled': 'order_cancelled',
+      };
+
+      const templateKey = statusTemplateMap[newStatus];
+      if (!templateKey) return;
+
+      console.log(`Sending status change email for order #${order.order_number} to ${userEmail}...`);
+
+      const { data, error } = await supabase.functions.invoke('send-order-email', {
+        body: {
+          template_key: templateKey,
+          recipient: userEmail,
+          order_id: order.id,
+          order_number: order.order_number,
+          customer_name: order.shippingAddress.name,
+          customer_phone: order.shippingAddress.phone,
+          customer_address: order.shippingAddress.street,
+          subtotal: order.subtotal,
+          shipping_cost: order.shipping,
+          total: order.total,
+          items: order.items.map(i => ({
+            name: i.product.name,
+            quantity: i.quantity,
+            price: i.product.price,
+          })),
+          variables: {
+            tracking_number: trackingNumber || order.trackingNumber || '',
+          }
+        },
+      });
+
+      if (error) {
+        console.error('Email status notification error:', error);
+      } else if (data?.success) {
+        toast.success('Email notification sent');
+      }
+    } catch (error) {
+      console.error('Failed to send status email:', error);
     }
   };
 
@@ -999,6 +1064,7 @@ export default function AdminOrders() {
         try {
           await updateOrderStatus(order.id, newStatus);
           sendStatusSms(order, newStatus);
+          sendStatusEmail(order, newStatus);
           successCount++;
         } catch (error) {
           console.error(`Failed to update order ${order.order_number}:`, error);

@@ -65,7 +65,8 @@ async function sendOrderEmail(
   shippingCost: number,
   total: number,
   items: Array<{ productId: string | null; name: string; image: string | null; price: number; quantity: number }>,
-  notes: string | null
+  notes: string | null,
+  customerEmail?: string | null
 ) {
   try {
     console.log('Sending order email notification...');
@@ -89,6 +90,7 @@ async function sendOrderEmail(
           image: i.image,
         })),
         notes,
+        customer_email: customerEmail || null,
       }),
     });
     const emailResult = await emailResponse.json();
@@ -578,11 +580,26 @@ Deno.serve(async (req) => {
     
     const orderNumber = orderData?.order_number || orderId;
 
+    // Fetch customer email if userId exists
+    let customerEmail = null;
+    if (body.userId) {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('user_id', body.userId)
+          .single();
+        customerEmail = profile?.email || null;
+      } catch (e) {
+        console.error('Failed to fetch customer email:', e);
+      }
+    }
+
     // Schedule background tasks using EdgeRuntime.waitUntil
     // These run after the response is sent, so the user doesn't wait
     const backgroundTasks = Promise.all([
       sendOrderSms(supabaseUrl, serviceKey, phone, name, orderNumber, total, orderId),
-      sendOrderEmail(supabaseUrl, orderId, orderNumber, name, phone, address, subtotal, shippingCost, total, itemsFinal, notes),
+      sendOrderEmail(supabaseUrl, orderId, orderNumber, name, phone, address, subtotal, shippingCost, total, itemsFinal, notes, customerEmail),
     ]);
 
     // Use EdgeRuntime.waitUntil to run tasks in background after response

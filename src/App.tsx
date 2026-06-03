@@ -44,6 +44,7 @@ import AdminBanners from '@/pages/admin/AdminBanners';
 import AdminShopSettings from '@/pages/admin/AdminShopSettings';
 import AdminMarketing from '@/pages/admin/AdminMarketing';
 import AdminSMS from '@/pages/admin/AdminSMS';
+import AdminEmail from '@/pages/admin/AdminEmail';
 import AdminLandingPages from '@/pages/admin/AdminLandingPages';
 import AdminLandingPageEditor from '@/pages/admin/AdminLandingPageEditor';
 import AdminContactSubmissions from '@/pages/admin/AdminContactSubmissions';
@@ -126,6 +127,7 @@ const App = () => (
               <Route path="/admin/banners" element={<AdminLayout><AdminBanners /></AdminLayout>} />
               <Route path="/admin/marketing" element={<AdminLayout><AdminMarketing /></AdminLayout>} />
               <Route path="/admin/sms" element={<AdminLayout><AdminSMS /></AdminLayout>} />
+              <Route path="/admin/email" element={<AdminLayout><AdminEmail /></AdminLayout>} />
               <Route path="/admin/social-media" element={<AdminLayout><AdminSocialMedia /></AdminLayout>} />
               <Route path="/admin/shop-settings" element={<AdminLayout><AdminShopSettings /></AdminLayout>} />
               <Route path="/admin/site-settings" element={<AdminLayout><AdminSiteSettings /></AdminLayout>} />

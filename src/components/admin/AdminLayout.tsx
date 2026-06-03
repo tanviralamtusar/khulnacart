@@ -19,6 +19,7 @@ import {
   Settings,
   Megaphone,
   MessageSquare,
+  Mail,
   Share2,
   BarChart3,
   Home,
@@ -53,6 +54,8 @@ const adminNavItems = [
   { title: 'Users', url: '/admin/users', icon: Users },
   { title: 'Inventory', url: '/admin/inventory', icon: Boxes },
   { title: 'Marketing', url: '/admin/marketing', icon: Megaphone },
+  { title: 'SMS Marketing', url: '/admin/sms', icon: MessageSquare },
+  { title: 'Email Marketing', url: '/admin/email', icon: Mail },
   { title: 'Shop Settings', url: '/admin/shop-settings', icon: Settings },
   { title: 'Site Settings', url: '/admin/site-settings', icon: Settings },
 
