@@ -12,7 +12,8 @@ import {
   ChevronDown,
   LogOut,
   Home,
-  Grid
+  Grid,
+  ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -192,11 +193,11 @@ const Header = () => {
         
         <Link to="/products" className="flex flex-col items-center gap-1 group">
           <Grid className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Categories</span>
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Products</span>
         </Link>
 
         {/* Large Cart Button */}
-        <div className="relative -mt-8">
+        <div className="flex flex-col items-center gap-1 -mt-8">
           <Button 
             size="icon" 
             className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90 transition-transform active:scale-95"
@@ -209,16 +210,17 @@ const Header = () => {
               </span>
             )}
           </Button>
+          <span className="text-[10px] font-medium text-primary">Cart</span>
         </div>
 
-        <Link to="/wishlist" className="flex flex-col items-center gap-1 group">
-          <Heart className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Wishlist</span>
+        <Link to="/my-account" className="flex flex-col items-center gap-1 group">
+          <ClipboardList className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Orders</span>
         </Link>
 
         <Link to={user ? (isAdmin ? '/admin' : '/my-account') : '/auth'} className="flex flex-col items-center gap-1 group">
           <User className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Log In</span>
+          <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Account</span>
         </Link>
       </div>
     </div>

@@ -116,7 +116,7 @@ const Footer = () => {
             <div className="space-y-4">
               <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Our Mission</h4>
               <p className="text-slate-500 max-w-sm leading-relaxed">
-                Just place the order, we will be at your door soon. <span className="font-semibold text-slate-900">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
+                Just place the order, we will be at your door soon. <span className="font-semibold text-slate-900">Your parcel is safe</span> until we hand it over to you. We really love your feedback.
               </p>
             </div>
             
