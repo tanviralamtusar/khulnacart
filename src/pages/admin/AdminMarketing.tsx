@@ -10,7 +10,8 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { 
   Save, BarChart3, Eye, EyeOff, ShoppingCart, CreditCard, Facebook, 
-  Ticket, Plus, Trash2, Pencil, Calendar, Percent, DollarSign, Mail, Bell, Music2
+  Ticket, Plus, Trash2, Pencil, Calendar, Percent, DollarSign, Mail, Bell, Music2,
+  Search, Globe
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -66,6 +67,7 @@ interface GoogleSettings {
   ga_enabled: boolean;
   gtm_enabled: boolean;
   ga_server_enabled: boolean;
+  google_site_verification: string;
 }
 
 interface TikTokSettings {
@@ -95,6 +97,7 @@ export default function AdminMarketing() {
     ga_enabled: false,
     gtm_enabled: false,
     ga_server_enabled: false,
+    google_site_verification: '',
   });
   const [savingGoogle, setSavingGoogle] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(true);
@@ -247,6 +250,7 @@ export default function AdminMarketing() {
           'ga_enabled',
           'gtm_enabled',
           'ga_server_enabled',
+          'google_site_verification',
         ]);
 
       if (error) throw error;
@@ -258,6 +262,7 @@ export default function AdminMarketing() {
         ga_enabled: false,
         gtm_enabled: false,
         ga_server_enabled: false,
+        google_site_verification: '',
       };
 
       data?.forEach((setting) => {
@@ -279,6 +284,9 @@ export default function AdminMarketing() {
             break;
           case 'ga_server_enabled':
             settings.ga_server_enabled = setting.value === 'true';
+            break;
+          case 'google_site_verification':
+            settings.google_site_verification = setting.value;
             break;
         }
       });
@@ -317,6 +325,7 @@ export default function AdminMarketing() {
         upsertSetting('ga_enabled', googleSettings.ga_enabled.toString()),
         upsertSetting('gtm_enabled', googleSettings.gtm_enabled.toString()),
         upsertSetting('ga_server_enabled', googleSettings.ga_server_enabled.toString()),
+        upsertSetting('google_site_verification', googleSettings.google_site_verification.trim()),
       ]);
 
       toast.success('Google Analytics settings saved successfully');
@@ -635,10 +644,14 @@ export default function AdminMarketing() {
       </div>
 
       <Tabs defaultValue="facebook" className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
+        <TabsList className="grid w-full max-w-2xl grid-cols-3">
           <TabsTrigger value="facebook" className="gap-2">
             <Facebook className="h-4 w-4" />
             Meta
+          </TabsTrigger>
+          <TabsTrigger value="google" className="gap-2">
+            <Globe className="h-4 w-4" />
+            Google
           </TabsTrigger>
           <TabsTrigger value="coupons" className="gap-2">
             <Ticket className="h-4 w-4" />
@@ -813,6 +826,421 @@ export default function AdminMarketing() {
           <Button onClick={handleSaveFacebook} disabled={savingFb} className="gap-2">
             <Save className="h-4 w-4" />
             {savingFb ? 'Saving...' : 'Save Facebook Settings'}
+          </Button>
+        </TabsContent>
+
+        {/* Google Analytics Tab */}
+        <TabsContent value="google" className="space-y-6">
+          {/* Google Search Console - Ranking */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="h-5 w-5 text-red-600" />
+                Google Search Console (Ranking)
+              </CardTitle>
+              <CardDescription>
+                Verify your site with Google Search Console to track your search ranking
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="googleSiteVerification">Google Site Verification Tag</Label>
+                <Input
+                  id="googleSiteVerification"
+                  value={googleSettings.google_site_verification}
+                  onChange={(e) => setGoogleSettings({ ...googleSettings, google_site_verification: e.target.value })}
+                  placeholder="e.g. <meta name='google-site-verification' content='...' /> or just the token"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Paste your verification meta tag or token. This helps Google index your site and show ranking data.
+                </p>
+              </div>
+
+              {googleSettings.google_site_verification && (
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    ✓ Verification tag will be added to your website's head section.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Google Tag Manager */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-yellow-600" />
+                    Google Tag Manager (GTM)
+                  </CardTitle>
+                  <CardDescription>
+                    Use GTM to manage all your tracking tags in one place
+                  </CardDescription>
+                </div>
+                <Switch
+                  checked={googleSettings.gtm_enabled}
+                  onCheckedChange={(checked) => setGoogleSettings({ ...googleSettings, gtm_enabled: checked })}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="gtmId">GTM Container ID</Label>
+                <Input
+                  id="gtmId"
+                  value={googleSettings.gtm_id}
+                  onChange={(e) => setGoogleSettings({ ...googleSettings, gtm_id: e.target.value })}
+                  placeholder="GTM-XXXXXXX"
+                  disabled={!googleSettings.gtm_enabled}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Find your Container ID in GTM → Admin → Container Settings
+                </p>
+              </div>
+
+              {googleSettings.gtm_enabled && googleSettings.gtm_id && (
+                <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    ✓ GTM will load on all pages. Configure your GA4, conversion tracking, and other tags in Google Tag Manager.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Google Analytics 4 */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    Google Analytics 4 (GA4)
+                  </CardTitle>
+                  <CardDescription>
+                    Direct GA4 integration (use this if you're not using GTM)
+                  </CardDescription>
+                </div>
+                <Switch
+                  checked={googleSettings.ga_enabled}
+                  onCheckedChange={(checked) => setGoogleSettings({ ...googleSettings, ga_enabled: checked })}
+                  disabled={googleSettings.gtm_enabled}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="gaMeasurementId">Measurement ID</Label>
+                <Input
+                  id="gaMeasurementId"
+                  value={googleSettings.ga_measurement_id}
+                  onChange={(e) => setGoogleSettings({ ...googleSettings, ga_measurement_id: e.target.value })}
+                  placeholder="G-XXXXXXXXXX"
+                  disabled={!googleSettings.ga_enabled && !googleSettings.ga_server_enabled}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Find this in GA4 → Admin → Data Streams → Your Stream
+                </p>
+              </div>
+
+              {googleSettings.gtm_enabled && (
+                <div className="bg-muted/50 border rounded-lg p-4">
+                  <p className="text-sm text-muted-foreground">
+                    💡 GTM is enabled. Configure GA4 within your GTM container instead of here for better control.
+                  </p>
+                </div>
+              )}
+
+              {googleSettings.ga_enabled && googleSettings.ga_measurement_id && !googleSettings.gtm_enabled && (
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    ✓ GA4 will track: page_view, view_item, add_to_cart, begin_checkout, purchase
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Server-Side Tracking */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-green-600" />
+                    Server-Side Tracking (Measurement Protocol)
+                  </CardTitle>
+                  <CardDescription>
+                    Send events directly from server - bypasses ad blockers, no Stape.io needed
+                  </CardDescription>
+                </div>
+                <Switch
+                  checked={googleSettings.ga_server_enabled}
+                  onCheckedChange={(checked) => setGoogleSettings({ ...googleSettings, ga_server_enabled: checked })}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="gaApiSecret">Measurement Protocol API Secret</Label>
+                <div className="relative">
+                  <Input
+                    id="gaApiSecret"
+                    type={showGaSecret ? 'text' : 'password'}
+                    value={googleSettings.ga_api_secret}
+                    onChange={(e) => setGoogleSettings({ ...googleSettings, ga_api_secret: e.target.value })}
+                    placeholder="Enter your API Secret"
+                    disabled={!googleSettings.ga_server_enabled}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowGaSecret(!showGaSecret)}
+                  >
+                    {showGaSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Create in GA4 → Admin → Data Streams → Your Stream → Measurement Protocol API secrets
+                </p>
+              </div>
+
+              {googleSettings.ga_server_enabled && googleSettings.ga_api_secret && googleSettings.ga_measurement_id && (
+                <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 space-y-2">
+                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                    ✓ Server-Side Tracking Active
+                  </p>
+                  <ul className="text-xs text-green-700 dark:text-green-300 space-y-1 list-disc list-inside">
+                    <li>begin_checkout - When users start checkout</li>
+                    <li>purchase - Order completion with transaction data</li>
+                    <li>Events sent via Measurement Protocol API</li>
+                  </ul>
+                  <p className="text-xs text-green-600 dark:text-green-400 pt-2">
+                    💡 Server-side events bypass ad blockers for accurate tracking
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Events Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Tracked Events</CardTitle>
+              <CardDescription>E-commerce events that will be sent to Google Analytics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                  <Eye className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <p className="font-medium text-sm">page_view</p>
+                    <p className="text-xs text-muted-foreground">Every page visit</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                  <Eye className="h-5 w-5 text-green-500" />
+                  <div>
+                    <p className="font-medium text-sm">view_item</p>
+                    <p className="text-xs text-muted-foreground">Product views</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                  <ShoppingCart className="h-5 w-5 text-orange-500" />
+                  <div>
+                    <p className="font-medium text-sm">add_to_cart</p>
+                    <p className="text-xs text-muted-foreground">Cart additions</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                  <CreditCard className="h-5 w-5 text-purple-500" />
+                  <div>
+                    <p className="font-medium text-sm">purchase</p>
+                    <p className="text-xs text-muted-foreground">Completed orders</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Save Button */}
+          <Button onClick={handleSaveGoogle} disabled={savingGoogle} className="gap-2">
+            <Save className="h-4 w-4" />
+            {savingGoogle ? 'Saving...' : 'Save Google Settings'}
+          </Button>
+        </TabsContent>
+
+        {/* TikTok Tab */}
+        <TabsContent value="tiktok" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Music2 className="h-5 w-5 text-[#00f2ea]" />
+                    TikTok Pixel
+                  </CardTitle>
+                  <CardDescription>
+                    Track conversions and optimize your TikTok ads
+                  </CardDescription>
+                </div>
+                <Switch
+                  checked={tiktokSettings.tiktok_pixel_enabled}
+                  onCheckedChange={(checked) => setTiktokSettings({ ...tiktokSettings, tiktok_pixel_enabled: checked })}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="tiktokPixelId">TikTok Pixel ID</Label>
+                <Input
+                  id="tiktokPixelId"
+                  value={tiktokSettings.tiktok_pixel_id}
+                  onChange={(e) => setTiktokSettings({ ...tiktokSettings, tiktok_pixel_id: e.target.value })}
+                  placeholder="Enter your TikTok Pixel ID"
+                  disabled={!tiktokSettings.tiktok_pixel_enabled}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-[#ff0050]" />
+                    TikTok Events API
+                  </CardTitle>
+                  <CardDescription>
+                    Server-side tracking for TikTok to bypass ad blockers
+                  </CardDescription>
+                </div>
+                <Switch
+                  checked={tiktokSettings.tiktok_events_api_enabled}
+                  onCheckedChange={(checked) => setTiktokSettings({ ...tiktokSettings, tiktok_events_api_enabled: checked })}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="tiktokToken">Access Token</Label>
+                <div className="relative">
+                  <Input
+                    id="tiktokToken"
+                    type={showTiktokToken ? "text" : "password"}
+                    value={tiktokSettings.tiktok_access_token}
+                    onChange={(e) => setTiktokSettings({ ...tiktokSettings, tiktok_access_token: e.target.value })}
+                    placeholder="Enter your TikTok Access Token"
+                    disabled={!tiktokSettings.tiktok_events_api_enabled}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowTiktokToken(!showTiktokToken)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-primary transition-colors z-10"
+                  >
+                    {showTiktokToken ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tiktokTestCode">Test Event Code</Label>
+                <Input
+                  id="tiktokTestCode"
+                  value={tiktokSettings.tiktok_test_event_code}
+                  onChange={(e) => setTiktokSettings({ ...tiktokSettings, tiktok_test_event_code: e.target.value })}
+                  placeholder="e.g., TEST1234"
+                  disabled={!tiktokSettings.tiktok_events_api_enabled}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Button onClick={handleSaveTikTok} disabled={savingTiktok} className="gap-2">
+            <Save className="h-4 w-4" />
+            {savingTiktok ? 'Saving...' : 'Save TikTok Settings'}
+          </Button>
+        </TabsContent>
+
+        {/* Email Tab */}
+        <TabsContent value="email" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                Email Notifications (Resend)
+              </CardTitle>
+              <CardDescription>
+                Configure Resend API to send automated order and contact notifications
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="resendApiKey">Resend API Key</Label>
+                <div className="relative">
+                  <Input
+                    id="resendApiKey"
+                    type={showApiKey ? "text" : "password"}
+                    value={emailSettings.resend_api_key}
+                    onChange={(e) => setEmailSettings({ ...emailSettings, resend_api_key: e.target.value })}
+                    placeholder="re_..."
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-primary transition-colors z-10"
+                  >
+                    {showApiKey ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="notifEmail">Notification Email</Label>
+                <Input
+                  id="notifEmail"
+                  type="email"
+                  value={emailSettings.notification_email}
+                  onChange={(e) => setEmailSettings({ ...emailSettings, notification_email: e.target.value })}
+                  placeholder="admin@yourstore.com"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Where you will receive notifications about new orders and contacts
+                </p>
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Order Notifications</Label>
+                  <p className="text-xs text-muted-foreground">Receive email when someone places an order</p>
+                </div>
+                <Switch
+                  checked={emailSettings.order_notification_enabled}
+                  onCheckedChange={(checked) => setEmailSettings({ ...emailSettings, order_notification_enabled: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Contact Form Notifications</Label>
+                  <p className="text-xs text-muted-foreground">Receive email when someone submits contact form</p>
+                </div>
+                <Switch
+                  checked={emailSettings.contact_notification_enabled}
+                  onCheckedChange={(checked) => setEmailSettings({ ...emailSettings, contact_notification_enabled: checked })}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Button onClick={handleSaveEmail} disabled={savingEmail} className="gap-2">
+            <Save className="h-4 w-4" />
+            {savingEmail ? 'Saving...' : 'Save Email Settings'}
           </Button>
         </TabsContent>
 

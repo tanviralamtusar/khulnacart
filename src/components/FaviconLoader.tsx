@@ -3,14 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 
 export default function FaviconLoader() {
   useEffect(() => {
-    let intervalId: number | undefined;
-
     const loadSiteSettings = async () => {
       try {
         const { data, error } = await supabase
           .from('admin_settings')
           .select('key, value')
-          .in('key', ['favicon_url', 'site_name', 'shop_name']);
+          .in('key', ['favicon_url', 'site_name', 'shop_name', 'google_site_verification']);
 
         if (error) {
           console.error('Failed to load site settings:', error);
@@ -39,6 +37,20 @@ export default function FaviconLoader() {
           if (siteName && document.title !== siteName) {
             document.title = siteName;
           }
+
+          // Update Google Site Verification
+          if (settings.google_site_verification) {
+            let meta = document.querySelector("meta[name='google-site-verification']") as HTMLMetaElement;
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'google-site-verification';
+              document.head.appendChild(meta);
+            }
+            
+            // Handle if they paste the whole tag or just the content
+            const contentMatch = settings.google_site_verification.match(/content="([^"]+)"/);
+            meta.content = contentMatch ? contentMatch[1] : settings.google_site_verification;
+          }
         }
       } catch (error) {
         console.error('Failed to load site settings:', error);
@@ -57,11 +69,11 @@ export default function FaviconLoader() {
     document.addEventListener('visibilitychange', onVisibilityChange);
 
     // Periodic refresh (helps when settings changed in admin without full reload)
-    intervalId = window.setInterval(loadSiteSettings, 30_000);
+    const intervalId = window.setInterval(loadSiteSettings, 30_000);
 
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
-      if (intervalId) window.clearInterval(intervalId);
+      window.clearInterval(intervalId);
     };
   }, []);
 
