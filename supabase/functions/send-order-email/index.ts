@@ -292,6 +292,7 @@ serve(async (req) => {
       site_url: supabaseUrl.replace("kphkbmwycreriandedis", "khulnacart"),
       support_phone: "+880 1234-567890",
       current_year: new Date().getFullYear().toString(),
+      current_date: new Date().toLocaleDateString('en-GB'),
       customer_name: body.customer_name || "Customer",
       customer_phone: body.customer_phone || "",
       customer_address: body.customer_address || "",
@@ -306,16 +307,35 @@ serve(async (req) => {
 
     if (body.items && body.items.length > 0) {
       vars["order_items"] = body.items.map(item => `
-        <tr>
-          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: left;">${item.name}</td>
-          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">৳${(item.price * item.quantity).toFixed(2)}</td>
+        <tr style="border-bottom: 1px solid #333;">
+          <td style="padding: 15px 0; text-align: left;">
+            <div style="display: flex; align-items: center;">
+              ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px;">` : ""}
+              <span style="font-size: 14px; color: #ffffff;">${item.name}</span>
+            </div>
+          </td>
+          <td style="padding: 15px 0; text-align: center; color: #ffffff;">
+            ×${item.quantity}
+          </td>
+          <td style="padding: 15px 0; text-align: right; color: #ffffff; font-weight: bold;">
+            ৳${(item.price * item.quantity).toFixed(2)}
+          </td>
         </tr>
       `).join("");
     } else {
       vars["order_items"] = "";
     }
-    vars["discount_row"] = "";
+
+    if (body.variables?.discount && parseFloat(body.variables.discount) > 0) {
+      vars["discount_row"] = `
+        <tr>
+          <td colspan="2" style="padding: 5px 0; text-align: left; color: #aaaaaa;">Discount:</td>
+          <td style="padding: 5px 0; text-align: right; color: #EF4444;">-৳${parseFloat(body.variables.discount).toFixed(2)}</td>
+        </tr>
+      `;
+    } else {
+      vars["discount_row"] = "";
+    }
 
     let subject = template.subject_template;
     let bodyHtml = template.html_template;
