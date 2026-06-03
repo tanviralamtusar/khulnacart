@@ -103,6 +103,8 @@ serve(async (req) => {
         "email_auto_send_welcome",
         "email_auto_send_order_placed",
         "email_auto_send_status_change",
+        "shop_logo_url",
+        "site_logo",
       ]);
 
     const settingsMap: Record<string, string> = {
@@ -290,6 +292,7 @@ serve(async (req) => {
     const vars: Record<string, string> = {
       site_name: settingsMap.email_sender_name || "Khulna Cart",
       site_url: supabaseUrl.replace("kphkbmwycreriandedis", "khulnacart"),
+      site_logo: "https://ahgwjwhaegwtvczqthrh.supabase.co/storage/v1/object/public/shop-assets/email.png",
       support_phone: "+880 1234-567890",
       current_year: new Date().getFullYear().toString(),
       current_date: new Date().toLocaleDateString('en-GB'),

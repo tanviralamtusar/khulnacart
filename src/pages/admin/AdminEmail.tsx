@@ -273,8 +273,10 @@ export default function AdminEmail() {
       .replace(/{{tracking_number}}/g, "STEAD-987654321")
       .replace(/{{site_name}}/g, settings.email_sender_name || "Khulna Cart")
       .replace(/{{site_url}}/g, "https://khulnacart.com")
+      .replace(/{{site_logo}}/g, "https://ahgwjwhaegwtvczqthrh.supabase.co/storage/v1/object/public/shop-assets/email.png")
       .replace(/{{support_phone}}/g, "+880 1234-567890")
       .replace(/{{current_year}}/g, "2026")
+      .replace(/{{current_date}}/g, new Date().toLocaleDateString('en-GB'))
       .replace(/{{reset_url}}/g, "https://khulnacart.com/reset-password?token=mock_token")
       .replace(/{{order_items}}/g, `
         <tr>
