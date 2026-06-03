@@ -100,27 +100,8 @@ const Header = () => {
             </Button>
           </div>
 
-          {/* Center: Logo */}
+          {/* Center: Empty */}
           <div className="flex items-center justify-center">
-            <Link to="/" className="flex-shrink-0">
-              {siteLogo ? (
-                <img
-                  src={siteLogo}
-                  alt={siteName || 'Site Logo'}
-                  className="h-10 md:h-12 w-auto object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    if (target.src !== defaultLogo) {
-                      target.src = defaultLogo;
-                    }
-                  }}
-                />
-              ) : (
-                <span className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap leading-none">
-                  {siteName}
-                </span>
-              )}
-            </Link>
           </div>
 
           {/* Right: Search */}

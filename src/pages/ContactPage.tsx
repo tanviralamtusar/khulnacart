@@ -84,14 +84,16 @@ const ContactPage = () => {
     {
       icon: Truck,
       title: 'Delivery',
-      description: 'Cash on delivery available nationwide. Free delivery on selected products.',
+      description: (
+        <div className="space-y-2">
+          <p>Cash on Delivery, bkash, Nagad, Rocket</p>
+          <p className="font-medium">Delivery area (Inside khulna, Same day delivery)</p>
+          <p className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-lg font-bold text-sm">
+            Flat TK 20 off on Online payment (bkash, ngd, rckt) *On Minimum payment (200 Tk)
+          </p>
+        </div>
+      ),
       color: 'bg-orange-500/10 text-orange-600'
-    },
-    {
-      icon: Users,
-      title: 'Wholesale & Reseller Support',
-      description: 'Inbox us to join as a wholesale order or reseller.',
-      color: 'bg-teal-500/10 text-teal-600'
     }
   ];
 
