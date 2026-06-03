@@ -102,21 +102,30 @@ const ContactPage = () => {
       <Header />
       <div className="pt-32 pb-16 min-h-screen bg-gradient-to-b from-background via-muted/30 to-background">
         {/* Hero Section */}
-        <section className="relative py-16 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/5" />
+        <section className="relative py-24 overflow-hidden">
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/images/Screenshot_2.png" 
+              alt="Customer Support Background" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
+          </div>
+
           <div className="container-custom relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+              <span className="inline-block px-4 py-2 bg-primary text-white rounded-full text-sm font-bold mb-6 shadow-lg shadow-primary/20">
                 📞 Contact Us
               </span>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 drop-shadow-md">
                 Get in Touch
               </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg text-slate-100 max-w-2xl mx-auto drop-shadow-sm font-medium">
                 We are always by your side. Contact us for any questions or orders.
               </p>
             </motion.div>
