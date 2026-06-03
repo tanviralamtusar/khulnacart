@@ -18,8 +18,18 @@ const ProductsPage = () => {
     const loadData = async () => {
       try {
         const [prods, cats] = await Promise.all([fetchProducts(), fetchCategories()]);
+        
+        // Calculate product counts for each category
+        const catsWithCounts = cats.map(cat => ({
+          ...cat,
+          productCount: prods.filter(p => 
+            p.categorySlug === cat.slug || 
+            p.category === cat.name
+          ).length
+        }));
+
         setProducts(prods);
-        setCategories(cats);
+        setCategories(catsWithCounts);
       } catch (error) {
         console.error('Failed to load products:', error);
       } finally {

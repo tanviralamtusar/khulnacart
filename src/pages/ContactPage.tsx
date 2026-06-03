@@ -123,48 +123,17 @@ const ContactPage = () => {
           </div>
         </section>
 
-        {/* Contact Cards */}
+        {/* Features Section */}
         <section className="py-12">
           <div className="container-custom">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {contactCards.map((card, index) => (
+            <div className="max-w-2xl mx-auto">
+              {features.map((feature, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group relative bg-card rounded-2xl p-6 border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity`} />
-                  <div className={`w-14 h-14 bg-gradient-to-br ${card.color} rounded-xl flex items-center justify-center mb-4 shadow-lg`}>
-                    <card.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {card.title}
-                  </h3>
-                  <p className="text-foreground font-medium">
-                    {card.content}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {card.subContent}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-12">
-          <div className="container-custom">
-            <div className="grid md:grid-cols-2 gap-6">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-card rounded-2xl p-8 border border-border hover:border-primary/30 transition-all"
+                  className="bg-card rounded-2xl p-8 border border-border hover:border-primary/30 transition-all shadow-sm"
                 >
                   <div className="flex items-start gap-4">
                     <div className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
@@ -174,9 +143,9 @@ const ContactPage = () => {
                       <h3 className="text-xl font-semibold text-foreground mb-2">
                         {feature.title}
                       </h3>
-                      <p className="text-muted-foreground">
+                      <div className="text-muted-foreground">
                         {feature.description}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
