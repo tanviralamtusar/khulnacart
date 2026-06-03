@@ -90,16 +90,27 @@ const Header = () => {
       {/* Main Header */}
       <div className="container-custom py-3">
         <div className="grid grid-cols-3 items-center justify-between gap-4">
-          {/* Left: Mobile Menu Toggle */}
+          {/* Left: Desktop Nav / Mobile Menu Toggle */}
           <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="hover:bg-transparent"
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center gap-8">
+              <Link to="/" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Home</Link>
+              <Link to="/products" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Products</Link>
+              <Link to="/my-account" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Orders</Link>
+              <Link to="/auth" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Account</Link>
+            </div>
+            
+            {/* Mobile Toggle */}
+            <div className="lg:hidden">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="hover:bg-transparent"
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
           </div>
 
           {/* Center: Empty */}
@@ -183,9 +194,9 @@ const Header = () => {
 
     </header>
 
-    {/* Bottom Navigation (Mobile Only) */}
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-background border-t border-border px-4 py-2 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
-      <div className="flex items-center justify-between relative">
+    {/* Bottom Navigation (Sticky/Mobile) */}
+    <div className="fixed bottom-0 left-0 right-0 z-[100] bg-background border-t border-border px-4 py-2 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:hidden">
+      <div className="flex items-center justify-between relative max-w-lg mx-auto">
         <Link to="/" className="flex flex-col items-center gap-1 group">
           <Home className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
           <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">Home</span>
