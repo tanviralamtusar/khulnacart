@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (email: string, password: string, fullName: string, phone?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -118,6 +118,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     });
+
+    // If signup is successful, trigger the branded welcome email
+    // Since Step 1 (disabling verification) is done, user is auto-confirmed
+    if (!error && data?.user) {
+      console.log('Signup successful, triggering custom welcome email...');
+      void supabase.functions.invoke('send-order-email', {
+        body: {
+          template_key: 'welcome',
+          recipient: email,
+          customer_name: fullName,
+          customer_phone: phone || '',
+        }
+      }).catch(err => console.error('Failed to trigger welcome email:', err));
+    }
 
     return { error: error as Error | null };
   };

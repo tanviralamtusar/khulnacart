@@ -124,7 +124,7 @@ const AuthPage = () => {
           }
         } else {
           toast.success('Account created successfully!');
-          navigate('/my-account');
+          navigate('/');
         }
       }
     } finally {
