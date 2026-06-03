@@ -176,7 +176,18 @@ serve(async (req) => {
       });
     }
 
-    const isLegacyOrderNotification = !body.template_key && body.order_number && settingsMap.order_notification_enabled === "true";
+    // Determine the template key and recipient
+    let templateKey = body.template_key;
+    const recipient = body.recipient || body.customer_email;
+    const orderId = body.order_id || null;
+
+    // Detect legacy place-order webhook payload (no template_key, but contains order details)
+    const isLegacyOrderNotification = !templateKey && !!body.order_number;
+
+    if (isLegacyOrderNotification) {
+      console.log("Handling legacy order notification to owner and customer...");
+      templateKey = "order_placed";
+    }
 
     // 2. Send Admin Alert if enabled
     if (isLegacyOrderNotification && settingsMap.order_notification_enabled === "true" && settingsMap.notification_email) {
@@ -240,9 +251,6 @@ serve(async (req) => {
       });
     }
 
-    let templateKey = body.template_key;
-    const recipient = body.recipient || body.customer_email;
-
     if (!recipient) {
       console.log("No recipient email provided. Exiting.");
       return new Response(JSON.stringify({ success: true, message: "No recipient provided. Skipping customer email." }), {
@@ -291,7 +299,7 @@ serve(async (req) => {
     // Construct variables
     const vars: Record<string, string> = {
       site_name: settingsMap.email_sender_name || "Khulna Cart",
-      site_url: supabaseUrl.replace("kphkbmwycreriandedis", "khulnacart"),
+      site_url: "https://khulnacart.com",
       site_logo: "https://ahgwjwhaegwtvczqthrh.supabase.co/storage/v1/object/public/shop-assets/email.png",
       support_phone: "+880 1234-567890",
       current_year: new Date().getFullYear().toString(),
