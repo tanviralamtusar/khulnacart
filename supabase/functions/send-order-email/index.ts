@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import nodemailer from "npm:nodemailer@6.9.15";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,7 +16,6 @@ interface OrderItem {
 }
 
 interface OrderEmailRequest {
-  // Original legacy properties (kept for backwards compatibility)
   order_id?: string;
   order_number?: string;
   customer_name?: string;
@@ -26,20 +26,45 @@ interface OrderEmailRequest {
   total?: number;
   items?: Array<OrderItem>;
   notes?: string | null;
-
-  // New automation properties
-  template_key?: string;      // e.g. 'welcome', 'order_placed', 'order_shipped', etc.
-  recipient?: string;         // Customer email
-  variables?: Record<string, string>; // Dynamic variables mapping
-
-  // Test send properties
+  template_key?: string;
+  recipient?: string;
+  variables?: Record<string, string>;
   is_test_send?: boolean;
   test_recipient?: string;
   test_subject?: string;
   test_body?: string;
-
-  // Added dynamically from place-order or other flows
   customer_email?: string | null;
+}
+
+async function sendViaResend(
+  resend: Resend,
+  from: string,
+  to: string[],
+  subject: string,
+  html: string
+) {
+  return await resend.emails.send({ from, to, subject, html });
+}
+
+async function sendViaGmail(
+  gmailUser: string,
+  gmailPass: string,
+  fromName: string,
+  to: string[],
+  subject: string,
+  html: string
+) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user: gmailUser, pass: gmailPass },
+  });
+
+  return await transporter.sendMail({
+    from: `"${fromName}" <${gmailUser}>`,
+    to: to.join(", "),
+    subject,
+    html,
+  });
 }
 
 serve(async (req) => {
@@ -66,7 +91,10 @@ serve(async (req) => {
       .from("admin_settings")
       .select("key, value")
       .in("key", [
+        "email_provider",
         "resend_api_key",
+        "gmail_address",
+        "gmail_app_password",
         "notification_email",
         "order_notification_enabled",
         "email_sender_name",
@@ -78,6 +106,7 @@ serve(async (req) => {
       ]);
 
     const settingsMap: Record<string, string> = {
+      email_provider: "resend",
       email_sender_name: "Khulna Cart",
       email_sender_address: "onboarding@resend.dev",
       email_enabled: "true",
@@ -90,16 +119,8 @@ serve(async (req) => {
       settingsMap[s.key] = s.value;
     });
 
-    const resendApiKey = settingsMap.resend_api_key;
-    if (!resendApiKey) {
-      console.log("Missing Resend API key");
-      return new Response(JSON.stringify({ success: false, message: "Email API not configured" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const resend = new Resend(resendApiKey);
+    const provider = settingsMap.email_provider || "resend";
+    const emailEnabled = settingsMap.email_enabled === "true";
     const body: OrderEmailRequest = await req.json();
 
     // 1. Handle Test Send from Admin UI
@@ -115,16 +136,31 @@ serve(async (req) => {
         });
       }
 
-      console.log(`Sending test email to: ${testRecipient}`);
+      console.log(`Sending test email via ${provider} to: ${testRecipient}`);
+      const htmlContent = testBody.includes("<") ? testBody : `<div style="font-family: Arial; padding: 20px;">${testBody.replace(/\n/g, "<br>")}</div>`;
 
-      const emailResponse = await resend.emails.send({
-        from: `${settingsMap.email_sender_name} <${settingsMap.email_sender_address}>`,
-        to: [testRecipient],
-        subject: testSubject,
-        html: testBody.includes("<") ? testBody : `<div style="font-family: Arial; padding: 20px;">${testBody.replace(/\n/g, "<br>")}</div>`,
-      });
+      let emailResponse;
+      if (provider === "gmail") {
+        const gmailUser = settingsMap.gmail_address;
+        const gmailPass = settingsMap.gmail_app_password;
+        if (!gmailUser || !gmailPass) {
+          return new Response(JSON.stringify({ success: false, message: "Gmail credentials not configured" }), {
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        emailResponse = await sendViaGmail(gmailUser, gmailPass, settingsMap.email_sender_name, [testRecipient], testSubject, htmlContent);
+      } else {
+        const resendApiKey = settingsMap.resend_api_key;
+        if (!resendApiKey) {
+          return new Response(JSON.stringify({ success: false, message: "Resend API key not configured" }), {
+            status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const resend = new Resend(resendApiKey);
+        const from = `${settingsMap.email_sender_name} <${settingsMap.email_sender_address}>`;
+        emailResponse = await sendViaResend(resend, from, [testRecipient], testSubject, htmlContent);
+      }
 
-      // Log the test send
       await supabase.from("email_logs").insert({
         recipient_email: testRecipient,
         subject: testSubject,
@@ -134,29 +170,17 @@ serve(async (req) => {
       });
 
       return new Response(JSON.stringify({ success: true, data: emailResponse }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Determine the template key and recipient
-    let templateKey = body.template_key;
-    let recipient = body.recipient || body.customer_email;
-    let orderId = body.order_id || null;
+    const isLegacyOrderNotification = !body.template_key && body.order_number && settingsMap.order_notification_enabled === "true";
 
-    // Detect legacy place-order webhook payload (no template_key, but contains order details)
-    const isLegacyOrderNotification = !templateKey && body.order_number && settingsMap.order_notification_enabled === "true";
-
-    if (isLegacyOrderNotification) {
-      console.log("Handling legacy order notification to owner and customer...");
-      templateKey = "order_placed";
-    }
-
-    // 2. Send Admin Alert if a new order comes in and admin alerts are enabled
+    // 2. Send Admin Alert if enabled
     if (isLegacyOrderNotification && settingsMap.order_notification_enabled === "true" && settingsMap.notification_email) {
       try {
         console.log(`Sending new order notification to store owner: ${settingsMap.notification_email}`);
-        
+
         const itemsHtml = (body.items || []).map(item => `
           <tr>
             <td style="padding: 12px; border-bottom: 1px solid #eee;">${item.name}</td>
@@ -188,64 +212,62 @@ serve(async (req) => {
           </div>
         `;
 
-        await resend.emails.send({
-          from: `Store Alerts <${settingsMap.email_sender_address}>`,
-          to: [settingsMap.notification_email],
-          subject: `🔔 New Order #${body.order_number} - ৳${(body.total || 0).toFixed(2)}`,
-          html: adminEmailHtml,
-        });
+        if (provider === "gmail") {
+          const gmailUser = settingsMap.gmail_address;
+          const gmailPass = settingsMap.gmail_app_password;
+          if (gmailUser && gmailPass) {
+            await sendViaGmail(gmailUser, gmailPass, settingsMap.email_sender_name, [settingsMap.notification_email], `🔔 New Order #${body.order_number} - ৳${(body.total || 0).toFixed(2)}`, adminEmailHtml);
+          }
+        } else {
+          const resendApiKey = settingsMap.resend_api_key;
+          if (resendApiKey) {
+            const resend = new Resend(resendApiKey);
+            await sendViaResend(resend, `Store Alerts <${settingsMap.email_sender_address}>`, [settingsMap.notification_email], `🔔 New Order #${body.order_number} - ৳${(body.total || 0).toFixed(2)}`, adminEmailHtml);
+          }
+        }
       } catch (ownerNotifError) {
         console.error("Failed to send owner notification email:", ownerNotifError);
       }
     }
 
-    // 3. Send Customer Email if template and recipient are configured
-    if (!settingsMap.email_enabled || settingsMap.email_enabled !== "true") {
+    // 3. Send Customer Email
+    if (!emailEnabled) {
       console.log("Customer email automations are globally disabled.");
       return new Response(JSON.stringify({ success: true, message: "Admin alert sent. Customer emails disabled." }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Skip if no recipient email is available
+    let templateKey = body.template_key;
+    const recipient = body.recipient || body.customer_email;
+
     if (!recipient) {
-      console.log("No recipient email provided for template send. Exiting.");
+      console.log("No recipient email provided. Exiting.");
       return new Response(JSON.stringify({ success: true, message: "No recipient provided. Skipping customer email." }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     // Verify auto-send rules
     if (templateKey === "welcome" && settingsMap.email_auto_send_welcome !== "true") {
-      console.log("Welcome emails auto-send is disabled.");
       return new Response(JSON.stringify({ success: true, message: "Welcome email auto-send disabled." }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
     if (templateKey === "order_placed" && settingsMap.email_auto_send_order_placed !== "true") {
-      console.log("Order confirmation receipts auto-send is disabled.");
       return new Response(JSON.stringify({ success: true, message: "Order placed receipt auto-send disabled." }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
     if (templateKey?.startsWith("order_") && templateKey !== "order_placed" && settingsMap.email_auto_send_status_change !== "true") {
-      console.log(`Order status change email auto-send is disabled for key: ${templateKey}`);
       return new Response(JSON.stringify({ success: true, message: "Order status change email auto-send disabled." }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (!templateKey) {
       return new Response(JSON.stringify({ success: false, message: "template_key is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -260,15 +282,14 @@ serve(async (req) => {
     if (templateError || !template) {
       console.log(`No active email template found for key: ${templateKey}`);
       return new Response(JSON.stringify({ success: false, message: `Active template not found for key: ${templateKey}` }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Construct the context variables dictionary
+    // Construct variables
     const vars: Record<string, string> = {
       site_name: settingsMap.email_sender_name || "Khulna Cart",
-      site_url: supabaseUrl.replace("kphkbmwycreriandedis", "khulnacart"), // fallback/best-effort
+      site_url: supabaseUrl.replace("kphkbmwycreriandedis", "khulnacart"),
       support_phone: "+880 1234-567890",
       current_year: new Date().getFullYear().toString(),
       customer_name: body.customer_name || "Customer",
@@ -283,29 +304,19 @@ serve(async (req) => {
       ...(body.variables || {}),
     };
 
-    // If order details are provided, compile order items table
     if (body.items && body.items.length > 0) {
-      const itemsHtml = body.items.map(item => `
+      vars["order_items"] = body.items.map(item => `
         <tr>
-          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: left;">
-            ${item.name}
-          </td>
-          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
-            ${item.quantity}
-          </td>
-          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
-            ৳${(item.price * item.quantity).toFixed(2)}
-          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: left;">${item.name}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">৳${(item.price * item.quantity).toFixed(2)}</td>
         </tr>
       `).join("");
-      vars["order_items"] = itemsHtml;
     } else {
       vars["order_items"] = "";
     }
+    vars["discount_row"] = "";
 
-    vars["discount_row"] = ""; // Optional discount placeholder row
-
-    // Interpolate subject and html body
     let subject = template.subject_template;
     let bodyHtml = template.html_template;
 
@@ -315,38 +326,46 @@ serve(async (req) => {
       bodyHtml = bodyHtml.replace(placeholder, val);
     }
 
-    console.log(`Sending email to: ${recipient} with template: ${templateKey}`);
+    console.log(`Sending email via ${provider} to: ${recipient} with template: ${templateKey}`);
 
-    const emailResponse = await resend.emails.send({
-      from: `${settingsMap.email_sender_name} <${settingsMap.email_sender_address}>`,
-      to: [recipient],
-      subject: subject,
-      html: bodyHtml,
-    });
+    let emailResponse;
+    if (provider === "gmail") {
+      const gmailUser = settingsMap.gmail_address;
+      const gmailPass = settingsMap.gmail_app_password;
+      if (!gmailUser || !gmailPass) {
+        throw new Error("Gmail credentials not configured");
+      }
+      emailResponse = await sendViaGmail(gmailUser, gmailPass, settingsMap.email_sender_name, [recipient], subject, bodyHtml);
+    } else {
+      const resendApiKey = settingsMap.resend_api_key;
+      if (!resendApiKey) {
+        throw new Error("Resend API key not configured");
+      }
+      const resend = new Resend(resendApiKey);
+      const from = `${settingsMap.email_sender_name} <${settingsMap.email_sender_address}>`;
+      emailResponse = await sendViaResend(resend, from, [recipient], subject, bodyHtml);
+    }
 
     console.log("Email dispatch completed:", JSON.stringify(emailResponse));
 
-    // Log the transaction
     await supabase.from("email_logs").insert({
       recipient_email: recipient,
       subject: subject,
       body: bodyHtml,
       template_key: templateKey,
-      order_id: orderId,
+      order_id: body.order_id || null,
       status: "sent",
       provider_response: emailResponse,
     });
 
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
   } catch (error: any) {
     console.error("send-order-email error:", error);
     return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });

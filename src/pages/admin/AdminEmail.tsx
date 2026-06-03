@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, Settings, History, Send, RefreshCw, Save, Pencil, Check, X, Eye } from "lucide-react";
@@ -48,7 +49,10 @@ interface EmailLog {
 }
 
 interface EmailSettings {
+  email_provider: string;
   resend_api_key: string;
+  gmail_address: string;
+  gmail_app_password: string;
   notification_email: string;
   order_notification_enabled: string;
   email_sender_name: string;
@@ -80,7 +84,10 @@ export default function AdminEmail() {
   
   // Settings state
   const [settings, setSettings] = useState<EmailSettings>({
+    email_provider: "resend",
     resend_api_key: "",
+    gmail_address: "",
+    gmail_app_password: "",
     notification_email: "",
     order_notification_enabled: "false",
     email_sender_name: "Khulna Cart",
@@ -120,7 +127,10 @@ export default function AdminEmail() {
         .from("admin_settings")
         .select("key, value")
         .in("key", [
+          "email_provider",
           "resend_api_key",
+          "gmail_address",
+          "gmail_app_password",
           "notification_email",
           "order_notification_enabled",
           "email_sender_name",
@@ -362,9 +372,9 @@ export default function AdminEmail() {
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Resend API Configuration</CardTitle>
+                <CardTitle>Email Provider Configuration</CardTitle>
                 <CardDescription>
-                  Configure your email delivery gateway via Resend
+                  Choose between Resend or Gmail SMTP for sending transactional emails
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -383,43 +393,104 @@ export default function AdminEmail() {
                   />
                 </div>
 
+                {/* Provider Selector */}
                 <div className="space-y-2">
-                  <Label htmlFor="apiKey">Resend API Key</Label>
-                  <Input
-                    id="apiKey"
-                    type="password"
-                    placeholder="re_..."
-                    value={settings.resend_api_key}
-                    onChange={(e) => setSettings({ ...settings, resend_api_key: e.target.value })}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Get an API key from your <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-blue-500 underline">Resend Dashboard</a>.
-                  </p>
+                  <Label>Email Provider</Label>
+                  <Select
+                    value={settings.email_provider}
+                    onValueChange={(value) => setSettings({ ...settings, email_provider: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="resend">Resend</SelectItem>
+                      <SelectItem value="gmail">Gmail SMTP</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="senderName">Sender Display Name</Label>
-                    <Input
-                      id="senderName"
-                      placeholder="e.g., Khulna Cart"
-                      value={settings.email_sender_name}
-                      onChange={(e) => setSettings({ ...settings, email_sender_name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="senderAddress">Sender Email Address</Label>
-                    <Input
-                      id="senderAddress"
-                      placeholder="e.g., info@yourdomain.com"
-                      value={settings.email_sender_address}
-                      onChange={(e) => setSettings({ ...settings, email_sender_address: e.target.value })}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Use <code className="bg-muted px-1 py-0.5 rounded">onboarding@resend.dev</code> for testing, or set up a custom verified domain in Resend.
-                    </p>
-                  </div>
-                </div>
+                {/* Resend Fields */}
+                {settings.email_provider === "resend" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="apiKey">Resend API Key</Label>
+                      <Input
+                        id="apiKey"
+                        type="password"
+                        placeholder="re_..."
+                        value={settings.resend_api_key}
+                        onChange={(e) => setSettings({ ...settings, resend_api_key: e.target.value })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Get an API key from your <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-blue-500 underline">Resend Dashboard</a>.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="senderName">Sender Display Name</Label>
+                        <Input
+                          id="senderName"
+                          placeholder="e.g., Khulna Cart"
+                          value={settings.email_sender_name}
+                          onChange={(e) => setSettings({ ...settings, email_sender_name: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="senderAddress">Sender Email Address</Label>
+                        <Input
+                          id="senderAddress"
+                          placeholder="e.g., info@yourdomain.com"
+                          value={settings.email_sender_address}
+                          onChange={(e) => setSettings({ ...settings, email_sender_address: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Must be a verified domain in Resend, or use <code className="bg-muted px-1 py-0.5 rounded">onboarding@resend.dev</code> for testing.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Gmail Fields */}
+                {settings.email_provider === "gmail" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="gmailAddress">Gmail Address</Label>
+                      <Input
+                        id="gmailAddress"
+                        placeholder="yourstore@gmail.com"
+                        value={settings.gmail_address}
+                        onChange={(e) => setSettings({ ...settings, gmail_address: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="gmailAppPassword">Gmail App Password</Label>
+                      <Input
+                        id="gmailAppPassword"
+                        type="password"
+                        placeholder="16-character app password"
+                        value={settings.gmail_app_password}
+                        onChange={(e) => setSettings({ ...settings, gmail_app_password: e.target.value })}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Generate an app password in your Google Account {"→"} Security {"→"} 2-Step Verification {"→"} App passwords. Your Gmail address above is used as the sender.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="senderName">Sender Display Name</Label>
+                      <Input
+                        id="senderName"
+                        placeholder="e.g., Khulna Cart"
+                        value={settings.email_sender_name}
+                        onChange={(e) => setSettings({ ...settings, email_sender_name: e.target.value })}
+                      />
+                    </div>
+                  </>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="notifEmail">Notification Recipient Email</Label>
