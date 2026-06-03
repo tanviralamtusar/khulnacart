@@ -1,10 +1,10 @@
-import { useState } from 'react';
+
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Star, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Product, ProductVariation } from '@/types';
+import { Product } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { toggleWishlist, selectWishlistItems } from '@/store/slices/wishlistSlice';
 import { toast } from 'sonner';
@@ -19,13 +19,9 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const wishlistItems = useAppSelector(selectWishlistItems);
   const isInWishlist = wishlistItems.some((item) => item.id === product.id);
   
-  // State for selected variation - no auto-select, customer must choose manually
-  const hasVariations = product.variations && product.variations.length > 0;
-  const [selectedVariation, setSelectedVariation] = useState<ProductVariation | undefined>(undefined);
-
-  // Get display price based on variation or base price
-  const displayPrice = selectedVariation?.price ?? product.price;
-  const displayOriginalPrice = selectedVariation?.original_price ?? product.originalPrice;
+  // Get display price
+  const displayPrice = product.price;
+  const displayOriginalPrice = product.originalPrice;
 
   const formatPrice = (price: number) => {
     return `৳${price.toLocaleString('en-BD')}`;
@@ -38,11 +34,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     toast.success(isInWishlist ? 'Removed from wishlist' : 'Added to wishlist!');
   };
 
-  const handleVariationClick = (e: React.MouseEvent, variation: ProductVariation) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setSelectedVariation(variation);
-  };
+
 
   return (
     <motion.div
@@ -99,11 +91,6 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
           {/* Content */}
           <div className="p-4">
-            {/* Category */}
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              {product.category}
-            </p>
-
             {/* Name */}
             <h3 className="font-medium text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
               {product.name}
@@ -127,39 +114,6 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
                 ({product.reviewCount})
               </span>
             </div>
-
-            {/* Variations Selector - Compact Size Display */}
-            {hasVariations && (
-              <div className="mb-3">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-xs font-medium text-muted-foreground shrink-0">Option:</span>
-                  {product.variations!.map((variation) => {
-                    // Remove 'Size ' prefix if present, but keep other custom variation strings like 1kg, 500ml etc.
-                    const sizeNumber = variation.name.replace(/^(Size\s*)/i, '');
-                    return (
-                      <button
-                        key={variation.id}
-                        onClick={(e) => handleVariationClick(e, variation)}
-                        className={`min-w-[28px] h-7 px-1.5 text-xs font-semibold rounded border transition-all ${
-                          selectedVariation?.id === variation.id
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-background text-foreground hover:border-primary'
-                        }`}
-                        title={variation.name}
-                      >
-                        {sizeNumber}
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* Free Delivery Badge */}
-                {selectedVariation && (selectedVariation.name.toLowerCase().includes('5kg') || 
-                  selectedVariation.name.includes('৫কেজি') || 
-                  selectedVariation.name === '5 KG') && (
-                  <p className="text-xs font-medium text-emerald-600 mt-1">🚚 ফ্রি ডেলিভারি</p>
-                )}
-              </div>
-            )}
 
             {/* Price */}
             <div className="flex items-center gap-2">

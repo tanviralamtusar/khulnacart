@@ -9,7 +9,9 @@ import {
   ShieldCheck,
   Truck,
   RotateCcw,
-  CreditCard
+  CreditCard,
+  MessageCircle,
+  Users
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -41,6 +43,13 @@ const Footer = () => {
     { icon: Truck, text: 'Fast Delivery' },
     { icon: RotateCcw, text: 'Easy Returns' },
     { icon: CreditCard, text: 'Secure Payment' },
+  ];
+
+  const socialLinks = [
+    { icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61589114327578', label: 'Facebook Page' },
+    { icon: Users, url: 'https://facebook.com/groups/619302732562688/', label: 'Facebook Group' },
+    { icon: MessageCircle, url: 'https://wa.me/message/7ZV4YUG5ACVGD1', label: 'WhatsApp' },
+    { icon: Instagram, url: 'https://www.instagram.com/khulnacart?igsh=MXRzc3Qwc216eTF5dQ==', label: 'Instagram' },
   ];
 
   return (
@@ -83,7 +92,7 @@ const Footer = () => {
                 "Dedicated Customer Support",
                 "Hassle-free Return Policy"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-slate-800 group">
+                <li key={i} className="flex items-center gap-3 text-slate-500 group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center group-hover:border-primary/50 transition-colors">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   </div>
@@ -114,18 +123,21 @@ const Footer = () => {
           {/* Column 3: About & Mission */}
           <div className="md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right space-y-8">
             <div className="space-y-4">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-900">Our Mission</h4>
-              <p className="text-slate-700 max-w-sm leading-relaxed">
-                Just place the order, we will be at your door soon. <span className="font-semibold text-slate-900">Your parcel is safe</span> until we hand it over to you. We really love your feedback.
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Our Mission</h4>
+              <p className="text-slate-500 max-w-sm leading-relaxed">
+                Just place the order, we will be at your door soon. <span className="font-semibold text-slate-900">Your parcel is safe</span> until we hand it over to you. We really love your feedback and strive to improve every day.
               </p>
             </div>
             
             <div className="space-y-6">
               <div className="flex items-center justify-center md:justify-end gap-3">
-                {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
+                {socialLinks.map(({ icon: Icon, url, label }, i) => (
                   <a 
                     key={i} 
-                    href="#" 
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={label}
                     className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
                   >
                     <Icon className="w-5 h-5" />

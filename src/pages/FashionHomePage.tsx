@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
-import heroSlide1 from '@/assets/hero-slide-1.jpg';
-import heroSlide2 from '@/assets/hero-slide-2.jpg';
-import heroSlide3 from '@/assets/hero-slide-3.jpg';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingBag, Heart, User, ChevronRight, ChevronLeft,
@@ -178,7 +175,7 @@ export default function FashionHomePage() {
         if (categoriesData) {
           // For categories without images, fetch first product image in parallel
           const catsNeedingImages = categoriesData.filter(cat => !cat.image_url);
-          let productImages: Record<string, string | null> = {};
+          const productImages: Record<string, string | null> = {};
           
           if (catsNeedingImages.length > 0) {
             const imageResults = await Promise.all(
@@ -220,168 +217,33 @@ export default function FashionHomePage() {
     return `৳${price.toLocaleString('bn-BD')}`;
   };
 
-  // Get icon component from string name
-  const getIconComponent = (iconName: string) => {
-    const icons: { [key: string]: any } = { Truck, RotateCcw, Shield, Headphones };
-    return icons[iconName] || Truck;
-  };
+  // Derived display lists
+  const displayProducts = featuredProducts.length > 0 ? featuredProducts : recentProducts;
+  const displayNewArrivals = newArrivals;
 
-  // Header promo text from home content
-  const headerPromoText = homeContent.header_promo?.text || 'Free delivery nationwide on orders ৳2000+ | 7 Days Easy Return';
-  const headerPromoEnabled = homeContent.header_promo?.enabled !== false;
-
-  // Hero slides from home content, banners, or defaults
-  const defaultSlides = [
-    {
-      id: '1',
-      title: 'New Two Piece Collection',
-      subtitle: 'Exclusive Design, Premium Quality - Up to 30% Off',
-      image: heroSlide1,
-      link: '/products?category=two-piece',
-      badge: '30% Off'
-    },
-    {
-      id: '2',
-      title: 'Three Piece Special',
-      subtitle: 'Premium Fabric, Elegant Design - New Arrival',
-      image: heroSlide2,
-      link: '/products?category=three-piece',
-      badge: 'New'
-    },
-    {
-      id: '3',
-      title: 'Summer Collection 2026',
-      subtitle: 'Comfortable and Stylish - Perfect for Summer',
-      image: heroSlide3,
-      link: '/products',
-      badge: 'Trending'
-    }
-  ];
-
-  // Priority: home_page_content hero_slides > banners > defaultSlides
-  const getHeroSlides = () => {
-    const contentSlides = homeContent.hero_slides?.slides;
-    if (contentSlides && contentSlides.length > 0 && contentSlides.some((s: any) => s.image)) {
-      return contentSlides.map((s: any, index: number) => ({
-        id: s.id || String(index),
-        title: s.title || '',
-        subtitle: s.subtitle || '',
-        image: s.image || defaultSlides[index]?.image || heroSlide1,
-        link: s.link || '/products',
-        badge: s.badge || ''
-      }));
-    }
-    if (banners.length > 0) {
-      return banners.map(b => ({
-        id: b.id,
-        title: b.title,
-        subtitle: b.subtitle || '',
-        image: b.image_url,
-        link: b.link_url || '/products',
-        badge: 'New'
-      }));
-    }
-    return defaultSlides;
-  };
-
-  const heroSlides = getHeroSlides();
-
-  // Auto-slide for hero carousel
-  useEffect(() => {
-    if (heroSlides.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroSlides.length]);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  }, [heroSlides.length]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  }, [heroSlides.length]);
-
-  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Convert to ProductType for cart
-    const productForCart: ProductType = {
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      description: '',
-      price: product.price,
-      originalPrice: product.original_price || undefined,
-      images: product.images || [],
-      category: '',
-      rating: product.rating || 0,
-      reviewCount: product.review_count || 0,
-      stock: 100,
-    };
-    dispatch(addToCart({ product: productForCart, quantity: 1 }));
-    dispatch(openCart());
-    toast.success('Added to cart');
-  };
-
-  const handleBuyNow = (product: Product, e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    const productForCart: ProductType = {
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      description: '',
-      price: product.price,
-      originalPrice: product.original_price || undefined,
-      images: product.images || [],
-      category: '',
-      rating: product.rating || 0,
-      reviewCount: product.review_count || 0,
-      stock: 100,
-    };
-
-    dispatch(addToCart({ product: productForCart, quantity: 1 }));
-    navigate('/checkout');
-  };
-
-  const handleToggleWishlist = (product: Product, e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Convert to ProductType for wishlist
-    const productForWishlist: ProductType = {
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      description: '',
-      price: product.price,
-      originalPrice: product.original_price || undefined,
-      images: product.images || [],
-      category: '',
-      rating: product.rating || 0,
-      reviewCount: product.review_count || 0,
-      stock: 100,
-    };
-    dispatch(toggleWishlist(productForWishlist));
-  };
-
-  const isInWishlist = (productId: string) => {
-    return wishlistItems.some((item: any) => item.id === productId);
-  };
-
-  const getDiscount = (price: number, originalPrice: number | null) => {
+  // Compute discount percentage
+  const getDiscount = (price: number, originalPrice: number | null): number | null => {
     if (!originalPrice || originalPrice <= price) return null;
     return Math.round(((originalPrice - price) / originalPrice) * 100);
   };
 
-  const displayProducts = featuredProducts;
-  const displayNewArrivals = newArrivals;
-  
-  const featuresBarItems = homeContent.features_bar?.items || [
-    { icon: 'Truck', title: 'Fast Delivery', desc: 'Free delivery nationwide' },
-    { icon: 'RotateCcw', title: 'Instant Check', desc: 'Return policy' },
-    { icon: 'Shield', title: 'Cash on Delivery', desc: 'Payment on delivery' },
-    { icon: 'Headphones', title: '24/7 Support', desc: 'Contact anytime' },
-  ];
+  // Wishlist helpers
+  const isInWishlist = (productId: string) =>
+    wishlistItems.some((item: any) => item.id === productId);
+
+  const handleToggleWishlist = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(toggleWishlist({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      original_price: product.original_price,
+      images: product.images,
+      slug: product.slug,
+    } as any));
+    const inWishlist = isInWishlist(product.id);
+    toast(inWishlist ? 'Removed from wishlist' : 'Added to wishlist');
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
