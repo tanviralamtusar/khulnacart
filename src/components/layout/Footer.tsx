@@ -83,7 +83,7 @@ const Footer = () => {
                 "Dedicated Customer Support",
                 "Hassle-free Return Policy"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-slate-500 group">
+                <li key={i} className="flex items-center gap-3 text-slate-800 group">
                   <div className="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center group-hover:border-primary/50 transition-colors">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   </div>
@@ -95,15 +95,15 @@ const Footer = () => {
 
           {/* Column 2: Customer Support Links */}
           <div className="md:col-span-3 space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Customer Support</h4>
-            <ul className="space-y-3 inline-block text-left md:text-left">
+            <h4 className="text-base font-black uppercase tracking-widest text-slate-900">Customer Support</h4>
+            <ul className="space-y-4 inline-block text-center md:text-left w-full">
               {[
                 { label: "Login", to: "/auth" },
                 { label: "Register", to: "/auth" },
                 { label: "Contact Us", to: "/contact" }
               ].map((link, i) => (
-                <li key={i} className="text-center md:text-left">
-                  <Link to={link.to} className="text-slate-500 hover:text-primary transition-colors inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all">
+                <li key={i} className="text-center md:text-left flex justify-center md:justify-start">
+                  <Link to={link.to} className="text-slate-900 hover:text-primary transition-colors text-lg font-bold">
                     {link.label}
                   </Link>
                 </li>
@@ -114,8 +114,8 @@ const Footer = () => {
           {/* Column 3: About & Mission */}
           <div className="md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right space-y-8">
             <div className="space-y-4">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Our Mission</h4>
-              <p className="text-slate-500 max-w-sm leading-relaxed">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-900">Our Mission</h4>
+              <p className="text-slate-700 max-w-sm leading-relaxed">
                 Just place the order, we will be at your door soon. <span className="font-semibold text-slate-900">Your parcel is safe</span> until we hand it over to you. We really love your feedback.
               </p>
             </div>

@@ -10,8 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingBag, Truck, ArrowLeft, Loader2, CheckCircle, Banknote } from 'lucide-react';
-import { ShippingMethodSelector, ShippingZone, SHIPPING_RATES } from '@/components/checkout/ShippingMethodSelector';
+import { ShoppingBag, Truck, ArrowLeft, Loader2, Banknote, CreditCard } from 'lucide-react';
+import { ShippingMethodSelector, ShippingZone } from '@/components/checkout/ShippingMethodSelector';
 import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -101,7 +101,8 @@ const CheckoutPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const draftOrderId = useRef<string | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [shippingZone, setShippingZone] = useState<ShippingZone>('outside_dhaka');
+  const [shippingZone, setShippingZone] = useState<ShippingZone>('inside_khulna');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
 
   const [shippingForm, setShippingForm] = useState<ShippingForm>({
     name: '',
@@ -109,8 +110,10 @@ const CheckoutPage = () => {
     address: '',
   });
 
+  const SHIPPING_RATES = { inside_khulna: 49 };
   const shippingCost = SHIPPING_RATES[shippingZone];
-  const total = cartTotal + shippingCost;
+  const onlineDiscount = paymentMethod === 'online' && cartTotal >= 200 ? 20 : 0;
+  const total = cartTotal + shippingCost - onlineDiscount;
 
   // Load saved address if user is logged in
   useEffect(() => {
@@ -161,23 +164,16 @@ const CheckoutPage = () => {
   }, [cartItems, authLoading, navigate]);
 
   // Track InitiateCheckout event once (both client and server side with same event ID)
-  // Also send user data if form is filled for better match quality
   useEffect(() => {
     if (isReady && cartItems.length > 0 && !hasTrackedCheckout.current) {
-      console.log('Firing InitiateCheckout event (client + server) with shared event_id');
-      
       const contentIds = cartItems.map(item => item.product.id);
       const numItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-      
-      // Generate shared event ID for deduplication
       const eventId = `InitiateCheckout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
-      // Extract user data from form if available
       const nameParts = shippingForm.name.trim().split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       
-      // Update client-side pixel with user data if available
       if (shippingForm.phone || firstName) {
         setUserData?.({
           phone: shippingForm.phone,
@@ -186,7 +182,6 @@ const CheckoutPage = () => {
         });
       }
       
-      // Client-side tracking with event ID
       if (window.fbq) {
         window.fbq('track', 'InitiateCheckout', {
           content_ids: contentIds,
@@ -196,7 +191,6 @@ const CheckoutPage = () => {
         }, { eventID: eventId });
       }
       
-      // Server-side tracking via CAPI with same event ID and user data
       trackServerCheckout({
         contentIds,
         value: cartTotal,
@@ -208,42 +202,12 @@ const CheckoutPage = () => {
           firstName: firstName || undefined,
           lastName: lastName || undefined,
         } : undefined,
-      }).then(result => {
-        console.log('[CAPI] InitiateCheckout result:', result);
-      }).catch(err => {
-        console.error('[CAPI] InitiateCheckout error:', err);
       });
       
       hasTrackedCheckout.current = true;
     }
   }, [isReady, cartItems, cartTotal, shippingForm, setUserData, trackServerCheckout]);
 
-  // Track user data update when phone is entered (for better match quality)
-  const hasTrackedPhoneUpdate = useRef(false);
-  useEffect(() => {
-    // Only track once when phone is filled with a valid number
-    if (!hasTrackedPhoneUpdate.current && 
-        shippingForm.phone && 
-        /^(\+?880)?01[3-9]\d{8}$/.test(shippingForm.phone.replace(/\s/g, '')) &&
-        cartItems.length > 0) {
-      
-      const nameParts = shippingForm.name.trim().split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-      
-      // Update client-side pixel with user data
-      setUserData?.({
-        phone: shippingForm.phone,
-        firstName,
-        lastName,
-      });
-      
-      console.log('Updated Facebook Pixel with user data for better matching');
-      hasTrackedPhoneUpdate.current = true;
-    }
-  }, [shippingForm.phone, shippingForm.name, cartItems.length, setUserData]);
-
-  // Save draft order when form changes
   const saveDraftOrder = useCallback(async () => {
     if (cartItems.length === 0) return;
     
@@ -272,37 +236,15 @@ const CheckoutPage = () => {
 
     try {
       if (draftOrderId.current) {
-        // Update existing draft
-        await supabase
-          .from('draft_orders')
-          .update(draftData)
-          .eq('id', draftOrderId.current);
+        await supabase.from('draft_orders').update(draftData).eq('id', draftOrderId.current);
       } else {
-        // Check if there's an existing draft for this session
-        const { data: existing } = await supabase
-          .from('draft_orders')
-          .select('id')
-          .eq('session_id', sessionId)
-          .eq('is_converted', false)
-          .maybeSingle();
-        
+        const { data: existing } = await supabase.from('draft_orders').select('id').eq('session_id', sessionId).eq('is_converted', false).maybeSingle();
         if (existing) {
           draftOrderId.current = existing.id;
-          await supabase
-            .from('draft_orders')
-            .update(draftData)
-            .eq('id', existing.id);
+          await supabase.from('draft_orders').update(draftData).eq('id', existing.id);
         } else {
-          // Create new draft
-          const { data } = await supabase
-            .from('draft_orders')
-            .insert([draftData])
-            .select('id')
-            .single();
-          
-          if (data) {
-            draftOrderId.current = data.id;
-          }
+          const { data } = await supabase.from('draft_orders').insert([draftData]).select('id').single();
+          if (data) draftOrderId.current = data.id;
         }
       }
     } catch (error) {
@@ -310,26 +252,13 @@ const CheckoutPage = () => {
     }
   }, [cartItems, shippingForm, user, cartTotal, shippingCost, total]);
 
-  // Debounced save on form change
   useEffect(() => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    
-    saveTimeoutRef.current = setTimeout(() => {
-      saveDraftOrder();
-    }, 1000); // Save after 1 second of no changes
-    
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => saveDraftOrder(), 1000);
+    return () => { if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current); };
   }, [shippingForm, cartItems, saveDraftOrder]);
 
-  const formatPrice = (price: number) => {
-    return `৳${price.toLocaleString('en-BD')}`;
-  };
+  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -349,111 +278,41 @@ const CheckoutPage = () => {
       toast({ title: "Address is required", variant: "destructive" });
       return false;
     }
-
-    // Require size selection for products that have variations
     const missingSize = cartItems.find((item) => {
       const variations = variationsByProductId[item.product.id] || item.product.variations || [];
       return variations.length > 0 && !item.variation;
     });
-
     if (missingSize) {
-      toast({
-        title: "Please select a variation",
-        description: `Select a variation for ${missingSize.product.name}`,
-        variant: "destructive",
-      });
+      toast({ title: "Please select a variation", description: `Select a variation for ${missingSize.product.name}`, variant: "destructive" });
       return false;
     }
-
     return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsSubmitting(true);
-    
     try {
-      // Extract first and last name from full name
-      const nameParts = shippingForm.name.trim().split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-      
-      // Update client-side pixel with user data for better matching
-      setUserData?.({
-        phone: shippingForm.phone,
-        firstName,
-        lastName,
-      });
-      
       const order = await createOrder({
         userId: user?.id || null,
         items: cartItems,
-        shippingAddress: {
-          name: shippingForm.name,
-          phone: shippingForm.phone,
-          address: shippingForm.address,
-        },
-        paymentMethod: 'cod',
+        shippingAddress: { name: shippingForm.name, phone: shippingForm.phone, address: shippingForm.address },
+        paymentMethod: paymentMethod,
         shippingZone: shippingZone,
       });
-      
-      // Mark draft order as converted
-      if (draftOrderId.current) {
-        await supabase
-          .from('draft_orders')
-          .update({ 
-            is_converted: true, 
-            converted_at: new Date().toISOString() 
-          })
-          .eq('id', draftOrderId.current);
-      }
-      
-      // Clear session ID for next checkout
+      if (draftOrderId.current) await supabase.from('draft_orders').update({ is_converted: true, converted_at: new Date().toISOString() }).eq('id', draftOrderId.current);
       localStorage.removeItem('checkout_session_id');
-      
-      // Mark as order placed before clearing cart to prevent redirect
       hasPlacedOrder.current = true;
-      
-      // Prepare items data for tracking on confirmation page
-      const orderItems = cartItems.map(item => ({
-        productId: item.product.id,
-        productName: item.product.name,
-        price: item.product.price,
-        quantity: item.quantity,
-      }));
-      
+      const orderItems = cartItems.map(item => ({ productId: item.product.id, productName: item.product.name, price: item.product.price, quantity: item.quantity }));
       dispatch(clearCart());
-      
-      // Navigate to confirmation page with order details including items for tracking
       navigate('/order-confirmation', {
-        state: {
-          orderNumber: order.id,
-          customerName: shippingForm.name,
-          phone: shippingForm.phone,
-          total: total,
-          items: orderItems,
-          numItems: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-          city: shippingZone === 'inside_dhaka' ? 'dhaka' : 'bangladesh',
-          district: shippingZone === 'inside_dhaka' ? 'dhaka' : undefined,
-        },
-        replace: true, // Replace to prevent back navigation to checkout
+        state: { orderNumber: order.id, customerName: shippingForm.name, phone: shippingForm.phone, total: total, items: orderItems, numItems: cartItems.reduce((sum, item) => sum + item.quantity, 0), city: 'khulna', district: 'khulna' },
+        replace: true,
       });
     } catch (error) {
       console.error('Order error:', error);
-      const msg =
-        error instanceof Error
-          ? error.message
-          : typeof error === 'string'
-            ? error
-            : JSON.stringify(error);
-      toast({
-        title: "Order placement failed",
-        description: msg || "Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Order placement failed", description: "Please try again.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -467,33 +326,20 @@ const CheckoutPage = () => {
     );
   }
 
-
   return (
     <main className="min-h-screen bg-muted/30 py-8">
       <div className="container-custom">
-        {/* Header */}
         <div className="mb-8">
           <Link to="/cart" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4">
             <ArrowLeft className="h-4 w-4" />
             Back to Cart
           </Link>
           <h1 className="font-display text-3xl font-bold text-foreground">Checkout</h1>
-          {!user && (
-            <p className="text-muted-foreground mt-2">
-              Checking out as guest.{' '}
-              <Link to="/auth" className="text-primary hover:underline">
-                Sign in
-              </Link>{' '}
-              to track your orders.
-            </p>
-          )}
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left Column - Forms */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Shipping Information */}
               <div className="bg-card rounded-xl p-6 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -505,69 +351,49 @@ const CheckoutPage = () => {
                 <div className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        placeholder="Enter your full name"
-                        value={shippingForm.name}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <Label htmlFor="name">Name *</Label>
+                      <Input id="name" name="name" placeholder="Enter your name" value={shippingForm.name} onChange={handleInputChange} required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number *</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        placeholder="01XXX-XXXXXX"
-                        value={shippingForm.phone}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <Input id="phone" name="phone" placeholder="01XXX-XXXXXX" value={shippingForm.phone} onChange={handleInputChange} required />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address">Full Address *</Label>
-                    <Input
-                      id="address"
-                      name="address"
-                      placeholder="House no, Road, Area, City, District"
-                      value={shippingForm.address}
-                      onChange={handleInputChange}
-                      required
-                    />
+                    <Input id="address" name="address" placeholder="House no, Road, Area, City, District" value={shippingForm.address} onChange={handleInputChange} required />
                   </div>
-
-                  {/* Shipping Method Selector */}
-                  <ShippingMethodSelector
-                    address={shippingForm.address}
-                    selectedZone={shippingZone}
-                    onZoneChange={setShippingZone}
-                  />
+                  <ShippingMethodSelector address={shippingForm.address} selectedZone={shippingZone} onZoneChange={setShippingZone} />
                 </div>
               </div>
 
-              {/* Payment Method - Fixed COD */}
               <div className="bg-card rounded-xl p-6 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                     <Banknote className="h-5 w-5 text-primary" />
                   </div>
                   <h2 className="font-display text-xl font-semibold text-foreground">Payment Method</h2>
                 </div>
-                
-                <div className="flex items-center gap-4 p-4 rounded-lg border-2 border-primary bg-primary/5">
-                  <Banknote className="h-6 w-6 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground">Cash on Delivery</p>
-                    <p className="text-sm text-muted-foreground">Pay when you receive your order</p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div onClick={() => setPaymentMethod('cod')} className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                    <Banknote className={`h-6 w-6 ${paymentMethod === 'cod' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <div>
+                      <p className="font-medium text-foreground">Cash on Delivery</p>
+                      <p className="text-xs text-muted-foreground">Pay when you receive</p>
+                    </div>
+                  </div>
+                  <div onClick={() => setPaymentMethod('online')} className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'online' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                    <CreditCard className={`h-6 w-6 ${paymentMethod === 'online' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <div>
+                      <p className="font-medium text-foreground">Online Payment</p>
+                      <p className="text-xs text-muted-foreground">bkash, Nagad, Rocket</p>
+                      {cartTotal >= 200 && <p className="text-[10px] text-primary font-bold mt-1">Flat ৳20 OFF</p>}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Column - Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-card rounded-xl p-6 shadow-sm sticky top-24">
                 <div className="flex items-center gap-3 mb-6">
@@ -577,110 +403,52 @@ const CheckoutPage = () => {
                   <h2 className="font-display text-xl font-semibold text-foreground">Order Summary</h2>
                 </div>
 
-                {/* Cart Items */}
                 <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
                   {cartItems.map((item) => {
-                    const itemKey = item.variation?.id
-                      ? `${item.product.id}-${item.variation.id}`
-                      : item.product.id;
+                    const itemKey = item.variation?.id ? `${item.product.id}-${item.variation.id}` : item.product.id;
                     const displayPrice = item.variation?.price ?? item.product.price;
                     const variations = variationsByProductId[item.product.id] || item.product.variations || [];
-
                     return (
                       <div key={itemKey} className="flex gap-3">
                         <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                          <img
-                            src={item.product.images[0] || '/placeholder.svg'}
-                            alt={item.product.name}
-                            className="w-full h-full object-cover"
-                          />
+                          <img src={item.product.images[0] || '/placeholder.svg'} alt={item.product.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-foreground text-sm line-clamp-2">{item.product.name}</p>
-
                           {variations.length > 0 && (
                             <div className="mt-2">
-                              <Select
-                                value={item.variation?.id}
-                                onValueChange={(variationId) => {
-                                  const v = variations.find((x) => x.id === variationId);
-                                  if (!v) return;
-                                  dispatch(
-                                    setCartItemVariation({
-                                      productId: item.product.id,
-                                      fromVariationId: item.variation?.id,
-                                      variation: v,
-                                    })
-                                  );
-                                }}
-                              >
-                                <SelectTrigger className="h-8 text-xs">
-                                  <SelectValue placeholder="Select Variation" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {variations.map((v) => (
-                                    <SelectItem key={v.id} value={v.id}>
-                                      {v.name} — ৳{Number(v.price).toLocaleString('en-BD')}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
+                              <Select value={item.variation?.id} onValueChange={(variationId) => {
+                                const v = variations.find((x) => x.id === variationId);
+                                if (v) dispatch(setCartItemVariation({ productId: item.product.id, fromVariationId: item.variation?.id, variation: v }));
+                              }}>
+                                <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select Variation" /></SelectTrigger>
+                                <SelectContent>{variations.map((v) => <SelectItem key={v.id} value={v.id}>{v.name} — ৳{Number(v.price).toLocaleString('en-BD')}</SelectItem>)}</SelectContent>
                               </Select>
                             </div>
                           )}
-
                           <p className="text-sm text-muted-foreground mt-2">Qty: {item.quantity}</p>
                         </div>
-                        <p className="font-semibold text-foreground text-sm">
-                          {formatPrice(displayPrice * item.quantity)}
-                        </p>
+                        <p className="font-semibold text-foreground text-sm">{formatPrice(displayPrice * item.quantity)}</p>
                       </div>
                     );
                   })}
                 </div>
 
                 <Separator className="my-4" />
-
-                {/* Pricing */}
                 <div className="space-y-3 text-sm">
+                  <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="font-medium text-foreground">{formatPrice(cartTotal)}</span></div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium text-foreground">{formatPrice(cartTotal)}</span>
+                    <span className="text-muted-foreground">Shipping (Khulna City)</span>
+                    <span className="font-medium text-foreground">{formatPrice(shippingCost)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      Shipping ({shippingZone === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'})
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {formatPrice(shippingCost)}
-                    </span>
-                  </div>
+                  {onlineDiscount > 0 && <div className="flex justify-between text-green-600 font-medium"><span>Online Payment Discount</span><span>-{formatPrice(onlineDiscount)}</span></div>}
                 </div>
-
                 <Separator className="my-4" />
-
-                <div className="flex justify-between items-center mb-6">
-                  <span className="font-display text-lg font-semibold text-foreground">Total</span>
-                  <span className="font-display text-2xl font-bold text-primary">{formatPrice(total)}</span>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full gradient-hero text-primary-foreground h-12 text-base"
-                  disabled={isSubmitting || cartItems.length === 0}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>Place Order • {formatPrice(total)}</>
-                  )}
+                <div className="flex justify-between items-center mb-6"><span className="font-display text-lg font-semibold text-foreground">Total</span><span className="font-display text-2xl font-bold text-primary">{formatPrice(total)}</span></div>
+                <Button type="submit" className="w-full gradient-hero text-primary-foreground h-12 text-base" disabled={isSubmitting || cartItems.length === 0}>
+                  {isSubmitting ? <><Loader2 className="h-5 w-5 animate-spin mr-2" />Processing...</> : <>Place Order • {formatPrice(total)}</>}
                 </Button>
-
-                <p className="text-xs text-center text-muted-foreground mt-4">
-                  By placing your order, you agree to our Terms of Service and Privacy Policy.
-                </p>
+                <p className="text-xs text-center text-muted-foreground mt-4">By placing your order, you agree to our Terms of Service and Privacy Policy.</p>
               </div>
             </div>
           </div>

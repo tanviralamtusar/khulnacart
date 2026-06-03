@@ -89,7 +89,7 @@ const ContactPage = () => {
           <p>Cash on Delivery, bkash, Nagad, Rocket</p>
           <p className="font-medium">Delivery area (Inside khulna, Same day delivery)</p>
           <p className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-lg font-bold text-sm">
-            Flat TK 20 off on Online payment (bkash, ngd, rckt) *On Minimum payment (200 Tk)
+            Flat TK 20 off on Online payment (bkash, nagad, rocket) *On Minimum payment (200 Tk)
           </p>
         </div>
       ),
