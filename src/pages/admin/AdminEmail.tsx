@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Settings, History, Send, RefreshCw, Save, Pencil, Check, X, Eye } from "lucide-react";
+import { Mail, Settings, History, Send, RefreshCw, Save, Pencil, Eye } from "lucide-react";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -102,7 +101,7 @@ export default function AdminEmail() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
   const [editedSubject, setEditedSubject] = useState("");
-  const [editedHtml, setEditedMessage] = useState("");
+  const [editedHtml, setEditedHtml] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
   
@@ -212,7 +211,7 @@ export default function AdminEmail() {
   const openEditTemplate = (template: EmailTemplate) => {
     setEditingTemplate(template);
     setEditedSubject(template.subject_template);
-    setEditedMessage(template.html_template);
+    setEditedHtml(template.html_template);
   };
 
   const updateTemplate = async () => {
@@ -327,16 +326,13 @@ export default function AdminEmail() {
 
   if (loading) {
     return (
-      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
-      </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -393,7 +389,6 @@ export default function AdminEmail() {
                   />
                 </div>
 
-                {/* Provider Selector */}
                 <div className="space-y-2">
                   <Label>Email Provider</Label>
                   <Select
@@ -410,7 +405,6 @@ export default function AdminEmail() {
                   </Select>
                 </div>
 
-                {/* Resend Fields */}
                 {settings.email_provider === "resend" && (
                   <>
                     <div className="space-y-2">
@@ -446,14 +440,13 @@ export default function AdminEmail() {
                           onChange={(e) => setSettings({ ...settings, email_sender_address: e.target.value })}
                         />
                         <p className="text-xs text-muted-foreground">
-                          Must be a verified domain in Resend, or use <code className="bg-muted px-1 py-0.5 rounded">onboarding@resend.dev</code> for testing.
+                          Must be a verified domain in Resend, or use onboarding@resend.dev for testing.
                         </p>
                       </div>
                     </div>
                   </>
                 )}
 
-                {/* Gmail Fields */}
                 {settings.email_provider === "gmail" && (
                   <>
                     <div className="space-y-2">
@@ -476,7 +469,7 @@ export default function AdminEmail() {
                         onChange={(e) => setSettings({ ...settings, gmail_app_password: e.target.value })}
                       />
                       <p className="text-xs text-muted-foreground">
-                        Generate an app password in your Google Account {"→"} Security {"→"} 2-Step Verification {"→"} App passwords. Your Gmail address above is used as the sender.
+                        Generate an app password in your Google Account Settings.
                       </p>
                     </div>
 
@@ -501,86 +494,57 @@ export default function AdminEmail() {
                     onChange={(e) => setSettings({ ...settings, notification_email: e.target.value })}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Where store owner receives internal alerts (like new orders).
+                    Where store owner receives internal alerts.
                   </p>
                 </div>
 
                 <div className="border-t pt-6 space-y-4">
                   <h3 className="font-semibold text-lg">Automated Triggers</h3>
-                  
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Send Registration Welcome Email</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Automatically email new customers when they create an account
-                      </p>
+                      <p className="text-sm text-muted-foreground">Automatically email new customers</p>
                     </div>
                     <Switch
                       checked={settings.email_auto_send_welcome === "true"}
-                      onCheckedChange={(checked) => 
-                        setSettings({ ...settings, email_auto_send_welcome: checked ? "true" : "false" })
-                      }
+                      onCheckedChange={(checked) => setSettings({ ...settings, email_auto_send_welcome: checked ? "true" : "false" })}
                     />
                   </div>
-
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Send Customer Order Receipt</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Send automated HTML receipt to customers as soon as they purchase
-                      </p>
+                      <p className="text-sm text-muted-foreground">Send automated receipt after purchase</p>
                     </div>
                     <Switch
                       checked={settings.email_auto_send_order_placed === "true"}
-                      onCheckedChange={(checked) => 
-                        setSettings({ ...settings, email_auto_send_order_placed: checked ? "true" : "false" })
-                      }
+                      onCheckedChange={(checked) => setSettings({ ...settings, email_auto_send_order_placed: checked ? "true" : "false" })}
                     />
                   </div>
-
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Send Delivery & Status Updates</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Send updates (Processing, Shipped with tracking number, Cancelled)
-                      </p>
+                      <p className="text-sm text-muted-foreground">Send updates on order status changes</p>
                     </div>
                     <Switch
                       checked={settings.email_auto_send_status_change === "true"}
-                      onCheckedChange={(checked) => 
-                        setSettings({ ...settings, email_auto_send_status_change: checked ? "true" : "false" })
-                      }
+                      onCheckedChange={(checked) => setSettings({ ...settings, email_auto_send_status_change: checked ? "true" : "false" })}
                     />
                   </div>
-
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Admin Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Email the owner/admin whenever a new order is received
-                      </p>
+                      <p className="text-sm text-muted-foreground">Email owner whenever a new order is received</p>
                     </div>
                     <Switch
                       checked={settings.order_notification_enabled === "true"}
-                      onCheckedChange={(checked) => 
-                        setSettings({ ...settings, order_notification_enabled: checked ? "true" : "false" })
-                      }
+                      onCheckedChange={(checked) => setSettings({ ...settings, order_notification_enabled: checked ? "true" : "false" })}
                     />
                   </div>
                 </div>
 
                 <Button onClick={saveSettings} disabled={saving} className="w-full">
-                  {saving ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Configurations
-                    </>
-                  )}
+                  {saving ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save Configurations
                 </Button>
               </CardContent>
             </Card>
@@ -591,9 +555,7 @@ export default function AdminEmail() {
             <Card>
               <CardHeader>
                 <CardTitle>Email Customization</CardTitle>
-                <CardDescription>
-                  Modify transaction email designs and templates
-                </CardDescription>
+                <CardDescription>Modify transaction email designs</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="p-4 bg-muted rounded-lg">
@@ -606,46 +568,25 @@ export default function AdminEmail() {
                     ))}
                   </div>
                 </div>
-
                 <div className="space-y-4">
                   {templates.map((template) => (
                     <div key={template.id} className="border rounded-lg p-5 space-y-4">
-                      <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-bold text-lg">{template.template_name}</h4>
                           <p className="text-sm text-muted-foreground">{template.description}</p>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Switch
-                            checked={template.is_active}
-                            onCheckedChange={(checked) => toggleTemplateActive(template.id, checked)}
-                          />
-                          <span className="text-sm font-medium">
-                            {template.is_active ? "Active" : "Disabled"}
-                          </span>
-                        </div>
+                        <Switch
+                          checked={template.is_active}
+                          onCheckedChange={(checked) => toggleTemplateActive(template.id, checked)}
+                        />
                       </div>
-
-                      <div className="space-y-2 text-sm bg-muted/40 p-4 rounded-md border font-mono">
-                        <span className="text-muted-foreground">Subject:</span> {template.subject_template}
-                      </div>
-
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => openEditTemplate(template)}
-                        >
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit Template
+                        <Button size="sm" variant="outline" onClick={() => openEditTemplate(template)}>
+                          <Pencil className="h-4 w-4 mr-2" /> Edit Template
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => showHtmlPreview(template.html_template)}
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          Preview Design
+                        <Button size="sm" variant="ghost" onClick={() => showHtmlPreview(template.html_template)}>
+                          <Eye className="h-4 w-4 mr-2" /> Preview Design
                         </Button>
                       </div>
                     </div>
@@ -660,65 +601,24 @@ export default function AdminEmail() {
             <Card>
               <CardHeader>
                 <CardTitle>Send Transactional Test Email</CardTitle>
-                <CardDescription>
-                  Verify your Resend connection and configuration by sending a custom email
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="testTo">Recipient Email</Label>
-                  <Input
-                    id="testTo"
-                    placeholder="customer@example.com"
-                    value={testTo}
-                    onChange={(e) => setTestTo(e.target.value)}
-                  />
+                  <Label>Recipient Email</Label>
+                  <Input placeholder="customer@example.com" value={testTo} onChange={(e) => setTestTo(e.target.value)} />
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="testSubject">Subject</Label>
-                  <Input
-                    id="testSubject"
-                    placeholder="Hello from Khulna Cart!"
-                    value={testSubject}
-                    onChange={(e) => setTestSubject(e.target.value)}
-                  />
+                  <Label>Subject</Label>
+                  <Input placeholder="Hello!" value={testSubject} onChange={(e) => setTestSubject(e.target.value)} />
                 </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="testBody">Message Body (Plain Text or simple HTML)</Label>
-                  <Textarea
-                    id="testBody"
-                    placeholder="This is a test notification."
-                    value={testBody}
-                    onChange={(e) => setTestBody(e.target.value)}
-                    rows={6}
-                  />
+                  <Label>Message Body</Label>
+                  <Textarea placeholder="Test notification" value={testBody} onChange={(e) => setTestBody(e.target.value)} rows={6} />
                 </div>
-
-                <Button 
-                  onClick={sendTestEmail} 
-                  disabled={sendingTest || !testTo || !testSubject || !testBody}
-                  className="w-full font-semibold"
-                >
-                  {sendingTest ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Sending test payload...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Dispatch Test Email
-                    </>
-                  )}
+                <Button onClick={sendTestEmail} disabled={sendingTest || !testTo || !testSubject || !testBody} className="w-full">
+                  {sendingTest ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+                  Dispatch Test Email
                 </Button>
-
-                {settings.email_enabled !== "true" && (
-                  <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded border border-yellow-200">
-                    ⚠️ Email automations are globally turned OFF in your Settings.
-                  </p>
-                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -726,67 +626,33 @@ export default function AdminEmail() {
           {/* Logs Tab */}
           <TabsContent value="logs" className="space-y-6">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
-                <div>
-                  <CardTitle>Delivery History</CardTitle>
-                  <CardDescription>
-                    Auditing logs of all transactional emails triggered by the system
-                  </CardDescription>
-                </div>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Delivery History</CardTitle>
                 <Button variant="outline" size="sm" onClick={loadLogs} disabled={logsLoading}>
-                  <RefreshCw className={`h-4 w-4 mr-2 ${logsLoading ? "animate-spin" : ""}`} />
-                  Refresh History
+                  <RefreshCw className={`h-4 w-4 mr-2 ${logsLoading ? "animate-spin" : ""}`} /> Refresh
                 </Button>
               </CardHeader>
               <CardContent>
                 {logs.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground border border-dashed rounded-lg bg-muted/20">
-                    No logs found. Ensure settings are active and transaction emails have run.
-                  </div>
+                  <div className="text-center py-12 text-muted-foreground border border-dashed rounded-lg">No logs found.</div>
                 ) : (
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Date / Time</TableHead>
+                          <TableHead>Date</TableHead>
                           <TableHead>Recipient</TableHead>
                           <TableHead>Subject</TableHead>
-                          <TableHead>Template</TableHead>
                           <TableHead>Status</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {logs.map((log) => (
                           <TableRow key={log.id}>
-                            <TableCell className="whitespace-nowrap font-medium text-xs">
-                              {format(new Date(log.created_at), "dd/MM/yyyy HH:mm")}
-                            </TableCell>
+                            <TableCell className="whitespace-nowrap text-xs">{format(new Date(log.created_at), "dd/MM/yyyy HH:mm")}</TableCell>
                             <TableCell className="font-mono text-xs">{log.recipient_email}</TableCell>
-                            <TableCell className="max-w-[200px] truncate text-xs" title={log.subject}>
-                              {log.subject}
-                            </TableCell>
-                            <TableCell>
-                              {log.template_key ? (
-                                <Badge variant="outline" className="font-mono text-[10px]">
-                                  {log.template_key}
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground text-xs">Custom</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <Badge 
-                                variant={log.status === "sent" ? "default" : "destructive"}
-                                className="text-[10px]"
-                              >
-                                {log.status}
-                              </Badge>
-                              {log.error_message && (
-                                <p className="text-[10px] text-destructive mt-1 max-w-[150px] truncate" title={log.error_message}>
-                                  {log.error_message}
-                                </p>
-                              )}
-                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate text-xs">{log.subject}</TableCell>
+                            <TableCell><Badge variant={log.status === "sent" ? "default" : "destructive"}>{log.status}</Badge></TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -803,50 +669,25 @@ export default function AdminEmail() {
           <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Edit Email: {editingTemplate?.template_name}</DialogTitle>
-              <DialogDescription>
-                Ensure standard placeholders are preserved so variables populate correctly.
-              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 flex-1 overflow-y-auto pr-1">
               <div className="space-y-2">
-                <Label htmlFor="tplSubject">Subject Template</Label>
-                <Input
-                  id="tplSubject"
-                  value={editedSubject}
-                  onChange={(e) => setEditedSubject(e.target.value)}
-                />
+                <Label>Subject Template</Label>
+                <Input value={editedSubject} onChange={(e) => setEditedSubject(e.target.value)} />
               </div>
-
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="tplHtml">HTML Content Code</Label>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 text-xs"
-                    onClick={() => showHtmlPreview(editedHtml)}
-                  >
-                    <Eye className="h-3 w-3 mr-1" />
-                    Preview Rendered
+                  <Label>HTML Content</Label>
+                  <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => showHtmlPreview(editedHtml)}>
+                    <Eye className="h-3 w-3 mr-1" /> Preview Rendered
                   </Button>
                 </div>
-                <Textarea
-                  id="tplHtml"
-                  value={editedHtml}
-                  onChange={(e) => setEditedMessage(e.target.value)}
-                  rows={15}
-                  className="font-mono text-xs"
-                />
+                <Textarea value={editedHtml} onChange={(e) => setEditedHtml(e.target.value)} rows={15} className="font-mono text-xs" />
               </div>
             </div>
-            <div className="flex justify-end gap-2 border-t pt-4 mt-2">
-              <Button variant="outline" onClick={() => setEditingTemplate(null)}>
-                Cancel
-              </Button>
-              <Button onClick={updateTemplate}>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </Button>
+            <div className="flex justify-end gap-2 border-t pt-4">
+              <Button variant="outline" onClick={() => setEditingTemplate(null)}>Cancel</Button>
+              <Button onClick={updateTemplate}><Save className="h-4 w-4 mr-2" /> Save Changes</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -854,15 +695,9 @@ export default function AdminEmail() {
         {/* HTML Preview Dialog */}
         <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
           <DialogContent className="max-w-4xl max-h-[85vh] flex flex-col">
-            <DialogHeader>
-              <DialogTitle>Design Preview</DialogTitle>
-            </DialogHeader>
-            <div className="border rounded-md bg-white p-2 overflow-auto flex-1 h-[60vh]">
-              <iframe
-                srcDoc={previewHtml}
-                title="Email Preview"
-                className="w-full h-full min-h-[50vh] border-0"
-              />
+            <DialogHeader><DialogTitle>Design Preview</DialogTitle></DialogHeader>
+            <div className="border rounded-md bg-white overflow-auto flex-1 h-[60vh]">
+              <iframe srcDoc={previewHtml} title="Email Preview" className="w-full h-full min-h-[50vh] border-0" />
             </div>
             <div className="flex justify-end border-t pt-4">
               <Button onClick={() => setPreviewOpen(false)}>Close Preview</Button>
@@ -870,6 +705,5 @@ export default function AdminEmail() {
           </DialogContent>
         </Dialog>
       </div>
-    </AdminLayout>
   );
 }
