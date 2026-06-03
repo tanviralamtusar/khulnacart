@@ -251,7 +251,7 @@ const OrderConfirmationPage = () => {
             <Truck className="h-8 w-8 text-green-600" />
             <div className="text-left">
               <p className="font-semibold text-green-800">Delivery Time</p>
-              <p className="text-sm text-green-700">1-2 days inside Dhaka • 3-5 days outside Dhaka</p>
+              <p className="text-sm text-green-700">Same day delivery</p>
             </div>
           </div>
 

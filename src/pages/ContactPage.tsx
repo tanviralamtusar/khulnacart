@@ -12,7 +12,6 @@ const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,14 +32,13 @@ const ContactPage = () => {
         .insert({
           name: formData.name.trim(),
           email: formData.email.trim() || null,
-          phone: formData.phone.trim() || null,
           message: formData.message.trim(),
         });
 
       if (error) throw error;
 
       toast.success('Your message has been sent!');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Error submitting contact form:', error);
       toast.error('Failed to send message. Please try again.');
@@ -132,41 +130,11 @@ const ContactPage = () => {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-12">
-          <div className="container-custom">
-            <div className="max-w-2xl mx-auto">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="bg-card rounded-2xl p-8 border border-border hover:border-primary/30 transition-all shadow-sm"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
-                      <feature.icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-foreground mb-2">
-                        {feature.title}
-                      </h3>
-                      <div className="text-muted-foreground">
-                        {feature.description}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Contact Form & Quick Actions */}
         <section className="py-12">
           <div className="container-custom">
-            <div className="grid lg:grid-cols-5 gap-8">
+            <div className="grid lg:grid-cols-5 gap-8 items-stretch">
               {/* Quick Actions */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -224,36 +192,43 @@ const ContactPage = () => {
                     <span className="text-white/80 text-sm">Get a quick reply</span>
                   </div>
                 </a>
-
-                {/* Map or Address Card */}
-                <div className="bg-card rounded-2xl p-6 border border-border">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-foreground">Our Location</h3>
+                {/* Info Cards */}
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-2xl hover:shadow-xl hover:shadow-red-500/20 transition-all hover:-translate-y-1">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6" />
                   </div>
-                  <p className="text-muted-foreground">
-                    <br />
-                    Khulna, Bangladesh
-                  </p>
+                  <div>
+                    <span className="block font-bold text-lg">Our Location</span>
+                    <span className="text-white/80 text-sm">Khulna, Bangladesh</span>
+                  </div>
                 </div>
+                {features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-4 p-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl hover:shadow-xl hover:shadow-orange-500/20 transition-all hover:-translate-y-1">
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <span className="block font-bold text-lg">{feature.title}</span>
+                      <span className="text-white/80 text-sm">Cash on Delivery, bkash, Nagad</span>
+                    </div>
+                  </div>
+                ))}
               </motion.div>
 
                {/* Contact Form */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="lg:col-span-3"
+                className="lg:col-span-3 h-full"
               >
-                <div className="bg-card p-8 rounded-2xl border border-border shadow-sm">
+                <div className="bg-card p-8 rounded-2xl border border-border shadow-sm h-full flex flex-col">
                   <h2 className="text-2xl font-display font-bold text-foreground mb-2">
                     Send a Message
                   </h2>
                   <p className="text-muted-foreground mb-6">
                     Fill out the form for any questions or order details
                   </p>
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} className="space-y-5 flex flex-col flex-1">
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
@@ -269,27 +244,16 @@ const ContactPage = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Phone Number
+                          Email
                         </label>
                         <Input
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="01XXX-XXXXXX"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="email@example.com"
                           className="h-12"
                         />
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        Email
-                      </label>
-                      <Input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="email@example.com"
-                        className="h-12"
-                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
@@ -299,7 +263,7 @@ const ContactPage = () => {
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         placeholder="Write your message here..."
-                        rows={5}
+                        className="flex-1 resize-none min-h-[120px]"
                         required
                       />
                     </div>
@@ -309,6 +273,7 @@ const ContactPage = () => {
                     </Button>
                   </form>
                 </div>
+
               </motion.div>
             </div>
           </div>
