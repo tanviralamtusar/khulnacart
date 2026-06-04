@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Phone, MessageCircle, Leaf, Shield, Wind, ChevronDown, ChevronUp, Minus, Plus, Play, User, LayoutDashboard } from 'lucide-react';
+import { Check, Phone, MessageCircle, Leaf, Shield, Wind, ChevronDown, ChevronUp, Minus, Plus, Play, User, LayoutDashboard, Banknote } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 import { useAutofillAddress } from "@/hooks/useAutofillAddress";
 import productImage from '@/assets/tulshi-lungs-product.jpg';
 import tulshiPlusImage from '@/assets/tulshi-plus-product.jpg';
@@ -36,11 +37,13 @@ export default function TulshiLandingPage() {
     address: '',
   });
   useAutofillAddress(setFormData);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bkash' | 'nagad' | 'rocket'>('bkash');
+  const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [productVideo, setProductVideo] = useState('');
   const [reviewVideos, setReviewVideos] = useState<string[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [product, setProduct] = useState(DEFAULT_PRODUCT);
 
@@ -113,13 +116,19 @@ export default function TulshiLandingPage() {
 
   const subtotal = product.price * quantity;
   const shippingCost = SHIPPING[shippingZone];
-  const total = subtotal + shippingCost;
+  const onlineDiscount = (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'rocket') && subtotal >= 200 ? 20 : 0;
+  const total = subtotal + shippingCost - onlineDiscount;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.phone || !formData.name || !formData.address) {
       toast.error('সব তথ্য পূরণ করুন');
+      return;
+    }
+
+    if (paymentMethod !== 'cod' && !transactionId.trim()) {
+      toast.error('ট্রানজেকশন আইডি দিন');
       return;
     }
 
@@ -148,11 +157,13 @@ export default function TulshiLandingPage() {
           orderSource: 'manual',
           customShippingCost: 49,
           notes: 'LP:tulshi',
+          paymentMethod,
+          transactionId: paymentMethod !== 'cod' ? transactionId.trim() : undefined,
         },
       });
 
       if (error) {
-        const anyErr = error as any;
+        const anyErr = error as { context?: { body?: { error?: string; message?: string } }; message?: string };
         const details =
           anyErr?.context?.body?.error ||
           anyErr?.context?.body?.message ||
@@ -531,6 +542,12 @@ export default function TulshiLandingPage() {
                   <span>Shipping</span>
                   <span>৳ {shippingCost}</span>
                 </div>
+                {onlineDiscount > 0 && (
+                  <div className="flex justify-between text-green-600 font-semibold text-sm">
+                    <span>Discount (অনলাইন ছাড়)</span>
+                    <span>-৳ {onlineDiscount}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-bold text-lg text-foreground pt-2 border-t border-border">
                   <span>Total</span>
                   <span className="text-primary">৳ {total.toLocaleString()}</span>
@@ -609,9 +626,77 @@ export default function TulshiLandingPage() {
                   </RadioGroup>
                 </div>
 
-                <div className="bg-muted/50 p-3 rounded-lg text-sm text-muted-foreground">
-                  <p className="font-medium text-foreground mb-1">Cash on delivery</p>
-                  <p>Pay with cash upon delivery.</p>
+                {/* Payment Method */}
+                <div className="space-y-4">
+                  <Label className="mb-2 block flex items-center gap-2">
+                    <Banknote className="h-4 w-4 text-primary" />
+                    পেমেন্ট মেথড
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([
+                      { id: 'bkash', name: 'bKash (বিকাশ)', label: 'ব', color: 'bg-[#e2125d]', activeColor: 'border-[#e2125d] bg-[#e2125d]/5' },
+                      { id: 'nagad', name: 'Nagad (নগদ)', label: 'ন', color: 'bg-[#f57c20]', activeColor: 'border-[#f57c20] bg-[#f57c20]/5' },
+                      { id: 'rocket', name: 'Rocket (রকেট)', label: 'র', color: 'bg-[#8c2d82]', activeColor: 'border-[#8c2d82] bg-[#8c2d82]/5' },
+                      { id: 'cod', name: 'Cash on Delivery', label: '🚚', color: 'bg-foreground', activeColor: 'border-foreground bg-foreground/5' }
+                    ] as const).map((pm) => (
+                      <div
+                        key={pm.id}
+                        onClick={() => { setPaymentMethod(pm.id); setTransactionId(''); }}
+                        className={`flex items-center gap-2 p-2.5 rounded-lg border-2 cursor-pointer transition-all duration-200 text-xs sm:text-sm font-semibold select-none ${
+                          paymentMethod === pm.id ? pm.activeColor + ' scale-[1.01] shadow-sm' : 'border-border hover:bg-muted/50'
+                        }`}
+                      >
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs text-white ${pm.color}`}>
+                          {pm.label}
+                        </div>
+                        <span className="truncate text-foreground">{pm.name}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {paymentMethod !== 'cod' && (
+                    <div className="p-3.5 rounded-lg border bg-muted/20 space-y-3">
+                      <p className="text-[11px] font-semibold text-gray-700 leading-normal">
+                        এটি আমাদের পার্সোনাল নাম্বার। দয়া করে এই নাম্বারে 'সেন্ড মানি' (Send Money) অথবা 'ক্যাশ ইন' (Cash In) করুন।
+                      </p>
+                      
+                      <div className="flex flex-col sm:flex-row items-center gap-2 p-2.5 bg-card rounded border">
+                        <div className="flex-1 text-center sm:text-left min-w-0">
+                          <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">
+                            {paymentMethod === 'bkash' ? 'bKash Number' : paymentMethod === 'nagad' ? 'Nagad Number' : 'Rocket Number'}
+                          </p>
+                          <p className="text-base font-bold tracking-widest text-foreground">
+                            {paymentMethod === 'bkash' || paymentMethod === 'nagad' ? '01995630960' : '019956309608'}
+                          </p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="w-full sm:w-auto h-8 text-xs font-semibold"
+                          onClick={() => {
+                            const number = paymentMethod === 'bkash' || paymentMethod === 'nagad' ? '01995630960' : '019956309608';
+                            navigator.clipboard.writeText(number);
+                            toast.success("Number copied!");
+                          }}
+                        >
+                          Copy Number
+                        </Button>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Label htmlFor="transactionId" className="text-xs font-bold text-gray-700">Transaction ID (ট্রানজেকশন আইডি) *</Label>
+                        <Input
+                          id="transactionId"
+                          placeholder="Enter TrxID after payment"
+                          value={transactionId}
+                          onChange={(e) => setTransactionId(e.target.value)}
+                          required
+                          className="bg-card text-foreground tracking-wide font-mono h-9 text-sm"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <Button

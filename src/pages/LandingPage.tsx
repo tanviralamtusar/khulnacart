@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { ChevronLeft, ChevronRight, ArrowLeft, Banknote } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -166,6 +167,8 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
   });
   useAutofillAddress(setOrderForm, section.type === "checkout-form");
   const [shippingZone, setShippingZone] = useState<ShippingZone>('outside_dhaka');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bkash' | 'nagad' | 'rocket'>('bkash');
+  const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [products, setProducts] = useState<ProductWithVariations[]>([]);
 
@@ -259,7 +262,13 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
     const { product, variation } = selected;
     const subtotal = variation.price * orderForm.quantity;
     const shippingCost = SHIPPING_RATES[shippingZone];
-    const total = subtotal + shippingCost;
+    const onlineDiscount = (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'rocket') && subtotal >= 200 ? 20 : 0;
+    const total = subtotal + shippingCost - onlineDiscount;
+
+    if (paymentMethod !== 'cod' && !transactionId.trim()) {
+      toast.error("Please enter the transaction ID");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -283,6 +292,8 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
           // IMPORTANT: mark as landing page so admin stats + order protection work consistently
           orderSource: 'landing_page',
           notes: `LP:${slug}`,
+          paymentMethod: paymentMethod,
+          transactionId: paymentMethod !== 'cod' ? transactionId.trim() : undefined,
         },
       });
 
@@ -556,7 +567,8 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
       const selected = getSelectedVariation();
       const subtotal = selected ? selected.variation.price * orderForm.quantity : 0;
       const shippingCost = settings.freeDelivery ? 0 : SHIPPING_RATES[shippingZone];
-      const total = subtotal + shippingCost;
+      const onlineDiscount = (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'rocket') && subtotal >= 200 ? 20 : 0;
+      const total = subtotal + shippingCost - onlineDiscount;
 
       return (
         <section
@@ -717,11 +729,84 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
                 />
               )}
 
+              {/* Payment Method */}
+              <div className="bg-white rounded-xl p-4 border space-y-4">
+                <h3 className="font-bold flex items-center gap-2 text-gray-900">
+                  <Banknote className="h-4 w-4 text-amber-500" />
+                  Payment Method
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'bkash', name: 'bKash (বিকাশ)', label: 'ব', color: 'bg-[#e2125d]', activeColor: 'border-[#e2125d] bg-[#e2125d]/5' },
+                    { id: 'nagad', name: 'Nagad (নগদ)', label: 'ন', color: 'bg-[#f57c20]', activeColor: 'border-[#f57c20] bg-[#f57c20]/5' },
+                    { id: 'rocket', name: 'Rocket (রকেট)', label: 'র', color: 'bg-[#8c2d82]', activeColor: 'border-[#8c2d82] bg-[#8c2d82]/5' },
+                    { id: 'cod', name: 'Cash on Delivery', label: '🚚', color: 'bg-foreground', activeColor: 'border-foreground bg-foreground/5' }
+                  ].map((pm) => (
+                    <div
+                      key={pm.id}
+                      onClick={() => { setPaymentMethod(pm.id as any); setTransactionId(''); }}
+                      className={`flex items-center gap-2 p-2.5 rounded-lg border-2 cursor-pointer transition-all duration-200 text-xs sm:text-sm font-semibold select-none ${
+                        paymentMethod === pm.id ? pm.activeColor + ' scale-[1.01] shadow-sm' : 'border-border hover:bg-muted/50'
+                      }`}
+                    >
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs text-white ${pm.color}`}>
+                        {pm.label}
+                      </div>
+                      <span className="truncate text-foreground">{pm.name}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {paymentMethod !== 'cod' && (
+                  <div className="p-3.5 rounded-lg border bg-muted/20 space-y-3 text-left">
+                    <p className="text-[11px] font-semibold text-gray-700 leading-normal">
+                      এটি আমাদের পার্সোনাল নাম্বার। দয়া করে এই নাম্বারে 'সেন্ড মানি' (Send Money) অথবা 'ক্যাশ ইন' (Cash In) করুন।
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row items-center gap-2 p-2.5 bg-card rounded border">
+                      <div className="flex-1 text-center sm:text-left min-w-0">
+                        <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">
+                          {paymentMethod === 'bkash' ? 'bKash Number' : paymentMethod === 'nagad' ? 'Nagad Number' : 'Rocket Number'}
+                        </p>
+                        <p className="text-base font-bold tracking-widest text-foreground">
+                          {paymentMethod === 'bkash' || paymentMethod === 'nagad' ? '01995630960' : '019956309608'}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full sm:w-auto h-8 text-xs font-semibold"
+                        onClick={() => {
+                          const number = paymentMethod === 'bkash' || paymentMethod === 'nagad' ? '01995630960' : '019956309608';
+                          navigator.clipboard.writeText(number);
+                          toast.success("Number copied!");
+                        }}
+                      >
+                        Copy Number
+                      </Button>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="transactionId" className="text-xs font-bold text-gray-700">Transaction ID (ট্রানজেকশন আইডি) *</Label>
+                      <Input
+                        id="transactionId"
+                        placeholder="Enter TrxID after payment"
+                        value={transactionId}
+                        onChange={(e) => setTransactionId(e.target.value)}
+                        required
+                        className="bg-card text-foreground tracking-wide font-mono h-9 text-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Order Summary */}
               {selected && (
                 <div className="bg-gray-50 rounded-xl p-4 mt-6">
                   <h3 className="font-semibold mb-4">Your order</h3>
-                  <div className="space-y-3">
+                  <div className="space-y-3 text-left">
                     <div className="flex justify-between items-center pb-3 border-b">
                       <div className="flex items-center gap-3">
                         {selected.product.images?.[0] && (
@@ -746,6 +831,12 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
                       <div className="flex justify-between text-sm">
                         <span>Shipping</span>
                         <span>৳ {shippingCost}</span>
+                      </div>
+                    )}
+                    {onlineDiscount > 0 && (
+                      <div className="flex justify-between text-green-600 text-sm">
+                        <span>Online Discount</span>
+                        <span>-৳ {onlineDiscount}</span>
                       </div>
                     )}
                     <div className="flex justify-between font-bold text-lg pt-3 border-t">
