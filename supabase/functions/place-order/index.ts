@@ -188,8 +188,19 @@ Deno.serve(async (req) => {
 
     const body = (await req.json()) as PlaceOrderBody;
 
+    // Basic validation
+    const name = (body?.shipping?.name ?? '').trim();
+    const phoneRaw = (body?.shipping?.phone ?? '').trim();
+    const phone = normalizeBdPhoneLocal(phoneRaw);
+    const address = (body?.shipping?.address ?? '').trim();
+
     // 1. Mandatory Email Validation & Auto-Registration Logic
-    const customerEmailRaw = (body?.email ?? '').trim().toLowerCase();
+    let customerEmailRaw = (body?.email ?? '').trim().toLowerCase();
+    if (!customerEmailRaw) {
+      // For orders that don't collect email (like manual orders or landing pages), generate a fallback email based on phone number
+      customerEmailRaw = `${phone || 'guest'}@khulnacart.com`;
+    }
+
     if (!customerEmailRaw || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmailRaw)) {
       return new Response(JSON.stringify({ error: 'Valid email address is required' }), {
         status: 400,
@@ -242,12 +253,6 @@ Deno.serve(async (req) => {
         console.error('Failed auto-registration flow:', regError);
       }
     }
-
-    // Basic validation
-    const name = (body?.shipping?.name ?? '').trim();
-    const phoneRaw = (body?.shipping?.phone ?? '').trim();
-    const phone = normalizeBdPhoneLocal(phoneRaw);
-    const address = (body?.shipping?.address ?? '').trim();
 
     if (!name || name.length > 100) {
       return new Response(JSON.stringify({ error: 'Invalid name' }), {
@@ -565,10 +570,8 @@ Deno.serve(async (req) => {
     ];
 
     const subtotal = itemsFinal.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    
-    // For manual orders, use admin-provided shipping cost and discount
-    const shippingZone = body.shippingZone || 'outside_dhaka';
-    const defaultShippingCost = shippingZone === 'inside_dhaka' ? 80 : 130;
+    // The default shipping cost is a fixed 49 BDT
+    const defaultShippingCost = 49;
     
     const shippingCost = (isManualOrder && typeof body.customShippingCost === 'number' && Number.isFinite(body.customShippingCost) && body.customShippingCost >= 0)
       ? body.customShippingCost

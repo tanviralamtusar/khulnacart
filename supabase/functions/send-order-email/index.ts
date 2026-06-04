@@ -325,14 +325,14 @@ serve(async (req) => {
         <tr style="border-bottom: 1px solid #333;">
           <td style="padding: 15px 0; text-align: left;">
             <div style="display: flex; align-items: center;">
-              ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px;">` : ""}
-              <span style="font-size: 14px; color: #ffffff;">${item.name}</span>
+              ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px; border: 1px solid #333;">` : ""}
+              <span style="font-size: 14px; color: #FBBF24;">${item.name}</span>
             </div>
           </td>
-          <td style="padding: 15px 0; text-align: center; color: #ffffff;">
+          <td style="padding: 15px 0; text-align: center; color: #FBBF24;">
             ×${item.quantity}
           </td>
-          <td style="padding: 15px 0; text-align: right; color: #ffffff; font-weight: bold;">
+          <td style="padding: 15px 0; text-align: right; color: #FBBF24; font-weight: bold;">
             ৳${(item.price * item.quantity).toFixed(2)}
           </td>
         </tr>

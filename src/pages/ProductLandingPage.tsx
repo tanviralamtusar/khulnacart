@@ -440,7 +440,7 @@ const DeliverySection = memo(() => (
       <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-6">Delivery & Payment</h2>
       <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
         {[
-          { icon: Truck, title: "Inside Dhaka 80৳", sub: "Outside 130৳", color: "bg-blue-500" },
+          { icon: Truck, title: "Delivery Charge 49৳", sub: "Flat Rate Everywhere", color: "bg-blue-500" },
           { icon: Clock, title: "1-3 Days", sub: "Delivery", color: "bg-green-500" },
           { icon: Shield, title: "Cash on", sub: "Delivery", color: "bg-purple-500" },
         ].map((item, idx) => (
@@ -789,7 +789,8 @@ const ProductLandingPage = () => {
           items: [{ productId: product.id, variationId: form.selectedVariationId || null, quantity: form.quantity }],
           shipping: { name: form.name, phone: form.phone, address: form.address },
           shippingZone: form.shippingZone,
-          orderSource: 'landing_page',
+          orderSource: 'manual',
+          customShippingCost: 49,
           notes: `LP:${slug}`,
         },
       });

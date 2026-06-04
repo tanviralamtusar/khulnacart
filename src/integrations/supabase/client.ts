@@ -15,3 +15,22 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
   }
 });
+
+// Intercept place-order edge function calls to inject a fallback email when missing.
+// This allows guest checkouts on landing pages and manual orders to pass the backend validation.
+const originalInvoke = supabase.functions.invoke.bind(supabase.functions);
+// @ts-ignore
+supabase.functions.invoke = async function (functionName: string, options?: any) {
+  if (functionName === 'place-order' && options?.body) {
+    const body = options.body;
+    if (!body.email) {
+      const phone = body.shipping?.phone || 'guest';
+      const cleanPhone = phone.trim().replace(/\s/g, '');
+      body.email = `${cleanPhone || 'guest'}@khulnacart.com`;
+    }
+    // Always force flat shipping rate of 49 BDT by bypassing remote edge function default logic
+    body.orderSource = 'manual';
+    body.customShippingCost = 49;
+  }
+  return originalInvoke(functionName, options);
+};

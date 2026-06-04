@@ -21,8 +21,8 @@ const DEFAULT_PRODUCT = {
 };
 
 const SHIPPING = {
-  dhaka: 80,
-  outside: 130,
+  dhaka: 49,
+  outside: 49,
 };
 
 export default function TulshiLandingPage() {
@@ -143,7 +143,8 @@ export default function TulshiLandingPage() {
             address: formData.address,
           },
           shippingZone: shippingZone === 'dhaka' ? 'inside_dhaka' : 'outside_dhaka',
-          orderSource: 'web',
+          orderSource: 'manual',
+          customShippingCost: 49,
           notes: 'LP:tulshi',
         },
       });

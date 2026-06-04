@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type ShippingZone = 'inside_khulna';
+export type ShippingZone = 'inside_dhaka' | 'outside_dhaka' | 'inside_khulna';
 
 interface ShippingMethodSelectorProps {
   address: string;
@@ -11,6 +11,8 @@ interface ShippingMethodSelectorProps {
 }
 
 const SHIPPING_RATES = {
+  inside_dhaka: 49,
+  outside_dhaka: 49,
   inside_khulna: 49,
 };
 

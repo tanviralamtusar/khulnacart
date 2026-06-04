@@ -487,7 +487,7 @@ const DeliverySection = memo(() => (
       <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-8">ডেলিভারি ও পেমেন্ট</h2>
       <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
         {[
-          { icon: Truck, title: "ঢাকায় ৮০৳", sub: "বাইরে ১৩০৳", color: "bg-blue-500" },
+          { icon: Truck, title: "ডেলিভারি চার্জ ৪৯৳", sub: "সারাদেশে Flat Rate", color: "bg-blue-500" },
           { icon: Clock, title: "১-৩ দিনে", sub: "ডেলিভারি", color: "bg-green-500" },
           { icon: Shield, title: "ক্যাশ অন", sub: "ডেলিভারি", color: "bg-purple-500" },
         ].map((item, idx) => (
@@ -1141,6 +1141,7 @@ const ReyonCottonLandingPage = () => {
       const { data, error } = await supabase.functions.invoke('place-order', {
         body: {
           userId: null,
+          email: `${form.phone.replace(/\s/g, '')}@khulnacart.com`,
           items: [{
             productId: selectedProduct.id,
             variationId: form.selectedVariationId || null,
@@ -1148,7 +1149,8 @@ const ReyonCottonLandingPage = () => {
           }],
           shipping: { name: form.name, phone: form.phone, address: form.address },
           shippingZone: form.shippingZone,
-          orderSource: 'landing_page',
+          orderSource: 'manual',
+          customShippingCost: 49,
           notes: form.note
             ? `LP:reyon-cotton-collection | কাস্টমার নোট: ${form.note}`
             : 'LP:reyon-cotton-collection',

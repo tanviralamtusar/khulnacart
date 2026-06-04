@@ -491,7 +491,7 @@ const DeliverySection = memo(() => (
       <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-8">ডেলিভারি ও পেমেন্ট</h2>
       <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
         {[
-          { icon: Truck, title: "ঢাকায় ৮০৳", sub: "বাইরে ১৩০৳", color: "bg-blue-500" },
+          { icon: Truck, title: "ডেলিভারি চার্জ ৪৯৳", sub: "সারাদেশে Flat Rate", color: "bg-blue-500" },
           { icon: Clock, title: "১-৩ দিনে", sub: "ডেলিভারি", color: "bg-green-500" },
           { icon: Shield, title: "ক্যাশ অন", sub: "ডেলিভারি", color: "bg-purple-500" },
         ].map((item, idx) => (

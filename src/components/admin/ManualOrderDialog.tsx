@@ -225,8 +225,8 @@ export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: Manual
 
   // Default shipping costs
   const SHIPPING_COSTS = {
-    inside_dhaka: 60,
-    outside_dhaka: 120,
+    inside_dhaka: 49,
+    outside_dhaka: 49,
   };
 
   const normalizedPhone = useMemo(() => normalizePhone(mobileNumber), [mobileNumber]);
@@ -649,6 +649,7 @@ export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: Manual
       const { data, error } = await supabase.functions.invoke('place-order', {
         body: {
           userId: null,
+          email: `${mobileNumber.trim()}@khulnacart.com`,
           items: orderItems.map(item => {
             const basePrice = item.variation ? item.variation.price : item.product.price;
             const itemPrice = item.customPrice !== undefined ? item.customPrice : basePrice;
