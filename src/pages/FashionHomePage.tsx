@@ -1051,18 +1051,6 @@ export default function FashionHomePage() {
                         {product.name}
                       </h3>
                       
-                      {/* Rating */}
-                      <div className="flex items-center gap-1 mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`w-3 h-3 ${i < (product.rating || 4) ? 'fill-amber-400 text-amber-400' : 'text-muted'}`} 
-                          />
-                        ))}
-                        <span className="text-[10px] text-muted-foreground ml-1">
-                          ({product.review_count || Math.floor(Math.random() * 50) + 10})
-                        </span>
-                      </div>
 
                       {/* Price */}
                       <div className="flex items-center gap-1.5 mb-2.5">

@@ -106,6 +106,7 @@ const CheckoutPage = () => {
   const [shippingZone, setShippingZone] = useState<ShippingZone>('inside_khulna');
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bkash' | 'nagad' | 'rocket'>('bkash');
   const [transactionId, setTransactionId] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number; max_discount_amount: number | null; calculatedDiscount: number } | null>(null);
 
   const [shippingForm, setShippingForm] = useState<ShippingForm>({
     name: '',
@@ -117,48 +118,106 @@ const CheckoutPage = () => {
   const SHIPPING_RATES = { inside_khulna: 49 };
   const shippingCost = SHIPPING_RATES[shippingZone];
   const onlineDiscount = (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'rocket') && cartTotal >= 200 ? 20 : 0;
-  const total = cartTotal + shippingCost - onlineDiscount;
+  
+  const couponDiscount = appliedCoupon?.calculatedDiscount || 0;
+  const total = cartTotal + shippingCost - onlineDiscount - couponDiscount;
+
+  // Load coupon from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('applied_coupon');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        let discount = 0;
+        if (parsed.discount_type === 'percentage') {
+          discount = Math.round((cartTotal * parsed.discount_value) / 100);
+          if (parsed.max_discount_amount && discount > parsed.max_discount_amount) {
+            discount = parsed.max_discount_amount;
+          }
+        } else {
+          discount = parsed.discount_value;
+        }
+        if (discount > cartTotal) {
+          discount = cartTotal;
+        }
+        setAppliedCoupon({
+          ...parsed,
+          calculatedDiscount: discount
+        });
+      } catch (e) {
+        console.error('Error parsing coupon on checkout:', e);
+      }
+    }
+  }, [cartTotal]);
 
   // Load saved address and sync email if user is logged in
   useEffect(() => {
     const loadUserAddress = async () => {
       if (!user) return;
       
-      // Always sync email from auth user if available
-      if (user.email && !shippingForm.email) {
-        setShippingForm(prev => ({ ...prev, email: user.email || '' }));
-      }
+      const isPhoneEmail = user.email?.endsWith('@phone.local');
+      const emailVal = isPhoneEmail ? '' : (user.email || '');
+      const phoneVal = user.phone || user.user_metadata?.phone || (isPhoneEmail ? user.email?.replace('@phone.local', '') : '');
 
-      const { data: addresses } = await supabase
+      // 1. Try to load default address first
+      const { data: addressData } = await supabase
         .from('addresses')
         .select('*')
         .eq('user_id', user.id)
         .eq('is_default', true)
         .maybeSingle();
       
-      if (addresses) {
+      if (addressData) {
         setShippingForm({
-          name: addresses.name,
-          phone: addresses.phone,
-          email: user.email || '',
-          address: `${addresses.street}, ${addresses.city}, ${addresses.district}`,
+          name: addressData.name || '',
+          phone: addressData.phone || phoneVal,
+          email: emailVal,
+          address: `${addressData.street || ''}, ${addressData.city || ''}, ${addressData.district || ''}`.replace(/^,\s*|,\s*$/, '').trim(),
+        });
+        return;
+      }
+
+      // 2. If no default address, try to load shipping details from their last order
+      const { data: lastOrder } = await supabase
+        .from('orders')
+        .select('shipping_name, shipping_phone, shipping_street, shipping_city, shipping_district')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (lastOrder) {
+        setShippingForm({
+          name: lastOrder.shipping_name || '',
+          phone: lastOrder.shipping_phone || phoneVal,
+          email: emailVal,
+          address: `${lastOrder.shipping_street || ''}, ${lastOrder.shipping_city || ''}, ${lastOrder.shipping_district || ''}`.replace(/^,\s*|,\s*$/, '').trim(),
+        });
+        return;
+      }
+
+      // 3. Try to load profile info third
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, phone, email')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (profile) {
+        setShippingForm({
+          name: profile.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '',
+          phone: profile.phone || phoneVal,
+          email: (profile.email && !profile.email.endsWith('@phone.local')) ? profile.email : emailVal,
+          address: '',
         });
       } else {
-        // Load profile info if no default address
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name, phone')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        if (profile) {
-          setShippingForm(prev => ({
-            ...prev,
-            name: profile.full_name || '',
-            phone: profile.phone || '',
-            email: user.email || '',
-          }));
-        }
+        // Fallback to auth metadata
+        setShippingForm({
+          name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+          phone: phoneVal,
+          email: emailVal,
+          address: '',
+        });
       }
     };
     
@@ -321,9 +380,11 @@ const CheckoutPage = () => {
         paymentMethod: paymentMethod,
         transactionId: paymentMethod !== 'cod' ? transactionId.trim() : undefined,
         shippingZone: shippingZone,
+        couponCode: appliedCoupon?.code,
       });
       if (draftOrderId.current) await supabase.from('draft_orders').update({ is_converted: true, converted_at: new Date().toISOString() }).eq('id', draftOrderId.current);
       localStorage.removeItem('checkout_session_id');
+      localStorage.removeItem('applied_coupon');
       hasPlacedOrder.current = true;
       const orderItems = cartItems.map(item => ({ productId: item.product.id, productName: item.product.name, price: item.product.price, quantity: item.quantity }));
       dispatch(clearCart());
@@ -387,8 +448,8 @@ const CheckoutPage = () => {
                       value={shippingForm.email} 
                       onChange={handleInputChange} 
                       required 
-                      disabled={!!user}
-                      className={!!user ? "bg-muted cursor-not-allowed" : ""}
+                      disabled={!!user && !user.email?.endsWith('@phone.local')}
+                      className={!!user && !user.email?.endsWith('@phone.local') ? "bg-muted cursor-not-allowed" : ""}
                     />
                     <p className="text-[10px] text-muted-foreground">Used for sending order receipts, account login, and tracking updates.</p>
                   </div>
@@ -593,6 +654,12 @@ const CheckoutPage = () => {
                     <span className="font-medium text-foreground">{formatPrice(shippingCost)}</span>
                   </div>
                   {onlineDiscount > 0 && <div className="flex justify-between text-green-600 font-medium"><span>Online Payment Discount</span><span>-{formatPrice(onlineDiscount)}</span></div>}
+                  {appliedCoupon && appliedCoupon.calculatedDiscount > 0 && (
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>Coupon Discount ({appliedCoupon.code})</span>
+                      <span>-{formatPrice(appliedCoupon.calculatedDiscount)}</span>
+                    </div>
+                  )}
                 </div>
                 <Separator className="my-4" />
                 <div className="flex justify-between items-center mb-6"><span className="font-display text-lg font-semibold text-foreground">Total</span><span className="font-display text-2xl font-bold text-primary">{formatPrice(total)}</span></div>

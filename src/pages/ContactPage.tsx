@@ -120,7 +120,7 @@ const ContactPage = () => {
               className="text-center max-w-3xl mx-auto"
             >
               <span className="inline-block px-4 py-2 bg-primary text-white rounded-full text-sm font-bold mb-6 shadow-lg shadow-primary/20">
-                📞 Contact Us
+                Contact Us
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 drop-shadow-md">
                 Get in Touch
@@ -162,20 +162,6 @@ const ContactPage = () => {
                   <div>
                     <span className="block font-bold text-lg">Message on WhatsApp</span>
                     <span className="text-white/80 text-sm">+8801838636425</span>
-                  </div>
-                </a>
-
-                {/* Call Button */}
-                <a
-                  href="tel:+8801838636425"
-                  className="flex items-center gap-4 p-5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:shadow-xl hover:shadow-blue-500/20 transition-all hover:-translate-y-1"
-                >
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <Phone className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-lg">Call Us Directly</span>
-                    <span className="text-white/80 text-sm">10 AM – 10 PM</span>
                   </div>
                 </a>
 

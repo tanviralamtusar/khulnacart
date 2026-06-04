@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -11,12 +11,17 @@ import {
   ChevronRight,
   Loader2,
   Phone,
-  CheckCircle2
+  CheckCircle2,
+  Star,
+  MessageSquare,
+  User
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/hooks/useAuth';
 import ProductCard from '@/components/products/ProductCard';
 import { fetchProductBySlug, fetchProducts } from '@/services/productService';
 import { Product, ProductVariation } from '@/types';
@@ -29,15 +34,35 @@ import { useServerTracking } from '@/hooks/useServerTracking';
 import { supabase } from '@/integrations/supabase/client';
 import BackButton from '@/components/ui/BackButton';
 
+interface Review {
+  id: string;
+  user_id: string;
+  product_id: string;
+  rating: number;
+  comment: string | null;
+  is_verified: boolean;
+  created_at: string;
+  profile?: { full_name: string | null };
+}
+
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedVariation, setSelectedVariation] = useState<ProductVariation | undefined>(undefined);
+
+  // Review states
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewHover, setReviewHover] = useState(0);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [userHasReviewed, setUserHasReviewed] = useState(false);
   
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector(selectWishlistItems);
@@ -400,10 +425,12 @@ const ProductDetailPage = () => {
               </span>
             </div>
 
-            {/* Happy Customers Badge */}
+            {/* Stock Info */}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CheckCircle2 className="h-5 w-5 text-[#6B8E23]" />
-              <span className="font-medium">14,360+ Happy Customers</span>
+              <CheckCircle2 className={`h-5 w-5 ${currentStock > 0 ? 'text-[#6B8E23]' : 'text-destructive'}`} />
+              <span className="font-medium">
+                {currentStock > 0 ? `Stock: ${currentStock} পিস বাকি আছে` : 'Stock: স্টক শেষ'}
+              </span>
             </div>
 
             {/* Short Description */}
@@ -418,7 +445,7 @@ const ProductDetailPage = () => {
               <Button 
                 variant="outline"
                 size="lg" 
-                className="w-full h-12 font-semibold border-2 border-foreground hover:bg-muted"
+                className="w-full h-12 font-semibold border-2 border-foreground text-foreground hover:bg-foreground/5 hover:text-foreground transition-colors"
                 onClick={handleAddToCart}
                 disabled={currentStock === 0}
               >
@@ -494,6 +521,24 @@ const ProductDetailPage = () => {
           </motion.div>
         )}
 
+        {/* Customer Reviews Section */}
+        <ReviewsSection 
+          product={product}
+          reviews={reviews}
+          setReviews={setReviews}
+          user={user}
+          reviewRating={reviewRating}
+          setReviewRating={setReviewRating}
+          reviewComment={reviewComment}
+          setReviewComment={setReviewComment}
+          reviewHover={reviewHover}
+          setReviewHover={setReviewHover}
+          submittingReview={submittingReview}
+          setSubmittingReview={setSubmittingReview}
+          userHasReviewed={userHasReviewed}
+          setUserHasReviewed={setUserHasReviewed}
+        />
+
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section className="mt-16 pt-16 border-t border-border">
@@ -512,5 +557,261 @@ const ProductDetailPage = () => {
     </>
   );
 };
+
+// ============ Reviews Section Component ============
+interface ReviewsSectionProps {
+  product: Product;
+  reviews: Review[];
+  setReviews: React.Dispatch<React.SetStateAction<Review[]>>;
+  user: any;
+  reviewRating: number;
+  setReviewRating: React.Dispatch<React.SetStateAction<number>>;
+  reviewComment: string;
+  setReviewComment: React.Dispatch<React.SetStateAction<string>>;
+  reviewHover: number;
+  setReviewHover: React.Dispatch<React.SetStateAction<number>>;
+  submittingReview: boolean;
+  setSubmittingReview: React.Dispatch<React.SetStateAction<boolean>>;
+  userHasReviewed: boolean;
+  setUserHasReviewed: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function ReviewsSection({
+  product, reviews, setReviews, user,
+  reviewRating, setReviewRating, reviewComment, setReviewComment,
+  reviewHover, setReviewHover, submittingReview, setSubmittingReview,
+  userHasReviewed, setUserHasReviewed
+}: ReviewsSectionProps) {
+  const navigate = useNavigate();
+
+  // Fetch reviews for this product
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('product_id', product.id)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        // Fetch profile names for reviewers
+        const userIds = [...new Set(data.map(r => r.user_id))];
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, full_name')
+          .in('user_id', userIds);
+
+        const profileMap: Record<string, string> = {};
+        profiles?.forEach(p => { profileMap[p.user_id] = p.full_name || 'Customer'; });
+
+        const enriched = data.map(r => ({
+          ...r,
+          profile: { full_name: profileMap[r.user_id] || 'Customer' }
+        }));
+        setReviews(enriched);
+
+        // Check if current user already reviewed
+        if (user) {
+          setUserHasReviewed(data.some(r => r.user_id === user.id));
+        }
+      }
+    };
+    fetchReviews();
+  }, [product.id, user]);
+
+  const avgRating = reviews.length > 0 
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) 
+    : 0;
+
+  const handleSubmitReview = async () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    if (!reviewComment.trim()) {
+      toast.error('অনুগ্রহ করে রিভিউ লিখুন');
+      return;
+    }
+
+    setSubmittingReview(true);
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert({
+          user_id: user.id,
+          product_id: product.id,
+          rating: reviewRating,
+          comment: reviewComment.trim(),
+          is_verified: false,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Get profile name
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      setReviews(prev => [{
+        ...data,
+        profile: { full_name: profile?.full_name || 'Customer' }
+      }, ...prev]);
+      setReviewComment('');
+      setReviewRating(5);
+      setUserHasReviewed(true);
+      toast.success('রিভিউ সফলভাবে জমা হয়েছে! ধন্যবাদ।');
+    } catch (err) {
+      console.error('Review submission error:', err);
+      toast.error('রিভিউ জমা দিতে সমস্যা হয়েছে।');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+      className="mt-12"
+    >
+      <div className="bg-card border border-border rounded-2xl p-6 md:p-8">
+        {/* Header with average rating */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+              <MessageSquare className="h-6 w-6 text-primary" />
+              Customer Reviews
+            </h2>
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <Star 
+                      key={i} 
+                      className={`w-4 h-4 ${i <= Math.round(avgRating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} 
+                    />
+                  ))}
+                </div>
+                <span className="text-sm font-semibold text-foreground">{avgRating.toFixed(1)}</span>
+                <span className="text-sm text-muted-foreground">({reviews.length}টি রিভিউ)</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Write Review Form */}
+        {!userHasReviewed && (
+          <div className="mb-8 p-5 bg-muted/30 border border-border rounded-xl">
+            <h3 className="font-semibold text-foreground mb-4">আপনার মতামত দিন</h3>
+            
+            {/* Star Rating Selector */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-sm text-muted-foreground font-medium">রেটিং:</span>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setReviewRating(star)}
+                    onMouseEnter={() => setReviewHover(star)}
+                    onMouseLeave={() => setReviewHover(0)}
+                    className="p-0.5 transition-transform hover:scale-110"
+                  >
+                    <Star 
+                      className={`w-6 h-6 transition-colors ${
+                        star <= (reviewHover || reviewRating) 
+                          ? 'fill-amber-400 text-amber-400' 
+                          : 'text-muted-foreground/30 hover:text-amber-300'
+                      }`} 
+                    />
+                  </button>
+                ))}
+              </div>
+              <span className="text-sm text-muted-foreground">({reviewRating}/5)</span>
+            </div>
+
+            {/* Comment */}
+            <Textarea
+              placeholder={user ? 'আপনার অভিজ্ঞতা শেয়ার করুন...' : 'রিভিউ দিতে লগইন করুন'}
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              rows={3}
+              className="mb-3 resize-none"
+              disabled={!user}
+            />
+
+            <Button
+              onClick={handleSubmitReview}
+              disabled={submittingReview || (!user && false)}
+              className="font-semibold"
+            >
+              {submittingReview ? (
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> জমা হচ্ছে...</>
+              ) : user ? (
+                'রিভিউ জমা দিন'
+              ) : (
+                'লগইন করুন'
+              )}
+            </Button>
+          </div>
+        )}
+
+        {/* Reviews List */}
+        {reviews.length === 0 ? (
+          <div className="text-center py-10">
+            <MessageSquare className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-muted-foreground">এখনো কোনো রিভিউ নেই। প্রথম রিভিউটি আপনি দিন!</p>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {reviews.map(review => (
+              <div key={review.id} className="flex gap-4 p-4 bg-background rounded-xl border border-border/50">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <User className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-foreground text-sm">
+                        {review.profile?.full_name || 'Customer'}
+                      </span>
+                      {review.is_verified && (
+                        <span className="text-[10px] bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1.5 py-0.5 rounded font-medium">
+                          ✓ Verified
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground">{formatDate(review.created_at)}</span>
+                  </div>
+                  <div className="flex items-center gap-0.5 mb-2">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <Star 
+                        key={i} 
+                        className={`w-3.5 h-3.5 ${i <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/20'}`} 
+                      />
+                    ))}
+                  </div>
+                  {review.comment && (
+                    <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
 
 export default ProductDetailPage;

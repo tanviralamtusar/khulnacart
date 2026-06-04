@@ -32,6 +32,7 @@ type PlaceOrderBody = {
   customAdvance?: number;
   paymentMethod?: string;
   transactionId?: string;
+  couponCode?: string;
 };
 
 function normalizeBdPhoneLocal(phone: string) {
@@ -575,6 +576,48 @@ Deno.serve(async (req) => {
     } else if (isManualOrder && typeof body.customDiscount === 'number' && Number.isFinite(body.customDiscount) && body.customDiscount >= 0) {
       discount = body.customDiscount;
     }
+
+    // Secure coupon validation on backend
+    if (body.couponCode) {
+      const code = String(body.couponCode).trim().toUpperCase();
+      const { data: coupon } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', code)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (coupon) {
+        const now = new Date();
+        const startValid = !coupon.starts_at || new Date(coupon.starts_at) <= now;
+        const expireValid = !coupon.expires_at || new Date(coupon.expires_at) >= now;
+        const usageValid = !coupon.usage_limit || coupon.used_count < coupon.usage_limit;
+        const minOrderValid = !coupon.min_order_amount || subtotal >= Number(coupon.min_order_amount);
+
+        if (startValid && expireValid && usageValid && minOrderValid) {
+          let couponDiscount = 0;
+          if (coupon.discount_type === 'percentage') {
+            couponDiscount = Math.round((subtotal * Number(coupon.discount_value)) / 100);
+            if (coupon.max_discount_amount && couponDiscount > Number(coupon.max_discount_amount)) {
+              couponDiscount = Number(coupon.max_discount_amount);
+            }
+          } else {
+            couponDiscount = Number(coupon.discount_value);
+          }
+          if (couponDiscount > subtotal) {
+            couponDiscount = subtotal;
+          }
+          
+          discount += couponDiscount;
+          
+          // Increment used_count on successful validation
+          await supabase
+            .from('coupons')
+            .update({ used_count: (coupon.used_count || 0) + 1 })
+            .eq('id', coupon.id);
+        }
+      }
+    }
     
     const advance = (isManualOrder && typeof body.customAdvance === 'number' && Number.isFinite(body.customAdvance) && body.customAdvance >= 0)
       ? body.customAdvance
@@ -610,8 +653,10 @@ Deno.serve(async (req) => {
         shipping_district: 'N/A',
         shipping_postal_code: null,
         notes: paymentMethod !== 'cod'
-          ? `${notes ? notes + ' | ' : ''}Payment: ${paymentMethod.toUpperCase()} | TrxID: ${transactionId}`
-          : (advance > 0 ? `${notes ? notes + ' | ' : ''}Advance: ৳${advance}` : notes),
+          ? `${notes ? notes + ' | ' : ''}Payment: ${paymentMethod.toUpperCase()} | TrxID: ${transactionId}${body.couponCode ? ' | Coupon: ' + body.couponCode : ''}`
+          : (advance > 0 
+              ? `${notes ? notes + ' | ' : ''}Advance: ৳${advance}${body.couponCode ? ' | Coupon: ' + body.couponCode : ''}` 
+              : `${notes ? notes + ' | ' : ''}${body.couponCode ? 'Coupon: ' + body.couponCode : ''}`),
         transaction_id: transactionId,
         invoice_note: invoiceNote,
         steadfast_note: steadfastNote,

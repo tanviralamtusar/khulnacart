@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useAutofillAddress } from "@/hooks/useAutofillAddress";
 import productImage from '@/assets/tulshi-lungs-product.jpg';
 import tulshiPlusImage from '@/assets/tulshi-plus-product.jpg';
 import lungsGuardImage from '@/assets/lungs-guard-product.jpg';
@@ -34,6 +35,7 @@ export default function TulshiLandingPage() {
     name: '',
     address: '',
   });
+  useAutofillAddress(setFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [productVideo, setProductVideo] = useState('');

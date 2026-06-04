@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Package, Phone, Home, Truck, ArrowRight } from 'lucide-react';
+import { CheckCircle, Phone, Home, Truck, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
@@ -220,34 +220,6 @@ const OrderConfirmationPage = () => {
             </div>
           )}
 
-          {/* Next Steps */}
-          <div className="bg-blue-50 rounded-xl p-6 mb-8 text-left">
-            <h3 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Next Steps
-            </h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-800 text-xs font-bold">1</span>
-                </div>
-                <span className="text-gray-700">Our team will call you soon to confirm the order</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-800 text-xs font-bold">2</span>
-                </div>
-                <span className="text-gray-700">Product will be packaged and handed over to courier</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-800 text-xs font-bold">3</span>
-                </div>
-                <span className="text-gray-700">Pay after receiving the product (Cash on Delivery)</span>
-              </li>
-            </ul>
-          </div>
-
           {/* Delivery Info */}
           <div className="flex items-center justify-center gap-4 mb-8 p-4 bg-green-50 rounded-xl border border-green-200">
             <Truck className="h-8 w-8 text-green-600" />
@@ -259,10 +231,25 @@ const OrderConfirmationPage = () => {
 
           {/* Contact */}
           <div className="text-center mb-8 p-4 bg-gray-50 rounded-xl">
-            <p className="text-gray-600 mb-2">Call us for any questions</p>
-            <a href="tel:+8801838636425" className="text-xl font-bold text-primary hover:underline">
-              📞 +880 1838-636425
-            </a>
+            <p className="text-gray-600 mb-3">Have questions? Contact us</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a 
+                href="https://wa.me/message/7ZV4YUG5ACVGD1" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
+              >
+                Message on WhatsApp
+              </a>
+              <a 
+                href="https://www.facebook.com/profile.php?id=61589114327578" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              >
+                Message on Facebook
+              </a>
+            </div>
           </div>
 
           {/* Action Buttons */}

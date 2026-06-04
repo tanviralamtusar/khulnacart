@@ -39,6 +39,7 @@ import {
 import { toast } from "sonner";
 import { useFacebookPixel } from "@/hooks/useFacebookPixel";
 import { useServerTracking } from "@/hooks/useServerTracking";
+import { useAutofillAddress } from "@/hooks/useAutofillAddress";
 
 // ====== Interfaces ======
 interface ProductVariation {
@@ -653,6 +654,7 @@ const CheckoutSection = memo(({ products, onSubmit, isSubmitting, selectedProduc
     selectedProductId: "",
     selectedVariationId: "",
   });
+  useAutofillAddress(setForm);
   const [shippingZone, setShippingZone] = useState<ShippingZone>('outside_dhaka');
   const sizeSelectionRef = useRef<HTMLDivElement>(null);
   const [productImageIndex, setProductImageIndex] = useState<Record<string, number>>({});

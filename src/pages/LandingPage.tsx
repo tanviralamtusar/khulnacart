@@ -15,6 +15,7 @@ import {
 import { ShippingMethodSelector, ShippingZone, SHIPPING_RATES } from "@/components/checkout/ShippingMethodSelector";
 import { toast } from "sonner";
 import { getEmbedUrl as getVideoEmbedUrl, parseIframeHtml } from "@/lib/videoEmbed";
+import { useAutofillAddress } from "@/hooks/useAutofillAddress";
 
 interface Section {
   id: string;
@@ -163,6 +164,7 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
     quantity: 1,
     selectedVariationId: "",
   });
+  useAutofillAddress(setOrderForm, section.type === "checkout-form");
   const [shippingZone, setShippingZone] = useState<ShippingZone>('outside_dhaka');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [products, setProducts] = useState<ProductWithVariations[]>([]);

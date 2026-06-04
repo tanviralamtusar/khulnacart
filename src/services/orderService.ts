@@ -14,6 +14,7 @@ interface CreateOrderData {
   paymentMethod: 'cod' | 'stripe' | 'bkash' | 'nagad' | 'rocket';
   transactionId?: string;
   shippingZone?: 'inside_dhaka' | 'outside_dhaka';
+  couponCode?: string;
 }
 
 export const createOrder = async (orderData: CreateOrderData): Promise<Order> => {
@@ -40,6 +41,7 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
         shippingZone: orderData.shippingZone || 'outside_dhaka',
         paymentMethod: orderData.paymentMethod,
         transactionId: orderData.transactionId,
+        couponCode: orderData.couponCode,
       },
     });
   } catch (e: unknown) {

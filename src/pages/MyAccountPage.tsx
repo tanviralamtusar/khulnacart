@@ -67,6 +67,7 @@ const MyAccountPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<{ full_name: string; phone: string; email: string } | null>(null);
+  const [defaultAddress, setDefaultAddress] = useState<{ name: string; phone: string } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -94,6 +95,29 @@ const MyAccountPage = () => {
       
       if (profileData) {
         setProfile(profileData);
+      }
+
+      // Fetch default address
+      const { data: addressData } = await supabase
+        .from('addresses')
+        .select('name, phone')
+        .eq('user_id', user.id)
+        .eq('is_default', true)
+        .maybeSingle();
+      
+      if (addressData) {
+        setDefaultAddress(addressData);
+      } else {
+        // fetch any address if no default
+        const { data: anyAddressData } = await supabase
+          .from('addresses')
+          .select('name, phone')
+          .eq('user_id', user.id)
+          .limit(1)
+          .maybeSingle();
+        if (anyAddressData) {
+          setDefaultAddress(anyAddressData);
+        }
       }
 
       // Fetch orders with items
@@ -146,7 +170,12 @@ const MyAccountPage = () => {
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">My Account</h1>
               <p className="text-muted-foreground mt-1">
-                Welcome, {profile?.full_name || user.email}
+                Hello, {profile?.full_name || 
+                        defaultAddress?.name || 
+                        orders[0]?.shipping_name || 
+                        user.user_metadata?.full_name || 
+                        user.user_metadata?.name || 
+                        (user.email && !user.email.endsWith('@phone.local') ? user.email.split('@')[0] : 'Customer')}
               </p>
             </div>
             <Button variant="outline" onClick={handleSignOut} className="w-fit">
@@ -215,8 +244,17 @@ const MyAccountPage = () => {
                     // Extract phone from email if it's in phone.local format
                     const isPhoneEmail = user.email?.endsWith('@phone.local');
                     const displayEmail = isPhoneEmail ? null : (profile?.email || user.email);
-                    const displayPhone = profile?.phone || (isPhoneEmail ? user.email?.replace('@phone.local', '') : null);
-                    const displayName = profile?.full_name || user.user_metadata?.full_name;
+                    const displayPhone = profile?.phone || 
+                                         defaultAddress?.phone || 
+                                         orders[0]?.shipping_phone || 
+                                         user.phone || 
+                                         user.user_metadata?.phone || 
+                                         (isPhoneEmail ? user.email?.replace('@phone.local', '') : null);
+                    const displayName = profile?.full_name || 
+                                        defaultAddress?.name || 
+                                        orders[0]?.shipping_name || 
+                                        user.user_metadata?.full_name || 
+                                        user.user_metadata?.name;
                     
                     return (
                       <div className="grid md:grid-cols-2 gap-4">

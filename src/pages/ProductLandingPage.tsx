@@ -31,6 +31,7 @@ import {
   SHIPPING_RATES,
 } from "@/components/checkout/ShippingMethodSelector";
 import { toast } from "sonner";
+import { useAutofillAddress } from "@/hooks/useAutofillAddress";
 // ====== Interfaces ======
 interface ProductVariation {
   id: string;
@@ -468,6 +469,7 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
   const [form, setForm] = useState<OrderForm>({
     name: "", phone: "", address: "", quantity: 1, selectedVariationId: "",
   });
+  useAutofillAddress(setForm);
   const [shippingZone, setShippingZone] = useState<ShippingZone>('outside_dhaka');
   const formRef = useRef<HTMLFormElement>(null);
   const sizeSelectionRef = useRef<HTMLDivElement>(null);
