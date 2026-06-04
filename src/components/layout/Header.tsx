@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +13,8 @@ import {
   LogOut,
   Home,
   Grid,
-  ClipboardList
+  ClipboardList,
+  ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,8 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   
   const cartCount = useAppSelector(selectCartCount);
   const wishlistItems = useAppSelector(selectWishlistItems);
@@ -91,17 +94,39 @@ const Header = () => {
       <div className="container-custom py-3">
         <div className="grid grid-cols-3 items-center justify-between gap-4">
           {/* Left: Desktop Nav / Mobile Menu Toggle */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-8">
+              {!isHomePage && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(-1)}
+                  className="hover:bg-muted rounded-full h-9 w-9 mr-1"
+                  title="Go Back"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              )}
               <Link to="/" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Home</Link>
               <Link to="/products" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Products</Link>
               <Link to="/my-account" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Orders</Link>
               <Link to="/auth" className="text-sm font-bold uppercase tracking-widest text-foreground hover:text-primary transition-colors">Account</Link>
             </div>
             
-            {/* Mobile Toggle */}
-            <div className="lg:hidden">
+            {/* Mobile: Back Button + Menu Toggle */}
+            <div className="lg:hidden flex items-center gap-0.5">
+              {!isHomePage && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => navigate(-1)}
+                  className="hover:bg-transparent h-9 w-9"
+                  title="Go Back"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="icon" 

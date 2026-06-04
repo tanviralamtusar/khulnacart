@@ -25,7 +25,7 @@ import {
   Home,
   Video,
   Shield,
-
+  ArrowLeft,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
@@ -174,11 +174,26 @@ function AdminSidebar() {
 }
 
 function AdminHeader() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isAdminRoot = location.pathname === '/admin';
+
   return (
-    <header className="h-14 border-b border-border bg-background flex items-center px-4 gap-4">
+    <header className="h-14 border-b border-border bg-background flex items-center px-4 gap-2">
       <SidebarTrigger>
         <Menu className="h-5 w-5" />
       </SidebarTrigger>
+      {!isAdminRoot && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="h-8 w-8 rounded-full hover:bg-muted"
+          title="Go Back"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+      )}
       <div className="flex-1" />
       <Button variant="outline" size="sm" asChild>
         <a href="/" target="_blank" rel="noopener noreferrer">
