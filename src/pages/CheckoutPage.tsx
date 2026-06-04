@@ -20,6 +20,7 @@ import type { ProductVariation } from '@/types';
 interface ShippingForm {
   name: string;
   phone: string;
+  email: string;
   address: string;
 }
 
@@ -107,6 +108,7 @@ const CheckoutPage = () => {
   const [shippingForm, setShippingForm] = useState<ShippingForm>({
     name: '',
     phone: '',
+    email: '',
     address: '',
   });
 
@@ -131,6 +133,7 @@ const CheckoutPage = () => {
         setShippingForm({
           name: addresses.name,
           phone: addresses.phone,
+          email: user.email || '',
           address: `${addresses.street}, ${addresses.city}, ${addresses.district}`,
         });
       } else {
@@ -146,6 +149,7 @@ const CheckoutPage = () => {
             ...prev,
             name: profile.full_name || '',
             phone: profile.phone || '',
+            email: user.email || '',
           }));
         }
       }
@@ -296,6 +300,7 @@ const CheckoutPage = () => {
     try {
       const order = await createOrder({
         userId: user?.id || null,
+        email: shippingForm.email,
         items: cartItems,
         shippingAddress: { name: shippingForm.name, phone: shippingForm.phone, address: shippingForm.address },
         paymentMethod: paymentMethod,
@@ -358,6 +363,11 @@ const CheckoutPage = () => {
                       <Label htmlFor="phone">Phone Number *</Label>
                       <Input id="phone" name="phone" placeholder="01XXX-XXXXXX" value={shippingForm.phone} onChange={handleInputChange} required />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address (Optional)</Label>
+                    <Input id="email" name="email" type="email" placeholder="your@email.com" value={shippingForm.email} onChange={handleInputChange} />
+                    <p className="text-[10px] text-muted-foreground">Used for sending order receipts and tracking updates.</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address">Full Address *</Label>

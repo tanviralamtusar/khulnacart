@@ -74,6 +74,8 @@ interface OrderItem {
 
 interface Order {
   id: string;
+  user_id?: string | null;
+  customer_email?: string | null;
   order_number: string;
   status: string;
   payment_status: string;
@@ -147,6 +149,7 @@ const ORDER_SELECT = `
   id, order_number, status, payment_status, payment_method, total, subtotal, shipping_cost, discount,
   shipping_name, shipping_phone, shipping_street, shipping_city, shipping_district, shipping_postal_code,
   tracking_number, notes, invoice_note, steadfast_note, steadfast_consignment_id, created_at, order_source, is_printed,
+  user_id, customer_email,
   order_items (id, order_id, product_id, product_name, product_image, quantity, price, variation_name)
 `;
 
@@ -735,12 +738,13 @@ export default function AdminOrders() {
 
   const sendStatusEmail = async (order: Order, newStatus: string) => {
     try {
-      let userEmail = null;
-      if (order.userId) {
+      let userEmail = order.customer_email;
+      
+      if (!userEmail && order.user_id) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('email')
-          .eq('user_id', order.userId)
+          .eq('user_id', order.user_id)
           .single();
         userEmail = profile?.email || null;
       }

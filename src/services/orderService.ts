@@ -4,6 +4,7 @@ import { Order, CartItem } from '@/types';
 
 interface CreateOrderData {
   userId: string | null;
+  email?: string | null;
   items: CartItem[];
   shippingAddress: {
     name: string;
@@ -21,6 +22,7 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
     invokeResult = await supabase.functions.invoke('place-order', {
       body: {
         userId: orderData.userId,
+        email: orderData.email,
         items: orderData.items.map((i) => ({
           productId: i.product.id,
           variationId: i.variation?.id,

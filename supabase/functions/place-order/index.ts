@@ -11,6 +11,7 @@ const corsHeaders = {
 
 type PlaceOrderBody = {
   userId?: string | null;
+  email?: string | null;
   items: Array<{
     productId: string;
     variationId?: string;
@@ -550,6 +551,7 @@ Deno.serve(async (req) => {
         invoice_note: invoiceNote,
         steadfast_note: steadfastNote,
         order_source: orderSource,
+        customer_email: body.email || null,
       },
     ]);
 
