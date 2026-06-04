@@ -270,16 +270,16 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden dialog-mobile-fit p-4 sm:p-6">
+      <DialogContent className="w-[92vw] sm:w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Edit Order {order.order_number}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 w-full min-w-0">
           {/* Customer Information */}
           <div className="space-y-4">
             <h3 className="font-medium text-lg border-b pb-2">Customer Information</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Customer Name *</Label>
                 <Input
@@ -311,7 +311,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
                 rows={2}
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>District</Label>
                 <Input
@@ -342,7 +342,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
           {/* Payment Information */}
           <div className="space-y-4">
             <h3 className="font-medium text-lg border-b pb-2">Payment Information</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Payment Method</Label>
                 <Select value={paymentMethod} onValueChange={setPaymentMethod}>
@@ -397,14 +397,15 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
             </div>
             <div className="space-y-3">
               {items.map((item, index) => (
-                <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-                  <div className="flex-1 grid grid-cols-4 gap-3">
-                    <div className="col-span-2 space-y-1">
+                <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 border rounded-lg bg-muted/30">
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-3 w-full">
+                    <div className="sm:col-span-2 space-y-1">
                       <Label className="text-xs text-muted-foreground">Product Name</Label>
                       <Input
                         value={item.product_name}
                         onChange={(e) => handleItemChange(index, 'product_name', e.target.value)}
                         placeholder="Product name"
+                        className="w-full"
                       />
                     </div>
                     <div className="space-y-1">
@@ -413,6 +414,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
                         value={item.variation_name || ''}
                         onChange={(e) => handleItemChange(index, 'variation_name', e.target.value)}
                         placeholder="Size/Variant"
+                        className="w-full"
                       />
                     </div>
                     <div className="space-y-1">
@@ -422,26 +424,30 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
                         min="1"
                         value={item.quantity}
                         onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value) || 1)}
+                        className="w-full"
                       />
                     </div>
                   </div>
-                  <div className="w-28 space-y-1">
-                    <Label className="text-xs text-muted-foreground">Price (৳)</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={item.price}
-                      onChange={(e) => handleItemChange(index, 'price', parseFloat(e.target.value) || 0)}
-                    />
+                  <div className="flex items-end gap-3 w-full sm:w-28 shrink-0">
+                    <div className="flex-1 sm:w-full space-y-1">
+                      <Label className="text-xs text-muted-foreground">Price (৳)</Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={item.price}
+                        onChange={(e) => handleItemChange(index, 'price', parseFloat(e.target.value) || 0)}
+                        className="w-full"
+                      />
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0 mb-0.5 sm:mb-0"
+                      onClick={() => handleRemoveItem(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => handleRemoveItem(index)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               ))}
             </div>
@@ -450,7 +456,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
           {/* Pricing */}
           <div className="space-y-4">
             <h3 className="font-medium text-lg border-b pb-2">Pricing</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Shipping Cost (৳)</Label>
                 <Input

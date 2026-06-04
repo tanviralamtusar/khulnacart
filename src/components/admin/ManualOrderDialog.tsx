@@ -711,7 +711,7 @@ export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: Manual
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto p-0">
+      <DialogContent className="w-[92vw] sm:w-full max-w-5xl max-h-[95vh] overflow-y-auto p-0">
         <DialogHeader className="p-4 pb-2">
           <DialogTitle className="text-lg font-semibold">New Order</DialogTitle>
           
@@ -764,7 +764,7 @@ export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: Manual
           )}
         </DialogHeader>
 
-        <div className="p-4 pt-2 space-y-4">
+        <div className="p-4 pt-2 space-y-4 w-full min-w-0">
 
           {/* Customer Information Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -947,84 +947,88 @@ export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: Manual
                       return (
                         <div
                           key={itemKey}
-                          className="flex items-center gap-2 p-2 bg-muted/30 rounded-md"
+                          className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-muted/30 rounded-md"
                         >
-                          {item.product.images?.[0] && (
-                            <img
-                              src={item.product.images[0]}
-                              alt={item.product.name}
-                              className="w-12 h-12 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{item.product.name}</p>
-                            <div className="flex items-center gap-1 flex-wrap">
-                              {item.variation && (
-                                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
-                                  {item.variation.name}
-                                </Badge>
-                              )}
-                              <Input
-                                type="text"
-                                value={item.customSize || ''}
-                                onChange={(e) => updateCustomSize(item.product.id, item.variation?.id, e.target.value)}
-                                className="h-6 w-20 text-xs px-1 py-0"
-                                placeholder="Size.."
+                          <div className="flex items-center gap-3 flex-1 min-w-0 w-full">
+                            {item.product.images?.[0] && (
+                              <img
+                                src={item.product.images[0]}
+                                alt={item.product.name}
+                                className="w-12 h-12 object-cover rounded shrink-0"
                               />
-                            </div>
-                            {/* Editable price input */}
-                            <div className="flex items-center gap-1 mt-1">
-                              <span className="text-xs text-muted-foreground">৳</span>
-                              <Input
-                                type="number"
-                                min="0"
-                                value={displayPrice}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  updateCustomPrice(
-                                    item.product.id,
-                                    item.variation?.id,
-                                    val === '' ? undefined : Number(val)
-                                  );
-                                }}
-                                className="h-6 w-16 text-xs px-1 py-0"
-                                placeholder={basePrice.toString()}
-                              />
-                              {item.customPrice !== undefined && item.customPrice !== basePrice && (
-                                <span className="text-xs text-muted-foreground line-through">৳{basePrice}</span>
-                              )}
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{item.product.name}</p>
+                              <div className="flex items-center gap-1 flex-wrap mt-0.5">
+                                {item.variation && (
+                                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
+                                    {item.variation.name}
+                                  </Badge>
+                                )}
+                                <Input
+                                  type="text"
+                                  value={item.customSize || ''}
+                                  onChange={(e) => updateCustomSize(item.product.id, item.variation?.id, e.target.value)}
+                                  className="h-6 w-20 text-xs px-1.5 py-0"
+                                  placeholder="Size.."
+                                />
+                              </div>
+                              {/* Editable price input */}
+                              <div className="flex items-center gap-1 mt-1">
+                                <span className="text-xs text-muted-foreground">৳</span>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  value={displayPrice}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    updateCustomPrice(
+                                      item.product.id,
+                                      item.variation?.id,
+                                      val === '' ? undefined : Number(val)
+                                    );
+                                  }}
+                                  className="h-6 w-16 text-xs px-1.5 py-0"
+                                  placeholder={basePrice.toString()}
+                                />
+                                {item.customPrice !== undefined && item.customPrice !== basePrice && (
+                                  <span className="text-xs text-muted-foreground line-through">৳{basePrice}</span>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => updateQuantity(item.product.id, item.variation?.id, item.quantity - 1)}
-                            >
-                              <Minus className="h-3 w-3" />
-                            </Button>
-                            <span className="w-6 text-center text-sm">{item.quantity}</span>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-7 w-7"
-                              onClick={() => updateQuantity(item.product.id, item.variation?.id, item.quantity + 1)}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 text-destructive"
-                              onClick={() => removeProduct(item.product.id, item.variation?.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
+                          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-muted-foreground/10">
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => updateQuantity(item.product.id, item.variation?.id, item.quantity - 1)}
+                              >
+                                <Minus className="h-3 w-3" />
+                              </Button>
+                              <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => updateQuantity(item.product.id, item.variation?.id, item.quantity + 1)}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => removeProduct(item.product.id, item.variation?.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <p className="font-semibold text-sm w-20 text-right shrink-0">
+                              ৳{displayPrice * item.quantity}
+                            </p>
                           </div>
-                          <p className="font-medium text-sm w-16 text-right">
-                            ৳{displayPrice * item.quantity}
-                          </p>
                         </div>
                       );
                     })}

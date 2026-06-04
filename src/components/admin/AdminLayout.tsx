@@ -109,7 +109,7 @@ function AdminSidebar() {
 
   return (
     <Sidebar className="border-r border-sidebar-border">
-      <div className="p-4 border-b border-sidebar-border">
+      <div className="h-14 px-4 border-b border-sidebar-border flex items-center">
         <h1 className="font-display text-xl font-bold text-sidebar-foreground">
           Admin Panel
         </h1>
@@ -176,7 +176,7 @@ function AdminSidebar() {
 function AdminHeader() {
   return (
     <header className="h-14 border-b border-border bg-background flex items-center px-4 gap-4">
-      <SidebarTrigger className="md:hidden">
+      <SidebarTrigger>
         <Menu className="h-5 w-5" />
       </SidebarTrigger>
       <div className="flex-1" />
@@ -223,9 +223,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-muted/30">
+      <div className="h-screen flex w-full bg-muted/30 overflow-hidden">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
           <AdminHeader />
           <main className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden">
             {children}

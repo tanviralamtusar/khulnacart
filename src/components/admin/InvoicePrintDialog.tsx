@@ -126,7 +126,7 @@ export function InvoicePrintDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[92vw] sm:w-full max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>Print Invoices ({orders.length})</span>
@@ -137,7 +137,7 @@ export function InvoicePrintDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="border rounded-lg overflow-hidden bg-gray-100 p-4">
+        <div className="border rounded-lg overflow-hidden bg-gray-100 p-4 w-full min-w-0">
           <div ref={printRef}>
             {orders.map((order, index) => (
               <div

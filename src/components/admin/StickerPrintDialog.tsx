@@ -125,7 +125,7 @@ export function StickerPrintDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[92vw] sm:w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>Print Stickers - A5 ({orders.length})</span>
@@ -136,7 +136,7 @@ export function StickerPrintDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="border rounded-lg overflow-hidden bg-gray-100 p-4">
+        <div className="border rounded-lg overflow-hidden bg-gray-100 p-4 w-full min-w-0">
           <div ref={printRef}>
             {orders.map((order, index) => (
               <div

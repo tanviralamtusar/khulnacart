@@ -205,7 +205,7 @@ export function CourierHistoryDialog({ phone, customerName }: CourierHistoryDial
           <History className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[92vw] sm:w-full sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
@@ -217,7 +217,7 @@ export function CourierHistoryDialog({ phone, customerName }: CourierHistoryDial
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 w-full min-w-0">
           {loading && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />

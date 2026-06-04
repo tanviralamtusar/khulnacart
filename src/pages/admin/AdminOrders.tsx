@@ -1264,7 +1264,7 @@ export default function AdminOrders() {
 
       {/* Mobile Header (from image) */}
       <div className="md:hidden flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-2xl font-bold">Orders</h1>
           <div className="flex items-center gap-2">
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
@@ -1883,35 +1883,35 @@ export default function AdminOrders() {
 
                   {/* Order Details */}
                   <div className="flex-1 min-w-0" onClick={() => openOrderDetail(order)}>
-                    <div className="flex justify-between items-start mb-0.5">
+                    <div className="flex flex-col sm:flex-row justify-between items-start mb-0.5 gap-1">
                       <p className="text-[#6366f1] font-bold text-base leading-tight">Serial No. #{serialNo}</p>
-                      <p className="text-[10px] text-right font-semibold text-black/80 mt-1 whitespace-nowrap">
-                        {format(new Date(order.created_at), 'MMMM d, yyyy h:mm:ss a')}
+                      <p className="text-[10px] text-left sm:text-right font-semibold text-black/80">
+                        {format(new Date(order.created_at), 'dd MMM yyyy, hh:mm a')}
                       </p>
                     </div>
                     
                     <p className="text-[#6366f1] font-semibold text-sm mb-2">Order ID:{order.order_number}</p>
                     
                     <div className="space-y-1">
-                      <div className="flex items-center text-xs">
-                        <span className="font-semibold text-foreground/70 w-16">Customer</span>
-                        <span className="text-muted-foreground mx-1">:</span>
-                        <span className="text-foreground font-medium truncate">{order.shipping_name}</span>
+                      <div className="flex items-center text-xs min-w-0">
+                        <span className="font-semibold text-foreground/70 w-16 shrink-0">Customer</span>
+                        <span className="text-muted-foreground mx-1 shrink-0">:</span>
+                        <span className="text-foreground font-medium truncate flex-1 min-w-0">{order.shipping_name}</span>
                       </div>
-                      <div className="flex items-center text-xs">
-                        <span className="font-semibold text-foreground/70 w-16">Phone</span>
-                        <span className="text-muted-foreground mx-1">:</span>
-                        <span className="text-foreground font-medium">{order.shipping_phone}</span>
+                      <div className="flex items-center text-xs min-w-0">
+                        <span className="font-semibold text-foreground/70 w-16 shrink-0">Phone</span>
+                        <span className="text-muted-foreground mx-1 shrink-0">:</span>
+                        <span className="text-foreground font-medium truncate flex-1 min-w-0">{order.shipping_phone}</span>
                       </div>
-                      <div className="flex items-center text-xs">
-                        <span className="font-semibold text-foreground/70 w-16">Items</span>
-                        <span className="text-muted-foreground mx-1">:</span>
-                        <span className="text-foreground font-medium">{order.order_items.reduce((sum, i) => sum + i.quantity, 0)}</span>
+                      <div className="flex items-center text-xs min-w-0">
+                        <span className="font-semibold text-foreground/70 w-16 shrink-0">Items</span>
+                        <span className="text-muted-foreground mx-1 shrink-0">:</span>
+                        <span className="text-foreground font-medium truncate flex-1 min-w-0">{order.order_items.reduce((sum, i) => sum + i.quantity, 0)}</span>
                       </div>
-                      <div className="flex items-center text-xs">
-                        <span className="font-semibold text-foreground/70 w-16">Total</span>
-                        <span className="text-muted-foreground mx-1">:</span>
-                        <span className="text-black font-bold text-sm">
+                      <div className="flex items-center text-xs min-w-0">
+                        <span className="font-semibold text-foreground/70 w-16 shrink-0">Total</span>
+                        <span className="text-muted-foreground mx-1 shrink-0">:</span>
+                        <span className="text-black font-bold text-sm truncate flex-1 min-w-0">
                           {Number(order.total).toFixed(2)} ৳
                         </span>
                       </div>
@@ -1947,12 +1947,12 @@ export default function AdminOrders() {
       )}
 
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden dialog-mobile-fit p-4 sm:p-6">
+        <DialogContent className="w-[92vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-xl sm:text-2xl">Order {selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-6">
+            <div className="space-y-6 w-full min-w-0">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold mb-2 flex flex-wrap items-center gap-2 text-base sm:text-lg">
