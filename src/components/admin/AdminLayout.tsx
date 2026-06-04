@@ -225,7 +225,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-muted/30">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           <AdminHeader />
           <main className="flex-1 p-4 md:p-6 overflow-auto">
             {children}

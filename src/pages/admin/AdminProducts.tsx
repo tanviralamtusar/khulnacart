@@ -553,7 +553,7 @@ export default function AdminProducts() {
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name *</Label>
                   <Input
@@ -596,7 +596,7 @@ export default function AdminProducts() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="price">Base Price *</Label>
                   <Input
@@ -816,8 +816,9 @@ export default function AdminProducts() {
                 </div>
 
                 {hasVariations && (
-                  <div className="space-y-3 bg-muted/50 rounded-lg p-4">
-                    <div className="grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground mb-2">
+                  <div className="space-y-3 bg-muted/50 rounded-lg p-3 sm:p-4">
+                    {/* Header: only show on tablet/desktop */}
+                    <div className="hidden sm:grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <div className="col-span-3">ভ্যারিয়েশন (Size/Kg/Ml)</div>
                       <div className="col-span-3">দাম (Price) ৳</div>
                       <div className="col-span-3">আগের দাম</div>
@@ -826,60 +827,69 @@ export default function AdminProducts() {
                     </div>
                     
                     {variations.map((variation) => (
-                      <div key={variation.clientId} className="grid grid-cols-12 gap-2 items-center">
-                        <Input
-                          className="col-span-3"
-                          placeholder="যেমন: Size 36, 1kg, 500ml..."
-                          value={variation.name}
-                          onChange={(e) => handleVariationChange(variation.clientId, 'name', e.target.value)}
-                        />
-                        <Input
-                          className="col-span-3"
-                          type="number"
-                          placeholder="950"
-                          value={variation.price || ''}
-                          onChange={(e) =>
-                            handleVariationChange(
-                              variation.clientId,
-                              'price',
-                              parseFloat(e.target.value) || 0
-                            )
-                          }
-                        />
-                        <Input
-                          className="col-span-3"
-                          type="number"
-                          placeholder="Optional"
-                          value={variation.original_price || ''}
-                          onChange={(e) =>
-                            handleVariationChange(
-                              variation.clientId,
-                              'original_price',
-                              parseFloat(e.target.value) || undefined
-                            )
-                          }
-                        />
-                        <Input
-                          className="col-span-2"
-                          type="number"
-                          value={variation.stock}
-                          onChange={(e) =>
-                            handleVariationChange(
-                              variation.clientId,
-                              'stock',
-                              parseInt(e.target.value) || 0
-                            )
-                          }
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="col-span-1"
-                          onClick={() => handleRemoveVariation(variation.clientId)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                      <div key={variation.clientId} className="flex flex-col sm:grid sm:grid-cols-12 gap-3 sm:gap-2 p-3 sm:p-0 border sm:border-0 rounded-lg sm:rounded-none bg-background sm:bg-transparent items-start sm:items-center relative">
+                        <div className="w-full sm:col-span-3">
+                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">ভ্যারিয়েশন (Size/Kg/Ml)</Label>
+                          <Input
+                            placeholder="যেমন: Size 36, 1kg, 500ml..."
+                            value={variation.name}
+                            onChange={(e) => handleVariationChange(variation.clientId, 'name', e.target.value)}
+                          />
+                        </div>
+                        <div className="w-full sm:col-span-3">
+                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">দাম (Price) ৳</Label>
+                          <Input
+                            type="number"
+                            placeholder="950"
+                            value={variation.price || ''}
+                            onChange={(e) =>
+                              handleVariationChange(
+                                variation.clientId,
+                                'price',
+                                parseFloat(e.target.value) || 0
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="w-full sm:col-span-3">
+                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">আগের দাম</Label>
+                          <Input
+                            type="number"
+                            placeholder="Optional"
+                            value={variation.original_price || ''}
+                            onChange={(e) =>
+                              handleVariationChange(
+                                variation.clientId,
+                                'original_price',
+                                parseFloat(e.target.value) || undefined
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="w-full sm:col-span-2">
+                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">স্টক</Label>
+                          <Input
+                            type="number"
+                            value={variation.stock}
+                            onChange={(e) =>
+                              handleVariationChange(
+                                variation.clientId,
+                                'stock',
+                                parseInt(e.target.value) || 0
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="absolute right-2 top-2 sm:static sm:col-span-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveVariation(variation.clientId)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
 
@@ -912,15 +922,15 @@ export default function AdminProducts() {
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Search className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
               <Input
                 placeholder="Search products..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="max-w-sm"
+                className="w-full sm:max-w-sm"
               />
             </div>
             
@@ -930,7 +940,7 @@ export default function AdminProducts() {
                 <Button
                   variant="outline"
                   className={cn(
-                    "justify-start text-left font-normal min-w-[240px]",
+                    "justify-start text-left font-normal w-full sm:w-[240px]",
                     !dateRange && "text-muted-foreground"
                   )}
                 >
@@ -964,7 +974,7 @@ export default function AdminProducts() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setDateRange(undefined)}
-                className="text-destructive"
+                className="text-destructive w-fit self-start sm:self-auto"
               >
                 <X className="h-4 w-4 mr-1" />
                 ক্লিয়ার
@@ -972,85 +982,194 @@ export default function AdminProducts() {
             )}
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      {product.images?.[0] && (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="h-10 w-10 rounded object-cover"
-                        />
+        <CardContent className="p-4 sm:p-6">
+          {/* Mobile View: Cards */}
+          <div className="md:hidden space-y-4">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="border border-border rounded-xl p-4 bg-card relative shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex gap-4">
+                  {product.images?.[0] && (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="h-20 w-20 rounded-xl object-cover border border-border shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start gap-2">
+                      <h3 className="font-semibold text-[#2563eb] text-base line-clamp-1 flex-1" title={product.name}>
+                        {product.name}
+                      </h3>
+                      {product.created_at && (
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap pt-1">
+                          {format(new Date(product.created_at), "MMM d, yyyy")}
+                        </span>
                       )}
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {product.slug}
-                        </div>
+                    </div>
+                    <p className="text-xs text-[#3b82f6] font-medium mt-0.5 truncate" title={product.slug || ''}>
+                      Slug: {product.slug}
+                    </p>
+
+                    {/* Details list, matching key-value pairs */}
+                    <div className="mt-3 space-y-1 text-xs text-foreground">
+                      <div className="flex">
+                        <span className="w-20 text-muted-foreground">Category</span>
+                        <span className="text-muted-foreground mr-2">:</span>
+                        <span className="font-medium text-foreground">{product.categories?.name || '-'}</span>
+                      </div>
+                      <div className="flex">
+                        <span className="w-20 text-muted-foreground">Price</span>
+                        <span className="text-muted-foreground mr-2">:</span>
+                        <span className="font-semibold text-foreground">৳{product.price.toFixed(0)}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-20 text-muted-foreground">Stock</span>
+                        <span className="text-muted-foreground mr-2">:</span>
+                        <Badge variant={product.stock < 10 ? 'destructive' : 'secondary'} className="text-[10px] font-semibold px-2 py-0">
+                          {product.stock}
+                        </Badge>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>{product.categories?.name || '-'}</TableCell>
-                  <TableCell>৳{product.price.toFixed(0)}</TableCell>
-                  <TableCell>
-                    <Badge variant={product.stock < 10 ? 'destructive' : 'secondary'}>
-                      {product.stock}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={product.is_active ? 'default' : 'outline'}>
+                  </div>
+                </div>
+
+                {/* Status and Action Buttons */}
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between gap-2">
+                  <div>
+                    <Badge variant={product.is_active ? 'default' : 'outline'} className={cn(
+                      "text-xs font-semibold px-3 py-1 rounded-full",
+                      product.is_active ? "bg-[#eab308] hover:bg-[#eab308]/90 text-white border-0" : ""
+                    )}>
                       {product.is_active ? 'Active' : 'Inactive'}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
+                  </div>
+                  <div className="flex gap-1.5">
                     <Button
-                      variant="ghost"
-                      size="icon"
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleDuplicate(product)}
                       title="ডুপ্লিকেট করুন"
+                      className="h-8 w-8 p-0"
                     >
-                      <Copy className="h-4 w-4 text-muted-foreground" />
+                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="icon"
+                      variant="outline"
+                      size="sm"
                       onClick={() => openEditDialog(product)}
+                      title="সম্পাদনা করুন"
+                      className="h-8 w-8 p-0"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="icon"
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleDelete(product.id)}
+                      title="ডিলিট করুন"
+                      className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredProducts.length === 0 && (
+                  </div>
+                </div>
+              </div>
+            ))}
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground border rounded-xl bg-card">
+                No products found
+              </div>
+            )}
+          </div>
+
+          {/* Desktop View: Table */}
+          <div className="hidden md:block overflow-x-auto w-full">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No products found
-                  </TableCell>
+                  <TableHead>Product</TableHead>
+                  <TableHead className="hidden md:table-cell">Category</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Stock</TableHead>
+                  <TableHead className="hidden sm:table-cell">Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3 max-w-[140px] sm:max-w-[250px] md:max-w-[350px]">
+                        {product.images?.[0] && (
+                          <img
+                            src={product.images[0]}
+                            alt={product.name}
+                            className="h-10 w-10 rounded object-cover shrink-0"
+                          />
+                        )}
+                        <div className="min-w-0">
+                          <div className="font-medium truncate" title={product.name}>
+                            {product.name}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate" title={product.slug || ''}>
+                            {product.slug}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">{product.categories?.name || '-'}</TableCell>
+                    <TableCell>৳{product.price.toFixed(0)}</TableCell>
+                    <TableCell>
+                      <Badge variant={product.stock < 10 ? 'destructive' : 'secondary'}>
+                        {product.stock}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <Badge variant={product.is_active ? 'default' : 'outline'}>
+                        {product.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDuplicate(product)}
+                          title="ডুপ্লিকেট করুন"
+                          className="h-8 w-8 shrink-0"
+                        >
+                          <Copy className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEditDialog(product)}
+                          className="h-8 w-8 shrink-0"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(product.id)}
+                          className="h-8 w-8 shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredProducts.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      No products found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
