@@ -250,39 +250,37 @@ export default function FashionHomePage() {
       <Header />
 
       {/* Categories Section */}
-      <section className="py-12 md:py-16 bg-muted/20 relative overflow-hidden">
+      <section className="py-6 md:py-16 bg-muted/20 relative overflow-hidden">
         {/* Background decorative accents */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/3 rounded-full blur-3xl pointer-events-none" />
 
         <div className="container-custom relative z-10">
-          {/* Section Header: Premium "Exploring" Style */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-            <div className="relative">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="h-1 w-6 bg-primary rounded-full animate-pulse" />
-                <span className="text-primary font-bold text-xs tracking-widest uppercase">Exploring</span>
+          {/* Section Header - Mobile Optimized */}
+          <div className="flex items-center justify-between mb-5 md:mb-10">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="h-1 w-5 bg-primary rounded-full animate-pulse" />
+                <span className="text-primary font-bold text-[10px] md:text-xs tracking-widest uppercase">Exploring</span>
               </div>
-              <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-foreground">
-                Shop By <span className="text-primary relative inline-block">Category<span className="absolute bottom-1.5 left-0 w-full h-1.5 bg-primary/20 -z-10 rounded-full" /></span>
+              <h2 className="text-lg md:text-4xl font-extrabold tracking-tight text-foreground">
+                Shop By <span className="text-primary relative inline-block">Category<span className="absolute bottom-0.5 md:bottom-1.5 left-0 w-full h-1 md:h-1.5 bg-primary/20 -z-10 rounded-full" /></span>
               </h2>
-              <p className="text-muted-foreground text-sm mt-1">
-                Choose your favorite category from our premium collection
-              </p>
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/products')} 
+              className="text-muted-foreground hover:text-primary text-xs md:text-sm font-semibold flex items-center gap-0.5 group px-2"
+            >
+              View All 
+              <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
 
-            {/* Slider Controls + View All */}
-            <div className="flex items-center gap-4 self-end md:self-auto">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/products')} 
-                className="text-muted-foreground hover:text-primary transition-colors text-sm font-semibold flex items-center gap-1 group"
-              >
-                View All 
-                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-              
+          {/* Desktop: Carousel with nav arrows */}
+          <div className="hidden md:block">
+            <div className="flex items-center justify-end gap-1.5 mb-4">
               <div className="flex items-center gap-1.5 bg-background p-1 rounded-full border border-border shadow-sm">
                 <Button
                   variant="ghost"
@@ -305,26 +303,23 @@ export default function FashionHomePage() {
                 </Button>
               </div>
             </div>
-          </div>
-
-          {/* Carousel Layout */}
-          <Carousel
-            setApi={setCarouselApi}
-            opts={{
-              align: "start",
-              loop: false,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-3 md:-ml-4">
-              {categories.map((category, index) => {
-                const categoryImage = category.image_url || category.productImage;
-                
-                return (
-                   <CarouselItem 
-                     key={category.id} 
-                     className="pl-3 md:pl-4 basis-1/4 sm:basis-1/3 md:basis-1/3 lg:basis-1/4"
-                   >
+            <Carousel
+              setApi={setCarouselApi}
+              opts={{
+                align: "start",
+                loop: false,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {categories.map((category) => {
+                  const categoryImage = category.image_url || category.productImage;
+                  
+                  return (
+                    <CarouselItem 
+                      key={category.id} 
+                      className="pl-4 basis-1/3 lg:basis-1/4"
+                    >
                       <motion.div
                         whileHover={{ y: -6 }}
                         transition={{ duration: 0.3 }}
@@ -343,16 +338,10 @@ export default function FashionHomePage() {
                               <ShoppingBag className="w-10 h-10 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
                             </div>
                           )}
-                          
-                          {/* Shimmer Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-                          
-                          {/* Decorative Accent Ring */}
                           <div className="absolute inset-2 border border-white/10 rounded-xl pointer-events-none group-hover:border-white/30 transition-all duration-300" />
-
-                          {/* Content Area */}
-                          <div className="absolute inset-0 flex flex-col justify-center items-center p-4 md:p-6 text-center z-10">
-                            <h3 className="font-bold text-white text-base md:text-lg tracking-tight group-hover:text-primary transition-colors drop-shadow-md">
+                          <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center z-10">
+                            <h3 className="font-bold text-white text-lg tracking-tight group-hover:text-primary transition-colors drop-shadow-md">
                               {category.name}
                             </h3>
                             <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-primary/90 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
@@ -362,11 +351,56 @@ export default function FashionHomePage() {
                           </div>
                         </div>
                       </motion.div>
-                  </CarouselItem>
+                    </CarouselItem>
+                  );
+                })}
+              </CarouselContent>
+            </Carousel>
+          </div>
+
+          {/* Mobile: Circular category icons in horizontal scroll */}
+          <div className="md:hidden">
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+              {categories.map((category, index) => {
+                const categoryImage = category.image_url || category.productImage;
+                
+                return (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                    className="flex flex-col items-center gap-2 snap-start flex-shrink-0 cursor-pointer group"
+                    style={{ minWidth: '76px' }}
+                    onClick={() => navigate(`/products?category=${category.slug}`)}
+                  >
+                    {/* Circular Image with Gradient Ring */}
+                    <div className="relative">
+                      <div className="w-[72px] h-[72px] rounded-full p-[2.5px] bg-gradient-to-br from-primary via-primary/60 to-primary/30 shadow-md group-active:scale-95 transition-transform duration-200">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-card border-2 border-background">
+                          {categoryImage ? (
+                            <img 
+                              src={categoryImage} 
+                              alt={category.name} 
+                              className="w-full h-full object-cover" 
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-muted flex items-center justify-center">
+                              <ShoppingBag className="w-6 h-6 text-muted-foreground/40" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Category Name */}
+                    <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2 w-full px-0.5">
+                      {category.name}
+                    </span>
+                  </motion.div>
                 );
               })}
-            </CarouselContent>
-          </Carousel>
+            </div>
+          </div>
         </div>
       </section>
 
