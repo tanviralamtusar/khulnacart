@@ -348,8 +348,8 @@ export default function AdminCategories() {
             <TableHeader>
               <TableRow>
                 <TableHead>Category</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Sort Order</TableHead>
+                <TableHead className="hidden md:table-cell">Slug</TableHead>
+                <TableHead className="hidden md:table-cell">Sort Order</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -362,23 +362,32 @@ export default function AdminCategories() {
                         <img
                           src={category.image_url}
                           alt={category.name}
-                          className="h-10 w-10 rounded object-cover"
+                          className="h-10 w-10 rounded object-cover shrink-0"
                         />
                       )}
-                      <div>
-                        <div className="font-medium">{category.name}</div>
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">{category.name}</div>
                         {category.description && (
-                          <div className="text-sm text-muted-foreground line-clamp-1">
+                          <div className="text-sm text-muted-foreground line-clamp-1 max-w-[150px] sm:max-w-none">
                             {category.description}
                           </div>
                         )}
+                        {/* Mobile display of Slug and Sort Order */}
+                        <div className="flex flex-wrap gap-1.5 mt-1 text-[11px] text-muted-foreground md:hidden">
+                          <span className="bg-muted px-1.5 py-0.5 rounded truncate max-w-[120px]">
+                            Slug: {category.slug}
+                          </span>
+                          <span className="bg-muted px-1.5 py-0.5 rounded">
+                            Sort: {category.sort_order ?? 0}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden md:table-cell text-muted-foreground">
                     {category.slug}
                   </TableCell>
-                  <TableCell>{category.sort_order}</TableCell>
+                  <TableCell className="hidden md:table-cell">{category.sort_order}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
