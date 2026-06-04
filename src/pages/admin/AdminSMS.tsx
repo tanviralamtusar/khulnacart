@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageSquare, Settings, History, Send, RefreshCw, Save, Pencil, Check, X } from "lucide-react";
 import { format } from "date-fns";
+import BackButton from "@/components/ui/BackButton";
 
 interface SmsTemplate {
   id: string;
@@ -265,6 +266,7 @@ export default function AdminSMS() {
     <AdminLayout>
       <div className="space-y-6">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-bold">SMS Management</h1>
           <p className="text-muted-foreground">
             Configure SMS notifications for your customers

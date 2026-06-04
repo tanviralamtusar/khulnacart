@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import BackButton from '@/components/ui/BackButton';
 
 const emailSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -168,6 +169,7 @@ const AuthPage = () => {
         <Header />
         <main className="flex-1 flex pt-32 pb-16 bg-muted/30">
           <div className="container-custom">
+            <BackButton fallbackPath="/" className="mb-4 pl-0" />
             <div className="max-w-md mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -251,6 +253,7 @@ const AuthPage = () => {
       <Header />
       <main className="flex-1 flex pt-32 pb-16 bg-muted/30">
         <div className="container-custom">
+          <BackButton fallbackPath="/" className="mb-4 pl-0" />
           <div className="max-w-md mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

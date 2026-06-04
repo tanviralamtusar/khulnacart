@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Save, Eye, EyeOff, Truck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import BackButton from '@/components/ui/BackButton';
 
 export default function AdminSteadfast() {
   const [loading, setLoading] = useState(true);
@@ -93,6 +94,7 @@ export default function AdminSteadfast() {
   return (
     <div className="space-y-6">
       <div>
+        <BackButton fallbackPath="/admin" className="mb-2" />
         <h1 className="text-3xl font-display font-bold flex items-center gap-2">
           <Truck className="h-8 w-8" />
           Steadfast Courier

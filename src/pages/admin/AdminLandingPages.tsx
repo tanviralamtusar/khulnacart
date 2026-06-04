@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Plus, Edit, Trash2, Eye, EyeOff, ExternalLink, Copy, Package, TrendingUp, ShoppingCart, Pencil, Search, CalendarIcon, X, Sparkles, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import BackButton from "@/components/ui/BackButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -436,6 +437,7 @@ const AdminLandingPages = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-bold">Landing Pages</h1>
           <p className="text-muted-foreground">
             Create and manage product landing pages

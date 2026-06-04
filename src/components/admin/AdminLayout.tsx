@@ -185,13 +185,14 @@ function AdminHeader() {
       </SidebarTrigger>
       {!isAdminRoot && (
         <Button
-          variant="ghost"
-          size="icon"
+          variant="outline"
+          size="sm"
           onClick={() => navigate(-1)}
-          className="h-8 w-8 rounded-full hover:bg-muted"
+          className="h-8 flex items-center gap-1.5 px-3 rounded-full hover:bg-muted hover:text-foreground shadow-sm hover:shadow-md transition-all active:scale-95 group"
           title="Go Back"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          <span className="text-xs font-medium">Back</span>
         </Button>
       )}
       <div className="flex-1" />

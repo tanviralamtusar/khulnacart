@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ProductCard from '@/components/products/ProductCard';
 import Header from '@/components/layout/Header';
+import BackButton from '@/components/ui/BackButton';
 import { fetchProducts, fetchCategories } from '@/services/productService';
 import { Product, Category } from '@/types';
 
@@ -171,6 +172,7 @@ const ProductsPage = () => {
       <Header />
       <div className="min-h-screen bg-background pt-32 pb-16">
         <div className="container-custom">
+        <BackButton fallbackPath="/" className="mb-4 pl-0" />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">

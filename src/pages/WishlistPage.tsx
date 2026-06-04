@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trash2, ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import BackButton from '@/components/ui/BackButton';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectWishlistItems, removeFromWishlist } from '@/store/slices/wishlistSlice';
 import { addToCart, openCart } from '@/store/slices/cartSlice';
@@ -25,10 +28,13 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-40 pb-16 bg-background">
-      <div className="container-custom">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+    <>
+      <Header />
+      <div className="min-h-screen pt-40 pb-16 bg-background">
+        <div className="container-custom">
+          <BackButton fallbackPath="/" className="mb-4 pl-0" />
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
             My Wishlist
           </h1>
           <p className="text-muted-foreground">
@@ -118,6 +124,8 @@ const WishlistPage = () => {
         )}
       </div>
     </div>
+    <Footer />
+  </>
   );
 };
 

@@ -37,6 +37,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { format } from 'date-fns';
+import BackButton from '@/components/ui/BackButton';
 
 type Coupon = {
   id: string;
@@ -639,6 +640,7 @@ export default function AdminMarketing() {
   return (
     <div className="space-y-6">
       <div>
+        <BackButton fallbackPath="/admin" className="mb-2" />
         <h1 className="text-3xl font-display font-bold">Marketing</h1>
         <p className="text-muted-foreground">Manage tracking, email notifications, and promotional coupons</p>
       </div>

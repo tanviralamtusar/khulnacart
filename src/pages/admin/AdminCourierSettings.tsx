@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Save, Eye, EyeOff, Truck, Package, BoxIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import BackButton from '@/components/ui/BackButton';
 
 function PasswordInput({ id, label, value, onChange, placeholder }: {
   id: string; label: string; value: string; onChange: (v: string) => void; placeholder: string;
@@ -167,6 +168,7 @@ export default function AdminCourierSettings() {
   return (
     <div className="space-y-6">
       <div>
+        <BackButton fallbackPath="/admin" className="mb-2" />
         <h1 className="text-3xl font-display font-bold flex items-center gap-2">
           <Truck className="h-8 w-8" />
           Courier Settings

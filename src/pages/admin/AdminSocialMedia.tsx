@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { MessageCircle, Phone, Save } from "lucide-react";
+import BackButton from "@/components/ui/BackButton";
 
 interface SocialMediaSettings {
   messenger_enabled: boolean;
@@ -108,6 +109,7 @@ const AdminSocialMedia = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-bold">Social Media</h1>
           <p className="text-muted-foreground">
             Configure chat buttons for Messenger and WhatsApp

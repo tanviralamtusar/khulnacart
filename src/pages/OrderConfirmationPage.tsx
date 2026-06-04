@@ -5,6 +5,7 @@ import { CheckCircle, Package, Phone, Home, Truck, ArrowRight } from 'lucide-rea
 import { motion } from 'framer-motion';
 import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
+import BackButton from '@/components/ui/BackButton';
 
 interface OrderItem {
   productId: string;
@@ -154,6 +155,7 @@ const OrderConfirmationPage = () => {
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
       <div className="max-w-2xl mx-auto">
+        <BackButton fallbackPath="/" className="mb-4 pl-0" />
         {/* Success Animation */}
         <motion.div
           initial={{ scale: 0 }}

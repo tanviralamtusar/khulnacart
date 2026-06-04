@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Mail, Phone, User, MessageSquare, Check, Trash2, Eye, Settings, Save } from 'lucide-react';
 import { format } from 'date-fns';
+import BackButton from '@/components/ui/BackButton';
 import {
   Dialog,
   DialogContent,
@@ -155,6 +156,7 @@ const AdminContactSubmissions = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
+            <BackButton fallbackPath="/admin" className="mb-2" />
             <h1 className="text-2xl font-bold">যোগাযোগ মেসেজ</h1>
             <p className="text-muted-foreground">
               কাস্টমারদের পাঠানো মেসেজ দেখুন

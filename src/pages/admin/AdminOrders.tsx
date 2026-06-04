@@ -53,6 +53,7 @@ import { InvoicePrintDialog } from '@/components/admin/InvoicePrintDialog';
 import { StickerPrintDialog } from '@/components/admin/StickerPrintDialog';
 import { ManualOrderDialog } from '@/components/admin/ManualOrderDialog';
 import { OrderEditDialog } from '@/components/admin/OrderEditDialog';
+import BackButton from '@/components/ui/BackButton';
 
 interface SteadfastStatus {
   tracking_code: string;
@@ -1253,6 +1254,7 @@ export default function AdminOrders() {
       {/* Desktop Header */}
       <div className="hidden md:flex items-center justify-between">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-display font-bold">Orders</h1>
           <p className="text-muted-foreground">Manage and track customer orders</p>
         </div>
@@ -1265,6 +1267,9 @@ export default function AdminOrders() {
       {/* Mobile Header (from image) */}
       <div className="md:hidden flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="w-full">
+            <BackButton fallbackPath="/admin" className="mb-2" />
+          </div>
           <h1 className="text-2xl font-bold">Orders</h1>
           <div className="flex items-center gap-2">
             <Select value={sourceFilter} onValueChange={setSourceFilter}>

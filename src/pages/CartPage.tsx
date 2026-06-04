@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Trash2, Plus, Minus, ArrowLeft, ArrowRight, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import BackButton from '@/components/ui/BackButton';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { 
   selectCartItems, 
@@ -28,16 +31,19 @@ const CartPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-40 pb-16 bg-background">
-      <div className="container-custom">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-            Shopping Cart
-          </h1>
-          <p className="text-muted-foreground">
-            You have {cartItems.length} items in your cart
-          </p>
-        </div>
+    <>
+      <Header />
+      <div className="min-h-screen pt-40 pb-16 bg-background">
+        <div className="container-custom">
+          <BackButton fallbackPath="/" className="mb-4 pl-0" />
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+              Shopping Cart
+            </h1>
+            <p className="text-muted-foreground">
+              You have {cartItems.length} items in your cart
+            </p>
+          </div>
 
         {cartItems.length === 0 ? (
           <motion.div
@@ -221,6 +227,8 @@ const CartPage = () => {
         )}
       </div>
     </div>
+    <Footer />
+  </>
   );
 };
 

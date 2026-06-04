@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Save, Settings, Globe, Upload, Image } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 interface HeaderSettings {
   site_name: string;
@@ -152,6 +153,7 @@ const AdminSiteSettings = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Settings className="h-8 w-8" />
             Site Settings

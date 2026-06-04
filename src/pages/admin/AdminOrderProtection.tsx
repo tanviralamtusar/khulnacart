@@ -21,6 +21,7 @@ import {
   Settings
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import BackButton from '@/components/ui/BackButton';
 
 interface OrderProtectionSettings {
   // Input-Based Blocking
@@ -166,6 +167,7 @@ const AdminOrderProtection = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Shield className="h-8 w-8" />
             Order Protection Settings

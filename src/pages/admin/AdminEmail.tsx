@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import BackButton from "@/components/ui/BackButton";
 
 interface EmailTemplate {
   id: string;
@@ -686,6 +687,7 @@ export default function AdminEmail() {
   return (
       <div className="space-y-6">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Mail className="h-8 w-8" />
             Email Management

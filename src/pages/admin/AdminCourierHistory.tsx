@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Package, Truck, CheckCircle, XCircle, AlertTriangle, Loader2, Key, Eye, EyeOff, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import BackButton from '@/components/ui/BackButton';
 
 interface CourierStats {
   name?: string;
@@ -176,6 +177,7 @@ export default function AdminCourierHistory() {
   return (
     <div className="space-y-6">
       <div>
+        <BackButton fallbackPath="/admin" className="mb-2" />
         <h1 className="text-3xl font-display font-bold">Courier History</h1>
         <p className="text-muted-foreground">Check customer delivery history from all couriers</p>
       </div>

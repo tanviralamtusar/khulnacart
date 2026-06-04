@@ -16,6 +16,7 @@ import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { ProductVariation } from '@/types';
+import BackButton from '@/components/ui/BackButton';
 
 interface ShippingForm {
   name: string;
@@ -350,10 +351,7 @@ const CheckoutPage = () => {
     <main className="min-h-screen bg-muted/30 py-8">
       <div className="container-custom">
         <div className="mb-8">
-          <Link to="/cart" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Cart
-          </Link>
+          <BackButton fallbackPath="/cart" label="Back to Cart" className="mb-4 pl-0" />
           <h1 className="font-display text-3xl font-bold text-foreground">Checkout</h1>
         </div>
 

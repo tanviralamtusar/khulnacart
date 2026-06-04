@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/layout/Header';
+import BackButton from '@/components/ui/BackButton';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -112,6 +113,7 @@ const ContactPage = () => {
           </div>
 
           <div className="container-custom relative z-10">
+            <BackButton fallbackPath="/" className="mb-6 pl-0 text-white hover:text-slate-200 hover:bg-white/10" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

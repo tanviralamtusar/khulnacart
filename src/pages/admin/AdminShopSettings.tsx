@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Upload, Trash2, Save, Store, Image } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import BackButton from '@/components/ui/BackButton';
 
 export default function AdminShopSettings() {
   const [shopName, setShopName] = useState('');
@@ -216,6 +217,7 @@ export default function AdminShopSettings() {
   return (
     <div className="space-y-6">
       <div>
+        <BackButton fallbackPath="/admin" className="mb-2" />
         <h1 className="text-3xl font-display font-bold">Shop Settings</h1>
         <p className="text-muted-foreground">Configure your shop name, logo, and favicon for invoices</p>
       </div>

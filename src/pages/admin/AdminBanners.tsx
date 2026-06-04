@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Image, ExternalLink, Upload, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import BackButton from '@/components/ui/BackButton';
 import { 
   getAllBanners, 
   createBanner, 
@@ -212,6 +213,7 @@ export default function AdminBanners() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-display font-bold">Slider Settings</h1>
           <p className="text-muted-foreground">Manage homepage hero slider images, titles, and links</p>
         </div>

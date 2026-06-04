@@ -21,6 +21,7 @@ import { CalendarIcon, TrendingUp, Package, DollarSign, ShoppingCart, Scale } fr
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { DateRange } from 'react-day-picker';
+import BackButton from '@/components/ui/BackButton';
 
 type DateRangePreset = 'today' | 'yesterday' | 'week' | 'month' | 'custom';
 
@@ -180,6 +181,7 @@ export default function AdminReports() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-2xl font-bold text-foreground">Sales Reports</h1>
           <p className="text-muted-foreground">
             View sales and revenue statistics

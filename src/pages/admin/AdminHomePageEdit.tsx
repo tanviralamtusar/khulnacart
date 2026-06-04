@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Save, Upload, Plus, Trash2, GripVertical, Image as ImageIcon } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 interface HomePageContent {
   [key: string]: any;
@@ -375,6 +376,7 @@ const AdminHomePageEdit = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
+            <BackButton fallbackPath="/admin" className="mb-2" />
             <h1 className="text-2xl font-bold">হোম পেজ এডিট</h1>
             <p className="text-muted-foreground">হোম পেজের সব টেক্সট, ছবি ও কন্টেন্ট পরিবর্তন করুন</p>
           </div>

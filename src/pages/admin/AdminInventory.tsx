@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Search, AlertTriangle, Package, Check } from 'lucide-react';
 import { getAllProducts, updateProductStock } from '@/services/adminService';
+import BackButton from '@/components/ui/BackButton';
 
 interface Product {
   id: string;
@@ -104,6 +105,7 @@ export default function AdminInventory() {
   return (
     <div className="space-y-6">
       <div>
+        <BackButton fallbackPath="/admin" className="mb-2" />
         <h1 className="text-3xl font-display font-bold">Inventory</h1>
         <p className="text-muted-foreground">Monitor and manage product stock levels</p>
       </div>

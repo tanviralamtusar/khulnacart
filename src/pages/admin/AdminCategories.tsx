@@ -23,6 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, FolderTree, Upload, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import BackButton from '@/components/ui/BackButton';
 import { 
   getAllCategories, 
   createCategory, 
@@ -201,6 +202,7 @@ export default function AdminCategories() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-display font-bold">Categories</h1>
           <p className="text-muted-foreground">Organize your product categories</p>
         </div>

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -89,13 +89,26 @@ const LandingPage = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen relative"
       style={{
         fontFamily: theme.fontFamily,
         backgroundColor: theme.backgroundColor,
         color: theme.textColor,
       }}
     >
+      {/* Floating Back Button */}
+      <div className="fixed top-4 left-4 z-50">
+        <Button
+          type="button"
+          onClick={() => navigate(-1)}
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 rounded-full shadow-lg border border-border bg-background/80 backdrop-blur-md hover:scale-110 active:scale-95 transition-all text-foreground"
+          title="ফিরে যান / Go Back"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
       {/* SEO Meta */}
       {page.meta_title && <title>{page.meta_title}</title>}
 

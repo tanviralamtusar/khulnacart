@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Save, Video, Plus, Trash2, Tag } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 const AdminLandingVideoSettings = () => {
   const { user, isLoading: authLoading } = useAuth();
@@ -151,6 +152,7 @@ const AdminLandingVideoSettings = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
+            <BackButton fallbackPath="/admin" className="mb-2" />
             <h1 className="text-2xl font-bold">ল্যান্ডিং পেজ ভিডিও সেটিংস</h1>
             <p className="text-muted-foreground">ল্যান্ডিং পেজের ভিডিও লিংক পরিবর্তন করুন</p>
           </div>

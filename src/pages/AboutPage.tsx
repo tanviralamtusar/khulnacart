@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Heart, ShieldCheck, Truck, RefreshCw, MessageCircle, Users, Sparkles, Package } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import BackButton from '@/components/ui/BackButton';
 
 const AboutPage = () => {
   const features = [
@@ -57,6 +58,7 @@ const AboutPage = () => {
           </div>
           
           <div className="container-custom relative z-10">
+            <BackButton fallbackPath="/" className="mb-6 pl-0" />
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}

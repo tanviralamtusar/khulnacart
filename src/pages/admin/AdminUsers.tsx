@@ -34,6 +34,7 @@ import { Search, Users, Shield, User, Plus, Loader2, KeyRound } from 'lucide-rea
 import { getAllUsers, updateUserRole } from '@/services/adminService';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import BackButton from '@/components/ui/BackButton';
 
 interface UserProfile {
   id: string;
@@ -209,6 +210,7 @@ export default function AdminUsers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="text-3xl font-display font-bold">Users</h1>
           <p className="text-muted-foreground">Manage user accounts and roles</p>
         </div>

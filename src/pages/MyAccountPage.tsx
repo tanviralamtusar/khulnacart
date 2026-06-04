@@ -24,6 +24,7 @@ import {
 import { format } from 'date-fns';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import BackButton from '@/components/ui/BackButton';
 
 interface OrderItem {
   id: string;
@@ -139,6 +140,7 @@ const MyAccountPage = () => {
       <Header />
       <main className="flex-1 py-8">
         <div className="container max-w-6xl mx-auto px-4 pt-20">
+          <BackButton fallbackPath="/" className="mb-4 pl-0" />
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div>

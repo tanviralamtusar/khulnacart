@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
 import { supabase } from '@/integrations/supabase/client';
+import BackButton from '@/components/ui/BackButton';
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -258,13 +259,7 @@ const ProductDetailPage = () => {
             <li className="text-muted-foreground/50">›</li>
             <li className="text-foreground truncate max-w-[200px]">{product.name}</li>
           </ol>
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary mt-2 text-sm transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back To Home
-          </Link>
+          <BackButton fallbackPath="/products" className="mt-2" />
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">

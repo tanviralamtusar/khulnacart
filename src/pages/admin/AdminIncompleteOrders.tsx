@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import BackButton from '@/components/ui/BackButton';
 
 interface DraftOrderItem {
   id: string;
@@ -140,6 +141,7 @@ export default function AdminIncompleteOrders() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
+          <BackButton fallbackPath="/admin" className="mb-2" />
           <h1 className="font-display text-2xl font-bold text-foreground">Incomplete Orders</h1>
           <p className="text-muted-foreground">View abandoned carts and incomplete checkouts</p>
         </div>

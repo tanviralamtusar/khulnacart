@@ -22,6 +22,7 @@ import {
   Flame,
   Gift,
   MapPin,
+  ArrowLeft,
 } from "lucide-react";
 
 import {
@@ -845,7 +846,20 @@ const ProductLandingPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
+      {/* Floating Back Button */}
+      <div className="fixed top-4 left-4 z-50">
+        <Button
+          type="button"
+          onClick={() => navigate(-1)}
+          variant="outline"
+          size="icon"
+          className="h-10 w-10 rounded-full shadow-lg border border-border bg-background/80 backdrop-blur-md hover:scale-110 active:scale-95 transition-all text-foreground"
+          title="ফিরে যান / Go Back"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
       <HeroSection product={product} currentImage={currentImage} setCurrentImage={setCurrentImage} onBuyNow={scrollToCheckout} />
       <FeaturesBanner />
       <ProductDescriptionSection description={product.long_description} />
