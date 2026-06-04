@@ -99,6 +99,7 @@ interface Order {
   order_items: OrderItem[];
   order_source: string;
   is_printed: boolean;
+  transaction_id?: string | null;
 }
 
 const sourceOptions = [
@@ -149,7 +150,7 @@ const ORDER_SELECT = `
   id, order_number, status, payment_status, payment_method, total, subtotal, shipping_cost, discount,
   shipping_name, shipping_phone, shipping_street, shipping_city, shipping_district, shipping_postal_code,
   tracking_number, notes, invoice_note, steadfast_note, steadfast_consignment_id, created_at, order_source, is_printed,
-  user_id, customer_email,
+  user_id, customer_email, transaction_id,
   order_items (id, order_id, product_id, product_name, product_image, quantity, price, variation_name)
 `;
 
@@ -1946,7 +1947,7 @@ export default function AdminOrders() {
       )}
 
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden dialog-mobile-fit p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-xl sm:text-2xl">Order {selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
@@ -1954,7 +1955,7 @@ export default function AdminOrders() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-semibold mb-2 flex items-center gap-2 text-base sm:text-lg">
+                  <h3 className="font-semibold mb-2 flex flex-wrap items-center gap-2 text-base sm:text-lg">
                     Customer Information
                     {getOrderCount(selectedOrder.shipping_phone) > 1 && (
                       <Badge variant="secondary" className="gap-1 text-[10px] bg-amber-100 text-amber-700 whitespace-nowrap">
@@ -1976,6 +1977,9 @@ export default function AdminOrders() {
                   <div className="text-sm space-y-1 text-muted-foreground bg-muted/30 p-3 rounded-lg">
                     <p><span className="font-medium text-foreground">Date:</span> {selectedOrder && format(new Date(selectedOrder.created_at), 'PPpp')}</p>
                     <p><span className="font-medium text-foreground">Payment:</span> {selectedOrder?.payment_method?.toUpperCase()}</p>
+                    {selectedOrder?.transaction_id && (
+                      <p><span className="font-medium text-foreground">Transaction ID:</span> <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-foreground select-all">{selectedOrder.transaction_id}</code></p>
+                    )}
                     <p><span className="font-medium text-foreground">Status:</span> {selectedOrder?.payment_status}</p>
                     {selectedOrder?.notes && <p><span className="font-medium text-foreground">Notes:</span> {selectedOrder.notes}</p>}
                   </div>
@@ -1995,14 +1999,14 @@ export default function AdminOrders() {
                     </h3>
                     <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
                       {previousOrders.map((prevOrder) => (
-                        <div key={prevOrder.id} className="flex items-center justify-between text-xs sm:text-sm bg-white rounded-md border border-amber-100 p-2 shadow-sm">
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                        <div key={prevOrder.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white rounded-md border border-amber-100 p-2 shadow-sm text-xs sm:text-sm">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 w-full sm:w-auto">
                             <span className="font-bold text-amber-700">{prevOrder.order_number}</span>
                             <span className="text-muted-foreground text-[10px] sm:text-xs">
                               {format(new Date(prevOrder.created_at), 'dd MMM yyyy')}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                             {getStatusBadge(prevOrder.status)}
                             <span className="font-bold">৳{Number(prevOrder.total).toFixed(0)}</span>
                           </div>
@@ -2047,12 +2051,12 @@ export default function AdminOrders() {
                   <span className="text-muted-foreground">Shipping</span>
                   <span className="font-medium">৳{selectedOrder ? Number(selectedOrder.shipping_cost || 0).toFixed(0) : '0'}</span>
                 </div>
-                {selectedOrder?.discount && Number(selectedOrder.discount) > 0 && (
+                {selectedOrder?.discount !== undefined && selectedOrder?.discount !== null && Number(selectedOrder.discount) > 0 ? (
                   <div className="flex justify-between text-sm text-green-600 font-medium">
                     <span>Discount</span>
                     <span>-৳{Number(selectedOrder.discount).toFixed(0)}</span>
                   </div>
-                )}
+                ) : null}
                 <div className="flex justify-between items-center font-bold text-lg pt-2 border-t mt-2">
                   <span>Total</span>
                   <span className="text-primary text-xl">৳{selectedOrder ? Number(selectedOrder.total).toFixed(0) : '0'}</span>

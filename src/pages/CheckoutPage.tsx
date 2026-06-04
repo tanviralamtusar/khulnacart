@@ -103,7 +103,8 @@ const CheckoutPage = () => {
   const draftOrderId = useRef<string | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [shippingZone, setShippingZone] = useState<ShippingZone>('inside_khulna');
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bkash' | 'nagad' | 'rocket'>('bkash');
+  const [transactionId, setTransactionId] = useState('');
 
   const [shippingForm, setShippingForm] = useState<ShippingForm>({
     name: '',
@@ -114,7 +115,7 @@ const CheckoutPage = () => {
 
   const SHIPPING_RATES = { inside_khulna: 49 };
   const shippingCost = SHIPPING_RATES[shippingZone];
-  const onlineDiscount = paymentMethod === 'online' && cartTotal >= 200 ? 20 : 0;
+  const onlineDiscount = (paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'rocket') && cartTotal >= 200 ? 20 : 0;
   const total = cartTotal + shippingCost - onlineDiscount;
 
   // Load saved address and sync email if user is logged in
@@ -291,6 +292,10 @@ const CheckoutPage = () => {
       toast({ title: "Address is required", variant: "destructive" });
       return false;
     }
+    if (paymentMethod !== 'cod' && !transactionId.trim()) {
+      toast({ title: "Transaction ID is required", description: "Please enter the payment transaction ID.", variant: "destructive" });
+      return false;
+    }
     const missingSize = cartItems.find((item) => {
       const variations = variationsByProductId[item.product.id] || item.product.variations || [];
       return variations.length > 0 && !item.variation;
@@ -313,6 +318,7 @@ const CheckoutPage = () => {
         items: cartItems,
         shippingAddress: { name: shippingForm.name, phone: shippingForm.phone, address: shippingForm.address },
         paymentMethod: paymentMethod,
+        transactionId: paymentMethod !== 'cod' ? transactionId.trim() : undefined,
         shippingZone: shippingZone,
       });
       if (draftOrderId.current) await supabase.from('draft_orders').update({ is_converted: true, converted_at: new Date().toISOString() }).eq('id', draftOrderId.current);
@@ -404,22 +410,140 @@ const CheckoutPage = () => {
                   <h2 className="font-display text-xl font-semibold text-foreground">Payment Method</h2>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div onClick={() => setPaymentMethod('cod')} className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
-                    <Banknote className={`h-6 w-6 ${paymentMethod === 'cod' ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <div>
-                      <p className="font-medium text-foreground">Cash on Delivery</p>
-                      <p className="text-xs text-muted-foreground">Pay when you receive</p>
+                  {/* bKash */}
+                  <div 
+                    onClick={() => { setPaymentMethod('bkash'); setTransactionId(''); }} 
+                    className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                      paymentMethod === 'bkash' 
+                        ? 'border-[#e2125d] bg-[#e2125d]/5 shadow-sm scale-[1.02]' 
+                        : 'border-border hover:border-[#e2125d]/50 hover:bg-[#e2125d]/5'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${paymentMethod === 'bkash' ? 'bg-[#e2125d] text-white' : 'bg-muted text-muted-foreground'}`}>
+                      ব
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-foreground">bKash (বিকাশ)</p>
+                        {cartTotal >= 200 && <span className="text-[10px] bg-[#e2125d] text-white px-1.5 py-0.5 rounded font-medium">৳২০ ছাড়</span>}
+                      </div>
+                      <p className="text-xs text-muted-foreground">বিকাশ পার্সোনাল পেমেন্ট</p>
                     </div>
                   </div>
-                  <div onClick={() => setPaymentMethod('online')} className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'online' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
-                    <CreditCard className={`h-6 w-6 ${paymentMethod === 'online' ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <div>
-                      <p className="font-medium text-foreground">Online Payment</p>
-                      <p className="text-xs text-muted-foreground">bkash, Nagad, Rocket</p>
-                      {cartTotal >= 200 && <p className="text-[10px] text-primary font-bold mt-1">Flat ৳20 OFF</p>}
+
+                  {/* Nagad */}
+                  <div 
+                    onClick={() => { setPaymentMethod('nagad'); setTransactionId(''); }} 
+                    className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                      paymentMethod === 'nagad' 
+                        ? 'border-[#f57c20] bg-[#f57c20]/5 shadow-sm scale-[1.02]' 
+                        : 'border-border hover:border-[#f57c20]/50 hover:bg-[#f57c20]/5'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${paymentMethod === 'nagad' ? 'bg-[#f57c20] text-white' : 'bg-muted text-muted-foreground'}`}>
+                      ন
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-foreground">Nagad (নগদ)</p>
+                        {cartTotal >= 200 && <span className="text-[10px] bg-[#f57c20] text-white px-1.5 py-0.5 rounded font-medium">৳২০ ছাড়</span>}
+                      </div>
+                      <p className="text-xs text-muted-foreground">নগদ পার্সোনাল পেমেন্ট</p>
+                    </div>
+                  </div>
+
+                  {/* Rocket */}
+                  <div 
+                    onClick={() => { setPaymentMethod('rocket'); setTransactionId(''); }} 
+                    className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                      paymentMethod === 'rocket' 
+                        ? 'border-[#8c2d82] bg-[#8c2d82]/5 shadow-sm scale-[1.02]' 
+                        : 'border-border hover:border-[#8c2d82]/50 hover:bg-[#8c2d82]/5'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${paymentMethod === 'rocket' ? 'bg-[#8c2d82] text-white' : 'bg-muted text-muted-foreground'}`}>
+                      র
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-foreground">Rocket (রকেট)</p>
+                        {cartTotal >= 200 && <span className="text-[10px] bg-[#8c2d82] text-white px-1.5 py-0.5 rounded font-medium">৳২০ ছাড়</span>}
+                      </div>
+                      <p className="text-xs text-muted-foreground">রকেট পার্সোনাল পেমেন্ট</p>
+                    </div>
+                  </div>
+
+                  {/* Cash on Delivery */}
+                  <div 
+                    onClick={() => { setPaymentMethod('cod'); setTransactionId(''); }} 
+                    className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                      paymentMethod === 'cod' 
+                        ? 'border-foreground bg-foreground/5 shadow-sm scale-[1.02]' 
+                        : 'border-border hover:border-foreground/50 hover:bg-foreground/5'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${paymentMethod === 'cod' ? 'bg-foreground text-background' : 'bg-muted text-muted-foreground'}`}>
+                      <Banknote className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-foreground">Cash on Delivery</p>
+                      <p className="text-xs text-muted-foreground">পণ্য হাতে পেয়ে পেমেন্ট করুন</p>
                     </div>
                   </div>
                 </div>
+
+                {paymentMethod !== 'cod' && (
+                  <div className="mt-6 p-5 rounded-lg border bg-muted/20 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-2 h-2 rounded-full bg-primary mt-2"></span>
+                      <p className="text-sm font-medium text-foreground">
+                        এটি আমাদের পার্সোনাল নাম্বার। দয়া করে এই নাম্বারে 'সেন্ড মানি' (Send Money) অথবা 'ক্যাশ ইন' (Cash In) করুন।
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-card rounded-md border">
+                      <div className="flex-1 text-center sm:text-left">
+                        <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
+                          {paymentMethod === 'bkash' ? 'bKash (বিকাশ) Number' : paymentMethod === 'nagad' ? 'Nagad (নগদ) Number' : 'Rocket (রকেট) Number'}
+                        </p>
+                        <p className="text-xl font-bold tracking-widest text-foreground mt-1">
+                          {paymentMethod === 'bkash' || paymentMethod === 'nagad' ? '01995630960' : '019956309608'}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full sm:w-auto"
+                        onClick={() => {
+                          const number = paymentMethod === 'bkash' || paymentMethod === 'nagad' ? '01995630960' : '019956309608';
+                          navigator.clipboard.writeText(number);
+                          toast({
+                            title: "Number copied!",
+                            description: `${number} has been copied to your clipboard.`,
+                          });
+                        }}
+                      >
+                        Copy Number
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="transactionId">Transaction ID (ট্রানজেকশন আইডি) *</Label>
+                      <Input
+                        id="transactionId"
+                        placeholder="Enter the transaction ID after payment"
+                        value={transactionId}
+                        onChange={(e) => setTransactionId(e.target.value)}
+                        required
+                        className="bg-card text-foreground tracking-wide placeholder:tracking-normal font-mono"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        টাকা পাঠানোর পর যে ট্রানজেকশন আইডি (TrxID) পাবেন, সেটি এখানে দিন।
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

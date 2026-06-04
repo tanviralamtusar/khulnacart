@@ -83,12 +83,13 @@ export interface Order {
   shipping: number;
   discount?: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  paymentMethod: 'cod' | 'stripe';
+  paymentMethod: 'cod' | 'stripe' | 'bkash' | 'nagad' | 'rocket';
   paymentStatus: 'pending' | 'paid' | 'failed';
   shippingAddress: Address;
   createdAt: string;
   updatedAt: string;
   trackingNumber?: string;
+  transactionId?: string;
 }
 
 export interface Review {

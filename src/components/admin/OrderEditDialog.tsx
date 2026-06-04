@@ -54,6 +54,7 @@ interface Order {
   order_items: OrderItem[];
   order_source: string;
   is_printed: boolean;
+  transaction_id: string | null;
 }
 
 interface OrderEditDialogProps {
@@ -67,6 +68,7 @@ const paymentMethods = [
   { value: 'cod', label: 'Cash on Delivery' },
   { value: 'bkash', label: 'bKash' },
   { value: 'nagad', label: 'Nagad' },
+  { value: 'rocket', label: 'Rocket' },
   { value: 'bank', label: 'Bank Transfer' },
 ];
 
@@ -91,6 +93,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
   // Payment fields
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [paymentStatus, setPaymentStatus] = useState('pending');
+  const [transactionId, setTransactionId] = useState('');
   
   // Pricing fields
   const [shippingCost, setShippingCost] = useState(0);
@@ -121,6 +124,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
       setDiscount(Number(order.discount) || 0);
       setNotes(order.notes || '');
       setItems([...order.order_items]);
+      setTransactionId(order.transaction_id || '');
     }
   }, [order, open]);
 
@@ -202,6 +206,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
             notes: notes.trim() || null,
             subtotal: subtotal,
             total: total,
+            transaction_id: paymentMethod !== 'cod' ? (transactionId.trim() || null) : null,
           })
           .eq('id', order.id),
         supabase
@@ -226,8 +231,8 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
       }));
 
       const { error: insertError } = await supabase
-        .from('order_items')
-        .insert(itemsToInsert);
+          .from('order_items')
+          .insert(itemsToInsert);
 
       if (insertError) throw insertError;
 
@@ -247,6 +252,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
         subtotal,
         total,
         order_items: normalizedItems,
+        transaction_id: paymentMethod !== 'cod' ? (transactionId.trim() || null) : null,
       };
 
       toast.success('Order updated successfully');
@@ -264,7 +270,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden dialog-mobile-fit p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Edit Order {order.order_number}</DialogTitle>
         </DialogHeader>
@@ -368,6 +374,16 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
                 </Select>
               </div>
             </div>
+            {paymentMethod !== 'cod' && (
+              <div className="space-y-2">
+                <Label>Transaction ID</Label>
+                <Input
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  placeholder="Enter Transaction ID"
+                />
+              </div>
+            )}
           </div>
 
           {/* Order Items */}

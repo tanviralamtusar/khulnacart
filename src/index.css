@@ -125,11 +125,20 @@
 
   html {
     scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Hind Siliguri', sans-serif;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -238,5 +247,17 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  @media (max-width: 640px) {
+    .dialog-mobile-fit {
+      left: 2.5vw !important;
+      right: 2.5vw !important;
+      width: 95vw !important;
+      max-width: 95vw !important;
+      transform: translate(0, -50%) !important;
+      top: 50% !important;
+      margin: 0 !important;
+    }
   }
 }

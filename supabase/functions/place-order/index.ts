@@ -30,6 +30,8 @@ type PlaceOrderBody = {
   customShippingCost?: number;
   customDiscount?: number;
   customAdvance?: number;
+  paymentMethod?: string;
+  transactionId?: string;
 };
 
 function normalizeBdPhoneLocal(phone: string) {
@@ -187,6 +189,10 @@ Deno.serve(async (req) => {
     });
 
     const body = (await req.json()) as PlaceOrderBody;
+
+    // Extract payment method and transaction ID
+    const paymentMethod = typeof body.paymentMethod === 'string' ? body.paymentMethod.trim() : 'cod';
+    const transactionId = typeof body.transactionId === 'string' ? body.transactionId.trim() : null;
 
     // Basic validation
     const name = (body?.shipping?.name ?? '').trim();
@@ -549,24 +555,8 @@ Deno.serve(async (req) => {
     }
 
     const itemsFinal = [
-      ...(enrichedDbItems as Array<{
-        productId: string | null;
-        variationId: string | null;
-        variationName: string | null;
-        name: string;
-        image: string | null;
-        price: number;
-        quantity: number;
-      }>),
-      ...(enrichedCustomItems as Array<{
-        productId: string | null;
-        variationId: string | null;
-        variationName: string | null;
-        name: string;
-        image: string | null;
-        price: number;
-        quantity: number;
-      }>),
+      ...enrichedDbItems,
+      ...enrichedCustomItems,
     ];
 
     const subtotal = itemsFinal.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -577,9 +567,14 @@ Deno.serve(async (req) => {
       ? body.customShippingCost
       : defaultShippingCost;
     
-    const discount = (isManualOrder && typeof body.customDiscount === 'number' && Number.isFinite(body.customDiscount) && body.customDiscount >= 0)
-      ? body.customDiscount
-      : 0;
+    // Apply discount logic: flat 20 BDT off for online payments (bkash, nagad, rocket) if subtotal >= 200 BDT.
+    // Otherwise, respect manual/custom discount if configured.
+    let discount = 0;
+    if (['bkash', 'nagad', 'rocket'].includes(paymentMethod) && subtotal >= 200) {
+      discount = 20;
+    } else if (isManualOrder && typeof body.customDiscount === 'number' && Number.isFinite(body.customDiscount) && body.customDiscount >= 0) {
+      discount = body.customDiscount;
+    }
     
     const advance = (isManualOrder && typeof body.customAdvance === 'number' && Number.isFinite(body.customAdvance) && body.customAdvance >= 0)
       ? body.customAdvance
@@ -602,7 +597,7 @@ Deno.serve(async (req) => {
         user_id: finalUserId ?? null,
         order_number: '',
         status: 'pending',
-        payment_method: 'cod',
+        payment_method: paymentMethod,
         payment_status: advance > 0 ? 'partial' : 'pending',
         subtotal,
         shipping_cost: shippingCost,
@@ -614,7 +609,10 @@ Deno.serve(async (req) => {
         shipping_city: 'N/A',
         shipping_district: 'N/A',
         shipping_postal_code: null,
-        notes: advance > 0 ? `${notes ? notes + ' | ' : ''}Advance: ৳${advance}` : notes,
+        notes: paymentMethod !== 'cod'
+          ? `${notes ? notes + ' | ' : ''}Payment: ${paymentMethod.toUpperCase()} | TrxID: ${transactionId}`
+          : (advance > 0 ? `${notes ? notes + ' | ' : ''}Advance: ৳${advance}` : notes),
+        transaction_id: transactionId,
         invoice_note: invoiceNote,
         steadfast_note: steadfastNote,
         order_source: orderSource,
@@ -650,7 +648,7 @@ Deno.serve(async (req) => {
     const orderNumber = orderData?.order_number || orderId;
 
     // Fetch customer email if userId exists
-    let customerEmail = customerEmailRaw;
+    const customerEmail = customerEmailRaw;
     
     // Schedule background tasks using EdgeRuntime.waitUntil
     // These run after the response is sent, so the user doesn't wait

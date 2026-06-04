@@ -78,11 +78,11 @@ const CartPage = () => {
                     transition={{ delay: index * 0.1 }}
                     className="flex gap-4 p-4 bg-card rounded-xl border border-border"
                   >
-                    <Link to={`/product/${item.product.slug}`}>
+                    <Link to={`/product/${item.product.slug}`} className="shrink-0">
                       <img
                         src={item.product.images[0]}
                         alt={item.product.name}
-                        className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg"
+                        className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 object-cover rounded-lg"
                       />
                     </Link>
                     <div className="flex-1 min-w-0">
@@ -110,8 +110,8 @@ const CartPage = () => {
                         )}
                       </div>
                       
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="flex items-center border border-border rounded-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
+                        <div className="flex items-center border border-border rounded-lg w-fit">
                           <button
                             onClick={() => dispatch(updateQuantity({ 
                               productId: item.product.id,
@@ -138,7 +138,7 @@ const CartPage = () => {
                           </button>
                         </div>
                         
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                           <span className="font-semibold text-foreground">
                             {formatPrice(displayPrice * item.quantity)}
                           </span>
@@ -157,8 +157,8 @@ const CartPage = () => {
                 );
               })}
 
-              <div className="flex justify-between pt-4">
-                <Button variant="outline" asChild>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between pt-4">
+                <Button variant="outline" asChild className="w-full sm:w-auto">
                   <Link to="/products">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Continue Shopping
@@ -170,7 +170,7 @@ const CartPage = () => {
                     dispatch(clearCart());
                     toast.success('Cart cleared');
                   }}
-                  className="text-destructive hover:text-destructive"
+                  className="text-destructive hover:text-destructive w-full sm:w-auto"
                 >
                   Clear Cart
                 </Button>

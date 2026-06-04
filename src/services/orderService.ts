@@ -11,7 +11,8 @@ interface CreateOrderData {
     phone: string;
     address: string;
   };
-  paymentMethod: 'cod' | 'stripe';
+  paymentMethod: 'cod' | 'stripe' | 'bkash' | 'nagad' | 'rocket';
+  transactionId?: string;
   shippingZone?: 'inside_dhaka' | 'outside_dhaka';
 }
 
@@ -27,7 +28,6 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
           productId: i.product.id,
           variationId: i.variation?.id,
           quantity: i.quantity,
-          // Provide extra fields so orders can still be placed when the catalog uses non-UUID mock ids
           productName: i.product.name,
           productImage: i.product.images?.[0] ?? null,
           price: i.product.price,
@@ -38,6 +38,8 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
           address: orderData.shippingAddress.address,
         },
         shippingZone: orderData.shippingZone || 'outside_dhaka',
+        paymentMethod: orderData.paymentMethod,
+        transactionId: orderData.transactionId,
       },
     });
   } catch (e: unknown) {
@@ -101,7 +103,7 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
     subtotal: Number(data.subtotal),
     shipping: Number(data.shippingCost),
     status: 'pending',
-    paymentMethod: 'cod',
+    paymentMethod: orderData.paymentMethod,
     paymentStatus: 'pending',
     shippingAddress: {
       id: '',
@@ -114,6 +116,7 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
     },
     createdAt: now,
     updatedAt: now,
+    transactionId: data.transactionId || orderData.transactionId,
   };
 };
 
@@ -166,5 +169,6 @@ export const fetchUserOrders = async (userId: string): Promise<Order[]> => {
     createdAt: order.created_at,
     updatedAt: order.updated_at,
     trackingNumber: order.tracking_number || undefined,
+    transactionId: order.transaction_id || undefined,
   }));
 };
