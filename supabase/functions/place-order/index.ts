@@ -57,6 +57,7 @@ function isBangladeshPhone(phone: string) {
 // Background task: Send order email notification
 async function sendOrderEmail(
   supabaseUrl: string,
+  serviceKey: string,
   orderId: string,
   orderNumber: string,
   name: string,
@@ -74,7 +75,10 @@ async function sendOrderEmail(
     const emailUrl = `${supabaseUrl}/functions/v1/send-order-email`;
     const emailResponse = await fetch(emailUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${serviceKey}`
+      },
       body: JSON.stringify({
         order_id: orderId,
         order_number: orderNumber,
@@ -178,6 +182,61 @@ Deno.serve(async (req) => {
     });
 
     const body = (await req.json()) as PlaceOrderBody;
+
+    // 1. Mandatory Email Validation & Auto-Registration Logic
+    const customerEmailRaw = (body?.email ?? '').trim().toLowerCase();
+    if (!customerEmailRaw || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmailRaw)) {
+      return new Response(JSON.stringify({ error: 'Valid email address is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    let finalUserId = body.userId;
+
+    // If guest checkout, attempt auto-registration
+    if (!finalUserId) {
+      try {
+        console.log(`Checking auto-registration for: ${customerEmailRaw}`);
+        // First check if a profile already exists for this email
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('email', customerEmailRaw)
+          .maybeSingle();
+
+        if (existingProfile) {
+          console.log(`Found existing user ID for email: ${existingProfile.user_id}`);
+          finalUserId = existingProfile.user_id;
+        } else {
+          // No user exists, create one silently using Admin API
+          console.log(`Creating new account for: ${customerEmailRaw}`);
+          const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+            email: customerEmailRaw,
+            email_confirm: true,
+            user_metadata: {
+              full_name: (body?.shipping?.name ?? '').trim(),
+              phone: (body?.shipping?.phone ?? '').trim(),
+              source: 'auto_registered_on_checkout'
+            }
+          });
+
+          if (createError) {
+            console.error('Auto-registration error:', createError);
+            // If creation fails (e.g. duplicate during race condition), we still proceed with order
+            // but we don't block the purchase.
+          } else if (newUser?.user) {
+            finalUserId = newUser.user.id;
+            console.log(`Auto-registered new user: ${finalUserId}`);
+            
+            // The handle_new_user trigger in the DB will automatically create their profile record.
+            // We can wait a tiny bit or just proceed.
+          }
+        }
+      } catch (regError) {
+        console.error('Failed auto-registration flow:', regError);
+      }
+    }
 
     // Basic validation
     const name = (body?.shipping?.name ?? '').trim();
@@ -532,7 +591,7 @@ Deno.serve(async (req) => {
     const { error: orderError } = await supabase.from('orders').insert([
       {
         id: orderId,
-        user_id: body.userId ?? null,
+        user_id: finalUserId ?? null,
         order_number: '',
         status: 'pending',
         payment_method: 'cod',
@@ -583,25 +642,29 @@ Deno.serve(async (req) => {
     const orderNumber = orderData?.order_number || orderId;
 
     // Fetch customer email if userId exists
-    let customerEmail = null;
-    if (body.userId) {
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('user_id', body.userId)
-          .single();
-        customerEmail = profile?.email || null;
-      } catch (e) {
-        console.error('Failed to fetch customer email:', e);
-      }
-    }
-
+    let customerEmail = customerEmailRaw;
+    
     // Schedule background tasks using EdgeRuntime.waitUntil
     // These run after the response is sent, so the user doesn't wait
     const backgroundTasks = Promise.all([
       sendOrderSms(supabaseUrl, serviceKey, phone, name, orderNumber, total, orderId),
-      sendOrderEmail(supabaseUrl, orderId, orderNumber, name, phone, address, subtotal, shippingCost, total, itemsFinal, notes, customerEmail),
+      sendOrderEmail(supabaseUrl, serviceKey, orderId, orderNumber, name, phone, address, subtotal, shippingCost, total, itemsFinal, notes, customerEmail),
+      // If we auto-registered a new user, the welcome email is already handled by sendOrderEmail
+      // because template_key 'welcome' is triggered elsewhere. 
+      // But wait, we should also trigger a Welcome Email specifically for these auto-registrations.
+      !body.userId && finalUserId ? fetch(`${supabaseUrl}/functions/v1/send-order-email`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${serviceKey}`
+        },
+        body: JSON.stringify({
+          template_key: 'welcome',
+          recipient: customerEmail,
+          customer_name: name,
+          customer_phone: phone,
+        }),
+      }).then(r => r.json()).catch(e => console.error('Auto-reg welcome fail:', e)) : Promise.resolve(),
     ]);
 
     // Use EdgeRuntime.waitUntil to run tasks in background after response

@@ -117,11 +117,16 @@ const CheckoutPage = () => {
   const onlineDiscount = paymentMethod === 'online' && cartTotal >= 200 ? 20 : 0;
   const total = cartTotal + shippingCost - onlineDiscount;
 
-  // Load saved address if user is logged in
+  // Load saved address and sync email if user is logged in
   useEffect(() => {
     const loadUserAddress = async () => {
       if (!user) return;
       
+      // Always sync email from auth user if available
+      if (user.email && !shippingForm.email) {
+        setShippingForm(prev => ({ ...prev, email: user.email || '' }));
+      }
+
       const { data: addresses } = await supabase
         .from('addresses')
         .select('*')
@@ -278,6 +283,10 @@ const CheckoutPage = () => {
       toast({ title: "Valid Bangladesh phone number is required", variant: "destructive" });
       return false;
     }
+    if (!shippingForm.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shippingForm.email)) {
+      toast({ title: "Valid email address is required", variant: "destructive" });
+      return false;
+    }
     if (!shippingForm.address.trim()) {
       toast({ title: "Address is required", variant: "destructive" });
       return false;
@@ -365,9 +374,19 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address (Optional)</Label>
-                    <Input id="email" name="email" type="email" placeholder="your@email.com" value={shippingForm.email} onChange={handleInputChange} />
-                    <p className="text-[10px] text-muted-foreground">Used for sending order receipts and tracking updates.</p>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input 
+                      id="email" 
+                      name="email" 
+                      type="email" 
+                      placeholder="your@email.com" 
+                      value={shippingForm.email} 
+                      onChange={handleInputChange} 
+                      required 
+                      disabled={!!user}
+                      className={!!user ? "bg-muted cursor-not-allowed" : ""}
+                    />
+                    <p className="text-[10px] text-muted-foreground">Used for sending order receipts, account login, and tracking updates.</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address">Full Address *</Label>

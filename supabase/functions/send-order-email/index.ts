@@ -245,14 +245,14 @@ serve(async (req) => {
 
     // 3. Send Customer Email
     if (!emailEnabled) {
-      console.log("Customer email automations are globally disabled.");
+      console.log("Customer email automations are globally disabled in admin_settings.");
       return new Response(JSON.stringify({ success: true, message: "Admin alert sent. Customer emails disabled." }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (!recipient) {
-      console.log("No recipient email provided. Exiting.");
+      console.log("No recipient email provided (body.recipient or body.customer_email is missing). Exiting.");
       return new Response(JSON.stringify({ success: true, message: "No recipient provided. Skipping customer email." }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -260,22 +260,26 @@ serve(async (req) => {
 
     // Verify auto-send rules
     if (templateKey === "welcome" && settingsMap.email_auto_send_welcome !== "true") {
+      console.log("Auto-send is disabled for 'welcome' template.");
       return new Response(JSON.stringify({ success: true, message: "Welcome email auto-send disabled." }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     if (templateKey === "order_placed" && settingsMap.email_auto_send_order_placed !== "true") {
+      console.log("Auto-send is disabled for 'order_placed' template.");
       return new Response(JSON.stringify({ success: true, message: "Order placed receipt auto-send disabled." }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     if (templateKey?.startsWith("order_") && templateKey !== "order_placed" && settingsMap.email_auto_send_status_change !== "true") {
+      console.log(`Auto-send is disabled for status change template: ${templateKey}`);
       return new Response(JSON.stringify({ success: true, message: "Order status change email auto-send disabled." }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (!templateKey) {
+      console.error("Critical Error: templateKey is missing after resolution.");
       return new Response(JSON.stringify({ success: false, message: "template_key is required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
