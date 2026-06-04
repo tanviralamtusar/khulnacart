@@ -77,7 +77,8 @@ async function sendOrderEmail(
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${serviceKey}`
+        'Authorization': `Bearer ${serviceKey}`,
+        'apikey': serviceKey
       },
       body: JSON.stringify({
         order_id: orderId,
@@ -133,7 +134,11 @@ async function sendOrderSms(
       const smsUrl = `${supabaseUrl}/functions/v1/send-sms`;
       const smsResponse = await fetch(smsUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${serviceKey}`,
+          'apikey': serviceKey
+        },
         body: JSON.stringify({
           phone: phone,
           template_key: 'order_placed',
@@ -656,7 +661,8 @@ Deno.serve(async (req) => {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${serviceKey}`
+          'Authorization': `Bearer ${serviceKey}`,
+          'apikey': serviceKey
         },
         body: JSON.stringify({
           template_key: 'welcome',
@@ -667,17 +673,12 @@ Deno.serve(async (req) => {
       }).then(r => r.json()).catch(e => console.error('Auto-reg welcome fail:', e)) : Promise.resolve(),
     ]);
 
-    // Use EdgeRuntime.waitUntil to run tasks in background after response
-    // @ts-ignore - EdgeRuntime is available in Deno Deploy
-    if (typeof EdgeRuntime !== 'undefined' && EdgeRuntime.waitUntil) {
-      // @ts-ignore
-      EdgeRuntime.waitUntil(backgroundTasks);
-    } else {
-      // Fallback: don't await, let it run in background
-      backgroundTasks.catch(err => console.error('Background task error:', err));
-    }
+    // Await background tasks to ensure they complete before response
+    // This is more reliable than backgrounding in some serverless environments
+    const backgroundResults = await backgroundTasks;
+    console.log('Background tasks completed:', JSON.stringify(backgroundResults));
 
-    // Return immediately - background tasks will continue
+    // Return response
     return new Response(
       JSON.stringify({
         orderId,

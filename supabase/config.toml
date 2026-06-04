@@ -373,6 +373,16 @@ allow_dynamic_registration = false
 
 [edge_runtime]
 enabled = true
+
+[functions.place-order]
+verify_jwt = false
+
+[functions.send-order-email]
+verify_jwt = false
+
+[functions.send-sms]
+verify_jwt = false
+
 # Supported request policies: `oneshot`, `per_worker`.
 # `per_worker` (default) — enables hot reload during local development.
 # `oneshot` — fallback mode if hot reload causes issues (e.g. in large repos or with symlinks).
