@@ -270,12 +270,12 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[92vw] sm:w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6">
-        <DialogHeader>
+      <DialogContent className="w-[92vw] sm:w-full max-w-3xl max-h-[90vh] flex flex-col gap-0 overflow-hidden p-0">
+        <DialogHeader className="px-6 py-4 border-b border-border/50 shrink-0 bg-background pr-12">
           <DialogTitle>Edit Order {order.order_number}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4 w-full min-w-0">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 w-full min-w-0">
           {/* Customer Information */}
           <div className="space-y-4">
             <h3 className="font-medium text-lg border-b pb-2">Customer Information</h3>
@@ -513,7 +513,7 @@ export function OrderEditDialog({ order, open, onOpenChange, onOrderUpdated }: O
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="px-6 py-4 border-t border-border/50 shrink-0 bg-background sm:justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
             Cancel
           </Button>

@@ -1952,12 +1952,12 @@ export default function AdminOrders() {
       )}
 
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="w-[92vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6">
-          <DialogHeader>
+        <DialogContent className="w-[92vw] sm:w-full max-w-2xl max-h-[90vh] flex flex-col gap-0 overflow-hidden p-0">
+          <DialogHeader className="px-6 py-4 border-b border-border/50 shrink-0 bg-background pr-12">
             <DialogTitle className="text-xl sm:text-2xl">Order {selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-6 w-full min-w-0">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 w-full min-w-0">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold mb-2 flex flex-wrap items-center gap-2 text-base sm:text-lg">
