@@ -13,7 +13,7 @@ interface CreateOrderData {
   };
   paymentMethod: 'cod' | 'stripe' | 'bkash' | 'nagad' | 'rocket';
   transactionId?: string;
-  shippingZone?: 'inside_dhaka' | 'outside_dhaka';
+  shippingZone?: 'inside_dhaka' | 'outside_dhaka' | 'inside_khulna';
   couponCode?: string;
 }
 

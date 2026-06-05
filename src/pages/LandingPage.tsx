@@ -49,6 +49,7 @@ const DEFAULT_THEME: ThemeSettings = {
 
 const LandingPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
 
   const { data: page, isLoading, error } = useQuery({
     queryKey: ["landing-page", slug],
