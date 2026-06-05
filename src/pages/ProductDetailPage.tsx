@@ -40,6 +40,7 @@ interface Review {
   product_id: string;
   rating: number;
   comment: string | null;
+  customer_name: string | null;
   is_verified: boolean;
   created_at: string;
   profile?: { full_name: string | null };
@@ -63,6 +64,8 @@ const ProductDetailPage = () => {
   const [reviewHover, setReviewHover] = useState(0);
   const [submittingReview, setSubmittingReview] = useState(false);
   const [userHasReviewed, setUserHasReviewed] = useState(false);
+  const [userHasPurchased, setUserHasPurchased] = useState(false);
+  const [purchaseCheckLoading, setPurchaseCheckLoading] = useState(false);
   
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector(selectWishlistItems);
@@ -537,6 +540,10 @@ const ProductDetailPage = () => {
           setSubmittingReview={setSubmittingReview}
           userHasReviewed={userHasReviewed}
           setUserHasReviewed={setUserHasReviewed}
+          userHasPurchased={userHasPurchased}
+          setUserHasPurchased={setUserHasPurchased}
+          purchaseCheckLoading={purchaseCheckLoading}
+          setPurchaseCheckLoading={setPurchaseCheckLoading}
         />
 
         {/* Related Products */}
@@ -574,13 +581,18 @@ interface ReviewsSectionProps {
   setSubmittingReview: React.Dispatch<React.SetStateAction<boolean>>;
   userHasReviewed: boolean;
   setUserHasReviewed: React.Dispatch<React.SetStateAction<boolean>>;
+  userHasPurchased: boolean;
+  setUserHasPurchased: React.Dispatch<React.SetStateAction<boolean>>;
+  purchaseCheckLoading: boolean;
+  setPurchaseCheckLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function ReviewsSection({
   product, reviews, setReviews, user,
   reviewRating, setReviewRating, reviewComment, setReviewComment,
   reviewHover, setReviewHover, submittingReview, setSubmittingReview,
-  userHasReviewed, setUserHasReviewed
+  userHasReviewed, setUserHasReviewed,
+  userHasPurchased, setUserHasPurchased, purchaseCheckLoading, setPurchaseCheckLoading
 }: ReviewsSectionProps) {
   const navigate = useNavigate();
 
@@ -619,6 +631,34 @@ function ReviewsSection({
     fetchReviews();
   }, [product.id, user]);
 
+  useEffect(() => {
+    const checkPurchasedProduct = async () => {
+      setUserHasPurchased(false);
+
+      if (!user) return;
+
+      setPurchaseCheckLoading(true);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('id, order_items!inner(id)')
+        .eq('user_id', user.id)
+        .eq('order_items.product_id', product.id)
+        .or('status.eq.delivered,payment_status.eq.paid')
+        .limit(1);
+
+      if (error) {
+        console.error('Purchase verification error:', error);
+        setUserHasPurchased(false);
+      } else {
+        setUserHasPurchased((data?.length || 0) > 0);
+      }
+
+      setPurchaseCheckLoading(false);
+    };
+
+    checkPurchasedProduct();
+  }, [product.id, user, setPurchaseCheckLoading, setUserHasPurchased]);
+
   const avgRating = reviews.length > 0 
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) 
     : 0;
@@ -633,6 +673,11 @@ function ReviewsSection({
       return;
     }
 
+    if (!userHasPurchased) {
+      toast.error('Only customers who purchased this product can submit a review.');
+      return;
+    }
+
     setSubmittingReview(true);
     try {
       const { data, error } = await supabase
@@ -642,7 +687,7 @@ function ReviewsSection({
           product_id: product.id,
           rating: reviewRating,
           comment: reviewComment.trim(),
-          is_verified: false,
+          is_verified: true,
         })
         .select()
         .single();
@@ -710,7 +755,15 @@ function ReviewsSection({
         </div>
 
         {/* Write Review Form */}
-        {!userHasReviewed && (
+        {!userHasReviewed && user && !purchaseCheckLoading && !userHasPurchased && (
+          <div className="mb-8 p-5 bg-muted/30 border border-border rounded-xl">
+            <p className="text-sm text-muted-foreground">
+              Only customers who purchased this product can submit a review.
+            </p>
+          </div>
+        )}
+
+        {!userHasReviewed && (!user || userHasPurchased) && (
           <div className="mb-8 p-5 bg-muted/30 border border-border rounded-xl">
             <h3 className="font-semibold text-foreground mb-4">আপনার মতামত দিন</h3>
             
@@ -783,7 +836,7 @@ function ReviewsSection({
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-foreground text-sm">
-                        {review.profile?.full_name || 'Customer'}
+                        {review.customer_name || review.profile?.full_name || 'Customer'}
                       </span>
                       {review.is_verified && (
                         <span className="text-[10px] bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1.5 py-0.5 rounded font-medium">

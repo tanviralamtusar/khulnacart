@@ -793,6 +793,7 @@ export type Database = {
         Row: {
           comment: string | null
           created_at: string
+          customer_name: string | null
           helpful_count: number | null
           id: string
           images: string[] | null
@@ -804,6 +805,7 @@ export type Database = {
         Insert: {
           comment?: string | null
           created_at?: string
+          customer_name?: string | null
           helpful_count?: number | null
           id?: string
           images?: string[] | null
@@ -815,6 +817,7 @@ export type Database = {
         Update: {
           comment?: string | null
           created_at?: string
+          customer_name?: string | null
           helpful_count?: number | null
           id?: string
           images?: string[] | null
