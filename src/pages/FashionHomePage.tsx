@@ -428,7 +428,7 @@ export default function FashionHomePage() {
                         }}
                       >
                         <ShoppingBag className="w-3.5 h-3.5" />
-                        বিস্তারিত দেখুন
+                        View Details
                       </Button>
                     </div>
                   </div>
