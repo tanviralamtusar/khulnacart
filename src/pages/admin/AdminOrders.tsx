@@ -2073,21 +2073,24 @@ export default function AdminOrders() {
                         return <Badge variant="secondary" className="font-semibold text-[11px] px-2 py-0.5 rounded-full">{selectedOrder?.payment_method?.toUpperCase()}</Badge>;
                       })()}
                     </div>
-                    <div className="flex justify-between items-center gap-2 border-b pb-1.5 border-muted-foreground/5">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b pb-2.5 border-muted-foreground/5">
                       <span className="font-medium text-foreground">Payment Status:</span>
-                      {(() => {
-                        const status = selectedOrder?.payment_status?.toLowerCase();
-                        if (status === 'paid') {
-                          return <Badge className="bg-green-100 text-green-800 border-green-200 hover:bg-green-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Paid</Badge>;
-                        }
-                        if (status === 'failed') {
-                          return <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Failed</Badge>;
-                        }
-                        if (status === 'refunded') {
-                          return <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Refunded</Badge>;
-                        }
-                        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Pending</Badge>;
-                      })()}
+                      <Select
+                        value={selectedOrder?.payment_status || 'pending'}
+                        onValueChange={(value) => selectedOrder && handlePaymentStatusChange(selectedOrder.id, value)}
+                        disabled={updating}
+                      >
+                        <SelectTrigger className="h-9 w-full sm:w-[150px] bg-background text-xs font-semibold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentStatusOptions.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     {selectedOrder?.payment_method !== 'cod' && (
                       <div className="border-b pb-2.5 border-muted-foreground/5 space-y-1.5">
@@ -2246,7 +2249,7 @@ export default function AdminOrders() {
 
               <div className="space-y-4 pt-4 border-t">
                 <h3 className="font-semibold text-base sm:text-lg">Update Status</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Status</Label>
                     <Select
@@ -2269,25 +2272,6 @@ export default function AdminOrders() {
                             </SelectItem>
                           );
                         })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Payment Status</Label>
-                    <Select
-                      value={selectedOrder?.payment_status || 'pending'}
-                      onValueChange={(value) => selectedOrder && handlePaymentStatusChange(selectedOrder.id, value)}
-                      disabled={updating}
-                    >
-                      <SelectTrigger className="h-11">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {paymentStatusOptions.map((status) => (
-                          <SelectItem key={status.value} value={status.value}>
-                            {status.label}
-                          </SelectItem>
-                        ))}
                       </SelectContent>
                     </Select>
                   </div>
