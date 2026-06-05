@@ -417,19 +417,6 @@ export default function FashionHomePage() {
                           )}
                         </div>
                       </div>
-                      
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full rounded-xl text-xs font-bold py-3.5 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all active:scale-95 flex items-center justify-center gap-1 mt-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/product/${product.slug}`);
-                        }}
-                      >
-                        <ShoppingBag className="w-3.5 h-3.5" />
-                        View Details
-                      </Button>
                     </div>
                   </div>
                 </motion.div>
