@@ -800,25 +800,35 @@ export default function AdminOrders() {
 
       console.log(`Sending status change email for order #${order.order_number} to ${userEmail}...`);
 
+      const customerAddress = [
+        order.shipping_street,
+        order.shipping_district,
+        order.shipping_city,
+        order.shipping_postal_code,
+      ].filter(Boolean).join(', ');
+      const currentTrackingNumber = trackingNumber || order.tracking_number || '';
+
       const { data, error } = await supabase.functions.invoke('send-order-email', {
         body: {
           template_key: templateKey,
           recipient: userEmail,
           order_id: order.id,
           order_number: order.order_number,
-          customer_name: order.shippingAddress.name,
-          customer_phone: order.shippingAddress.phone,
-          customer_address: order.shippingAddress.street,
-          subtotal: order.subtotal,
-          shipping_cost: order.shipping,
-          total: order.total,
-          items: order.items.map(i => ({
-            name: i.product.name,
-            quantity: i.quantity,
-            price: i.product.price,
+          customer_name: order.shipping_name,
+          customer_phone: order.shipping_phone,
+          customer_address: customerAddress,
+          subtotal: Number(order.subtotal),
+          shipping_cost: Number(order.shipping_cost || 0),
+          total: Number(order.total),
+          items: order.order_items.map((item) => ({
+            name: item.variation_name ? `${item.product_name} (${item.variation_name})` : item.product_name,
+            quantity: item.quantity,
+            price: Number(item.price),
+            image: item.product_image || undefined,
           })),
           variables: {
-            tracking_number: trackingNumber || order.trackingNumber || '',
+            discount: Number(order.discount || 0).toFixed(2),
+            tracking_number: currentTrackingNumber,
           }
         },
       });
