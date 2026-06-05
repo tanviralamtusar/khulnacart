@@ -31,7 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer, Globe, UserPlus, Plus, Check, Tag, RefreshCw, RotateCcw, Loader2, UserCheck, History, Trash2, Calendar, Edit, MapPin, Download, CheckSquare, ShoppingCart, Save } from 'lucide-react';
+import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer, Globe, UserPlus, Plus, Check, Tag, RefreshCw, RotateCcw, Loader2, UserCheck, History, Trash2, Calendar, Edit, MapPin, Download, CheckSquare, ShoppingCart, Save, Copy } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { supabase } from '@/integrations/supabase/client';
@@ -1979,14 +1979,85 @@ export default function AdminOrders() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2 text-base sm:text-lg">Order Details</h3>
-                  <div className="text-sm space-y-1 text-muted-foreground bg-muted/30 p-3 rounded-lg">
-                    <p><span className="font-medium text-foreground">Date:</span> {selectedOrder && format(new Date(selectedOrder.created_at), 'PPpp')}</p>
-                    <p><span className="font-medium text-foreground">Payment:</span> {selectedOrder?.payment_method?.toUpperCase()}</p>
-                    {selectedOrder?.transaction_id && (
-                      <p><span className="font-medium text-foreground">Transaction ID:</span> <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-foreground select-all">{selectedOrder.transaction_id}</code></p>
+                  <div className="text-sm space-y-2.5 text-muted-foreground bg-muted/30 p-4 rounded-lg border border-muted-foreground/10">
+                    <p className="flex justify-between items-center gap-2 border-b pb-1.5 border-muted-foreground/5">
+                      <span className="font-medium text-foreground">Date:</span>
+                      <span className="text-foreground/80 font-medium font-sans">
+                        {selectedOrder && format(new Date(selectedOrder.created_at), 'PPpp')}
+                      </span>
+                    </p>
+                    <div className="flex justify-between items-center gap-2 border-b pb-1.5 border-muted-foreground/5">
+                      <span className="font-medium text-foreground">Payment Method:</span>
+                      {(() => {
+                        const method = selectedOrder?.payment_method?.toLowerCase();
+                        if (method === 'bkash') {
+                          return <Badge className="bg-[#e2125d] hover:bg-[#e2125d]/90 text-white font-semibold text-[11px] px-2 py-0.5 rounded-full">bKash (বিকাশ)</Badge>;
+                        }
+                        if (method === 'nagad') {
+                          return <Badge className="bg-[#f57c20] hover:bg-[#f57c20]/90 text-white font-semibold text-[11px] px-2 py-0.5 rounded-full">Nagad (নগদ)</Badge>;
+                        }
+                        if (method === 'rocket') {
+                          return <Badge className="bg-[#8c2d82] hover:bg-[#8c2d82]/90 text-white font-semibold text-[11px] px-2 py-0.5 rounded-full">Rocket (রকেট)</Badge>;
+                        }
+                        if (method === 'cod') {
+                          return <Badge variant="outline" className="border-foreground/20 text-foreground font-semibold text-[11px] px-2 py-0.5 rounded-full">Cash on Delivery</Badge>;
+                        }
+                        return <Badge variant="secondary" className="font-semibold text-[11px] px-2 py-0.5 rounded-full">{selectedOrder?.payment_method?.toUpperCase()}</Badge>;
+                      })()}
+                    </div>
+                    <div className="flex justify-between items-center gap-2 border-b pb-1.5 border-muted-foreground/5">
+                      <span className="font-medium text-foreground">Payment Status:</span>
+                      {(() => {
+                        const status = selectedOrder?.payment_status?.toLowerCase();
+                        if (status === 'paid') {
+                          return <Badge className="bg-green-100 text-green-800 border-green-200 hover:bg-green-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Paid</Badge>;
+                        }
+                        if (status === 'failed') {
+                          return <Badge className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Failed</Badge>;
+                        }
+                        if (status === 'refunded') {
+                          return <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Refunded</Badge>;
+                        }
+                        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100 font-semibold text-[11px] px-2 py-0.5 rounded-full">Pending</Badge>;
+                      })()}
+                    </div>
+                    {selectedOrder?.payment_method !== 'cod' && (
+                      <div className="border-b pb-2.5 border-muted-foreground/5 space-y-1.5">
+                        <span className="font-medium text-foreground block">Transaction ID:</span>
+                        {selectedOrder?.transaction_id ? (
+                          <div className="flex items-center gap-1.5 bg-background p-1.5 rounded border border-muted-foreground/20 shadow-inner group">
+                            <code className="font-mono text-xs text-foreground select-all break-all flex-1 pl-1">
+                              {selectedOrder.transaction_id}
+                            </code>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-muted-foreground hover:text-foreground shrink-0"
+                              onClick={() => {
+                                navigator.clipboard.writeText(selectedOrder.transaction_id || '');
+                                toast.success('Transaction ID copied to clipboard');
+                              }}
+                              title="Copy Transaction ID"
+                            >
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-amber-600 bg-amber-50 dark:bg-amber-950/20 px-2.5 py-1.5 rounded border border-amber-200 dark:border-amber-900/50 text-[11px] font-medium leading-relaxed">
+                            <span>⚠️ TrxID missing (পেমেন্ট ট্রানজেকশন আইডি নেই)</span>
+                          </div>
+                        )}
+                      </div>
                     )}
-                    <p><span className="font-medium text-foreground">Status:</span> {selectedOrder?.payment_status}</p>
-                    {selectedOrder?.notes && <p><span className="font-medium text-foreground">Notes:</span> {selectedOrder.notes}</p>}
+                    {selectedOrder?.notes && (
+                      <div className="pt-0.5">
+                        <span className="font-medium text-foreground block mb-1">Notes:</span>
+                        <p className="bg-background/40 p-2 rounded border border-muted-foreground/10 text-xs italic leading-relaxed text-foreground/80">
+                          {selectedOrder.notes}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
