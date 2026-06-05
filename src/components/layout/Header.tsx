@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
   Search,
-  ShoppingBag,
+  ShoppingCart,
   Heart,
   User,
   Menu,
@@ -239,7 +239,7 @@ const Header = () => {
             className="w-14 h-14 rounded-full bg-primary shadow-lg border-4 border-background hover:bg-primary/90 transition-transform active:scale-95"
             onClick={() => dispatch(toggleCart())}
           >
-            <ShoppingBag className="w-6 h-6 text-primary-foreground" />
+            <ShoppingCart className="w-6 h-6 text-primary-foreground" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-primary shadow-sm">
                 {cartCount}

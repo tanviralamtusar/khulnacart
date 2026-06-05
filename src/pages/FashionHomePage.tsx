@@ -153,7 +153,7 @@ export default function FashionHomePage() {
   }, []);
 
   const formatPrice = (price: number) => {
-    return `৳${price.toLocaleString('bn-BD')}`;
+    return `৳${price.toLocaleString('en-BD')}`;
   };
 
   const displayProducts = featuredProducts.length > 0 ? featuredProducts : recentProducts;
