@@ -1965,6 +1965,31 @@ export default function AdminOrders() {
                       </div>
                     </div>
 
+                    <div
+                      className="mt-3 space-y-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Payment Status
+                      </Label>
+                      <Select
+                        value={order.payment_status || 'pending'}
+                        onValueChange={(value) => handlePaymentStatusChange(order.id, value)}
+                        disabled={updating}
+                      >
+                        <SelectTrigger className="h-9 w-full text-xs font-semibold">
+                          <SelectValue placeholder="Payment" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentStatusOptions.map((paymentStatus) => (
+                            <SelectItem key={paymentStatus.value} value={paymentStatus.value}>
+                              {paymentStatus.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div className="flex justify-end mt-2">
                       <div className={`${status?.color || 'bg-gray-500'} text-white text-[11px] px-4 py-1.5 rounded-md font-bold shadow-sm`}>
                         Order {status?.label || order.status}
