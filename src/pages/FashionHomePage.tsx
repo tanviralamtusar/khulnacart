@@ -185,36 +185,6 @@ export default function FashionHomePage() {
     <div className="min-h-screen bg-background pb-20 md:pb-0 pt-[60px] lg:pt-[72px]">
       <Header />
 
-      {/* Floating Support & Chat Helpline */}
-      <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-[90] flex flex-col gap-2.5 items-end">
-        {/* Call Helpline */}
-        <a 
-          href="tel:+8801995909243"
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 sm:p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110 active:scale-95 group border border-blue-500/20"
-          title="কল করুন হেল্পলাইনে"
-        >
-          <Phone className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-white" />
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-out text-[10px] sm:text-xs font-bold whitespace-nowrap px-0 group-hover:px-1.5">
-            হেল্পলাইন কল
-          </span>
-        </a>
-        
-        {/* WhatsApp Chat */}
-        <a 
-          href="https://wa.me/8801995909243" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full p-2.5 sm:p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110 active:scale-95 group border border-emerald-500/20 relative"
-          title="হোয়াটসঅ্যাপে চ্যাট করুন"
-        >
-          <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
-          <MessageCircle className="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-white relative z-10" />
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-out text-[10px] sm:text-xs font-bold whitespace-nowrap px-0 group-hover:px-1.5 relative z-10">
-            WhatsApp চ্যাট
-          </span>
-        </a>
-      </div>
-
       {/* Categories Section */}
       <section className="py-6 md:py-16 bg-muted/20 relative overflow-hidden">
         {/* Background decorative accents */}
@@ -390,11 +360,11 @@ export default function FashionHomePage() {
                     onClick={() => product.slug && navigate(`/product/${product.slug}`)}
                   >
                     {/* Product Image */}
-                    <div className="relative aspect-[3/4] overflow-hidden">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4">
                       <img
                         src={product.images?.[0]}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                       />
                       
                       {/* Discount Badge */}

@@ -45,11 +45,11 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       <Link to={`/product/${product.slug}`}>
         <div className="group bg-card rounded-xl overflow-hidden border border-border hover:shadow-xl hover:border-primary/20 transition-all duration-300">
           {/* Image Container */}
-          <div className="relative aspect-square overflow-hidden bg-muted">
+          <div className="relative aspect-square overflow-hidden bg-white p-3 sm:p-4">
             <img
               src={product.images?.[0] || '/placeholder.svg'}
               alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
               onError={(e) => {
                 e.currentTarget.src = '/placeholder.svg';

@@ -294,11 +294,11 @@ const ProductDetailPage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="relative aspect-square rounded-lg overflow-hidden bg-muted mb-4 border border-border">
+            <div className="relative aspect-square rounded-lg overflow-hidden bg-white p-4 sm:p-6 mb-4 border border-border">
               <img
                 src={product.images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
 
               {/* Navigation Arrows */}
