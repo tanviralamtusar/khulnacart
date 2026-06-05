@@ -46,7 +46,7 @@ interface Review {
 }
 
 const ProductDetailPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { '*': slug } = useParams<{ '*': string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
