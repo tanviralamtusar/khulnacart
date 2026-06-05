@@ -317,6 +317,18 @@ export const updateOrderStatus = async (id: string, status: string, trackingNumb
   return data;
 };
 
+export const updateOrderPaymentStatus = async (id: string, paymentStatus: string) => {
+  const { data, error } = await supabase
+    .from('orders')
+    .update({ payment_status: paymentStatus })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
 export const deleteOrder = async (id: string) => {
   // Delete SMS logs and order items in parallel first
   const [{ error: smsError }, { error: itemsError }] = await Promise.all([

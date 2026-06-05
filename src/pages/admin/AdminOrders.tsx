@@ -35,7 +35,7 @@ import { Search, Eye, Package, Truck, CheckCircle, XCircle, Clock, Send, Printer
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { supabase } from '@/integrations/supabase/client';
-import { getOrderById, updateOrderStatus, deleteOrder } from '@/services/adminService';
+import { getOrderById, updateOrderStatus, updateOrderPaymentStatus, deleteOrder } from '@/services/adminService';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -116,6 +116,13 @@ const statusOptions = [
   { value: 'delivered', label: 'Delivered', icon: CheckCircle, color: 'bg-green-500' },
   { value: 'returned', label: 'Returned', icon: XCircle, color: 'bg-orange-500' },
   { value: 'cancelled', label: 'Cancelled', icon: XCircle, color: 'bg-red-500' },
+];
+
+const paymentStatusOptions = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'failed', label: 'Failed' },
+  { value: 'refunded', label: 'Refunded' },
 ];
 
 const normalizePhoneForLookup = (phone: string): string => phone.replace(/\D/g, '').slice(-11);
@@ -680,6 +687,29 @@ export default function AdminOrders() {
       }
     } catch (error) {
       toast.error('Failed to update order status');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handlePaymentStatusChange = async (orderId: string, newPaymentStatus: string) => {
+    setUpdating(true);
+    try {
+      await updateOrderPaymentStatus(orderId, newPaymentStatus);
+      toast.success('Payment status updated');
+
+      const updatedOrders = orders.map(o =>
+        o.id === orderId ? { ...o, payment_status: newPaymentStatus } : o
+      );
+      setOrders(updatedOrders);
+      persistOrdersCache(updatedOrders);
+
+      if (selectedOrder?.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, payment_status: newPaymentStatus });
+      }
+    } catch (error) {
+      console.error('Failed to update payment status:', error);
+      toast.error('Failed to update payment status');
     } finally {
       setUpdating(false);
     }
@@ -1724,9 +1754,22 @@ export default function AdminOrders() {
                     <TableCell>{format(new Date(order.created_at), 'MMM dd, yyyy')}</TableCell>
                     <TableCell>৳{Number(order.total).toFixed(0)}</TableCell>
                     <TableCell>
-                      <Badge variant={order.payment_status === 'paid' ? 'default' : 'outline'}>
-                        {order.payment_status}
-                      </Badge>
+                      <Select
+                        value={order.payment_status || 'pending'}
+                        onValueChange={(value) => handlePaymentStatusChange(order.id, value)}
+                        disabled={updating}
+                      >
+                        <SelectTrigger className="w-[120px] h-8 text-xs">
+                          <SelectValue placeholder="Payment" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentStatusOptions.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
                     <TableCell>{getSteadfastStatusBadge(order.tracking_number)}</TableCell>
@@ -2178,7 +2221,7 @@ export default function AdminOrders() {
 
               <div className="space-y-4 pt-4 border-t">
                 <h3 className="font-semibold text-base sm:text-lg">Update Status</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Status</Label>
                     <Select
@@ -2201,6 +2244,25 @@ export default function AdminOrders() {
                             </SelectItem>
                           );
                         })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Payment Status</Label>
+                    <Select
+                      value={selectedOrder?.payment_status || 'pending'}
+                      onValueChange={(value) => selectedOrder && handlePaymentStatusChange(selectedOrder.id, value)}
+                      disabled={updating}
+                    >
+                      <SelectTrigger className="h-11">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paymentStatusOptions.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
