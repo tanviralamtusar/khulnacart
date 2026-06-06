@@ -85,19 +85,37 @@ export default function FashionHomePage() {
     };
   }, [carouselApi]);
 
-  // Auto-scroll for categories carousel
+  // Auto-scroll for categories carousel with pause-on-interaction
   useEffect(() => {
     if (!carouselApi || categories.length <= 1) return;
     
-    const interval = setInterval(() => {
-      if (carouselApi.canScrollNext()) {
-        carouselApi.scrollNext();
-      } else {
-        carouselApi.scrollTo(0);
-      }
-    }, 5000);
+    let intervalId: NodeJS.Timeout;
     
-    return () => clearInterval(interval);
+    const startAutoplay = () => {
+      stopAutoplay();
+      intervalId = setInterval(() => {
+        carouselApi.scrollNext();
+      }, 2000);
+    };
+    
+    const stopAutoplay = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+    
+    startAutoplay();
+    
+    carouselApi.on("pointerDown", stopAutoplay);
+    carouselApi.on("pointerUp", startAutoplay);
+    
+    return () => {
+      stopAutoplay();
+      if (carouselApi) {
+        carouselApi.off("pointerDown", stopAutoplay);
+        carouselApi.off("pointerUp", startAutoplay);
+      }
+    };
   }, [carouselApi, categories.length]);
 
   const wishlistItems = useAppSelector(selectWishlistItems);
@@ -251,6 +269,8 @@ export default function FashionHomePage() {
               opts={{
                 align: "start",
                 loop: true,
+                duration: 12,
+                dragFree: true,
               }}
               className="w-full"
             >
@@ -261,12 +281,12 @@ export default function FashionHomePage() {
                   return (
                     <CarouselItem 
                       key={category.id} 
-                      className="pl-3 md:pl-4 basis-1/4 md:basis-1/3 lg:basis-1/4"
+                      className="pl-3 md:pl-4 basis-[28%] xs:basis-[26%] sm:basis-[22%] md:basis-1/3 lg:basis-1/4"
                     >
                       {/* Desktop Rectangular Card */}
                       <motion.div
-                        whileHover={{ y: -6 }}
-                        transition={{ duration: 0.3 }}
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         className="hidden md:block group cursor-pointer h-full"
                         onClick={() => navigate(`/products?category=${category.slug}`)}
                       >
@@ -298,13 +318,19 @@ export default function FashionHomePage() {
 
                       {/* Mobile Circular Slide */}
                       <motion.div
-                        whileTap={{ scale: 0.95 }}
-                        className="md:hidden flex flex-col items-center gap-2 cursor-pointer group py-1"
+                        whileTap={{ scale: 0.92 }}
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                        className="md:hidden flex flex-col items-center gap-2.5 cursor-pointer group py-1"
                         onClick={() => navigate(`/products?category=${category.slug}`)}
                       >
                         <div className="relative">
                           {/* Animated/Glowing gradient ring with lucrative visual cues */}
-                          <div className="w-[70px] h-[70px] xs:w-[76px] xs:h-[76px] rounded-full p-[2.5px] bg-gradient-to-tr from-primary via-rose-500 to-amber-500 shadow-md group-active:scale-95 transition-transform duration-200">
+                          <motion.div 
+                            whileHover={{ rotate: 12 }}
+                            transition={{ type: "spring", stiffness: 200, damping: 12 }}
+                            className="w-[70px] h-[70px] xs:w-[76px] xs:h-[76px] rounded-full p-[2.5px] bg-gradient-to-tr from-primary via-rose-500 to-amber-500 shadow-md transition-transform duration-200"
+                          >
                             <div className="w-full h-full rounded-full overflow-hidden bg-card border-2 border-background">
                               {categoryImage ? (
                                 <img 
@@ -318,7 +344,7 @@ export default function FashionHomePage() {
                                 </div>
                               )}
                             </div>
-                          </div>
+                          </motion.div>
                         </div>
                         {/* Title text */}
                         <span className="text-[10px] font-bold text-foreground text-center leading-tight line-clamp-1 w-full px-0.5">
