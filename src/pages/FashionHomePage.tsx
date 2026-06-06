@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectWishlistItems, toggleWishlist } from '@/store/slices/wishlistSlice';
 import { toast } from 'sonner';
+import { useSEO } from '@/hooks/useSEO';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import {
@@ -49,6 +50,10 @@ interface HomePageContent {
 }
 
 export default function FashionHomePage() {
+  useSEO({
+    title: 'Your Premium Online Fashion Shop',
+    description: 'Discover the latest trends in fashion at KhulnaCart. Quality products, fast delivery, and secure shopping.'
+  });
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [categories, setCategories] = useState<Category[]>([]);

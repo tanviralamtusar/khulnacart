@@ -109,7 +109,7 @@ serve(async (req) => {
 
     const settingsMap: Record<string, string> = {
       email_provider: "resend",
-      email_sender_name: "Khulna Cart",
+      email_sender_name: "KhulnaCart",
       email_sender_address: "onboarding@resend.dev",
       email_enabled: "true",
       email_auto_send_welcome: "true",
@@ -128,7 +128,7 @@ serve(async (req) => {
     // 1. Handle Test Send from Admin UI
     if (body.is_test_send) {
       const testRecipient = body.test_recipient;
-      const testSubject = body.test_subject || "Test Email from Khulna Cart";
+      const testSubject = body.test_subject || "Test Email from KhulnaCart";
       const testBody = body.test_body || "This is a test message to confirm your email integration is working.";
 
       if (!testRecipient) {
@@ -302,7 +302,7 @@ serve(async (req) => {
 
     // Construct variables
     const vars: Record<string, string> = {
-      site_name: settingsMap.email_sender_name || "Khulna Cart",
+      site_name: settingsMap.email_sender_name || "KhulnaCart",
       site_url: "https://khulnacart.com",
       site_logo: "https://ahgwjwhaegwtvczqthrh.supabase.co/storage/v1/object/public/shop-assets/email.png",
       support_phone: "+880 1234-567890",

@@ -34,6 +34,7 @@ import {
 } from "@/components/checkout/ShippingMethodSelector";
 import { toast } from "sonner";
 import { useAutofillAddress } from "@/hooks/useAutofillAddress";
+import { useSEO } from "@/hooks/useSEO";
 // ====== Interfaces ======
 interface ProductVariation {
   id: string;
@@ -824,6 +825,14 @@ const ProductLandingPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFloatingCta, setShowFloatingCta] = useState(true);
   const checkoutRef = useRef<HTMLDivElement>(null);
+
+  // Update SEO tags
+  useSEO({
+    title: product?.name,
+    description: product?.short_description || product?.long_description?.substring(0, 160),
+    image: product?.images?.[0],
+    type: 'product'
+  });
 
   // Hide floating CTA when checkout section is visible
   useEffect(() => {

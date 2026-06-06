@@ -31,6 +31,7 @@ import { toggleWishlist, selectWishlistItems } from '@/store/slices/wishlistSlic
 import { toast } from 'sonner';
 import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
+import { useSEO } from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
 import BackButton from '@/components/ui/BackButton';
 
@@ -71,6 +72,14 @@ const ProductDetailPage = () => {
   const wishlistItems = useAppSelector(selectWishlistItems);
   const { trackViewContent, trackAddToCartWithEventId, generateEventId, isReady } = useFacebookPixel();
   const { trackAddToCart: trackServerAddToCart, trackViewContent: trackServerViewContent } = useServerTracking();
+
+  // Update SEO tags
+  useSEO({
+    title: product?.name,
+    description: product?.short_description || product?.long_description?.substring(0, 160),
+    image: product?.images?.[0],
+    type: 'product'
+  });
 
   // Fetch social media settings for Call Now and Messenger buttons
   const { data: socialSettings } = useQuery({

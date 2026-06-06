@@ -3,8 +3,13 @@ import { Heart, ShieldCheck, Truck, RefreshCw, MessageCircle, Users, Sparkles, P
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import BackButton from '@/components/ui/BackButton';
+import { useSEO } from '@/hooks/useSEO';
 
 const AboutPage = () => {
+  useSEO({
+    title: 'About Us',
+    description: 'Learn more about KhulnaCart, your favorite online shop committed to fashion and trust.'
+  });
   const features = [
     {
       icon: ShieldCheck,
@@ -75,7 +80,7 @@ const AboutPage = () => {
               </motion.span>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-8 leading-tight">
-                Khulna Cart: A Modern Digital
+                KhulnaCart: A Modern Digital
                 <span className="block text-primary mt-2">Destination for Fashion & Trust</span>
               </h1>
               
@@ -103,7 +108,7 @@ const AboutPage = () => {
                 
                 <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    <span className="text-primary font-semibold">Khulna Cart</span> is an emerging e-commerce platform committed to making customers' lives easier and more enjoyable. We believe that shopping is not just a necessity, but an experience.
+                    <span className="text-primary font-semibold">KhulnaCart</span> is an emerging e-commerce platform committed to making customers' lives easier and more enjoyable. We believe that shopping is not just a necessity, but an experience.
                   </p>
                   
                   <p>
@@ -245,7 +250,7 @@ const AboutPage = () => {
               className="max-w-4xl mx-auto text-center"
             >
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
-                Keep your shopping safe with Khulna Cart
+                Keep your shopping safe with KhulnaCart
               </h2>
               <p className="text-xl opacity-90 mb-8 leading-relaxed max-w-2xl mx-auto">
                 Enjoy the best shopping experience by connecting with us. We are always committed to respecting your trust.

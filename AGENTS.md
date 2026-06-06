@@ -1,4 +1,4 @@
-# Agent Guide - Khulna Cart
+# Agent Guide - KhulnaCart
 
 ## Tech Stack
 - **Framework:** React 18 (Vite)

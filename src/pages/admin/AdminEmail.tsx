@@ -79,16 +79,16 @@ const TEMPLATE_VARIABLES = [
 
 const PROFESSIONAL_TEMPLATES = {
   welcome: {
-    subject: "Your khulnaCart account has been created!",
+    subject: "Your KhulnaCart account has been created!",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
-      <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">Welcome to khulnaCart</h1>
+      <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">Welcome to KhulnaCart</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
-      <p style="font-size: 16px; margin-bottom: 25px; line-height: 1.6; color: #FBBF24;">Thanks for creating an account on khulnaCart. Here's a copy of your user details.</p>
+      <p style="font-size: 16px; margin-bottom: 25px; line-height: 1.6; color: #FBBF24;">Thanks for creating an account on KhulnaCart. Here's a copy of your user details.</p>
       
       <div style="border-top: 1px solid #333; border-bottom: 1px solid #333; padding: 15px 0; margin-bottom: 25px;">
         <p style="font-size: 16px; margin: 0; color: #FBBF24;"><strong>Username:</strong> <span style="color: #F59E0B; font-weight: bold;">{{customer_name}}</span></p>
@@ -97,19 +97,19 @@ const PROFESSIONAL_TEMPLATES = {
       <p style="font-size: 14px; color: #aaaaaa; line-height: 1.6; margin-bottom: 20px;">You can access your account area to view orders, change your password, and more at: <a href="{{site_url}}/my-account" style="color: #F59E0B; text-decoration: none; font-weight: bold; border-bottom: 1px solid #F59E0B;">{{site_url}}/my-account</a></p>
       
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   order_placed: {
-    subject: "Your khulnaCart order has been received!",
+    subject: "Your KhulnaCart order has been received!",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Thank you for your order</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
@@ -164,19 +164,19 @@ const PROFESSIONAL_TEMPLATES = {
 
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
         <p style="font-size: 15px; margin-bottom: 10px; color: #FBBF24;">Thanks again! If you need any help with your order, please contact us at <a href="mailto:khulnacart.info@gmail.com" style="color: #F59E0B; text-decoration: none; font-weight: bold; border-bottom: 1px solid #F59E0B;">khulnacart.info@gmail.com</a>.</p>
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   order_shipped: {
-    subject: "Your khulnaCart order #{{order_number}} has been shipped!",
+    subject: "Your KhulnaCart order #{{order_number}} has been shipped!",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Good things are heading your way!</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
@@ -214,23 +214,23 @@ const PROFESSIONAL_TEMPLATES = {
 
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
         <p style="font-size: 15px; margin-bottom: 10px; color: #FBBF24;">Thanks again! If you need any help with your order, please contact us at <a href="mailto:khulnacart.info@gmail.com" style="color: #F59E0B; text-decoration: none; font-weight: bold; border-bottom: 1px solid #F59E0B;">khulnacart.info@gmail.com</a>.</p>
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   password_reset: {
-    subject: "Reset Your khulnaCart Password",
+    subject: "Reset Your KhulnaCart Password",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">Reset Your Password</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
-      <p style="font-size: 16px; margin-bottom: 30px; line-height: 1.6; color: #FBBF24;">We received a request to reset your khulnaCart password. Click the button below to set a new password:</p>
+      <p style="font-size: 16px; margin-bottom: 30px; line-height: 1.6; color: #FBBF24;">We received a request to reset your KhulnaCart password. Click the button below to set a new password:</p>
       
       <div style="text-align: center; margin: 40px 0;">
         <a href="{{reset_url}}" style="background-color: #F59E0B; color: #121212; padding: 15px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 18px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">Reset Password</a>
@@ -239,19 +239,19 @@ const PROFESSIONAL_TEMPLATES = {
       <p style="font-size: 14px; color: #aaaaaa; line-height: 1.6;">If you didn't request a password reset, you can safely ignore this email.</p>
       
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   order_processing: {
-    subject: "Your khulnaCart order #{{order_number}} is being processed",
+    subject: "Your KhulnaCart order #{{order_number}} is being processed",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Order Processing</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
@@ -282,19 +282,19 @@ const PROFESSIONAL_TEMPLATES = {
       </table>
 
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   order_confirmed: {
-    subject: "Your khulnaCart order #{{order_number}} has been confirmed",
+    subject: "Your KhulnaCart order #{{order_number}} has been confirmed",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Order Confirmed</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
@@ -305,19 +305,19 @@ const PROFESSIONAL_TEMPLATES = {
       </div>
 
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   order_delivered: {
-    subject: "Your khulnaCart order #{{order_number}} has been delivered",
+    subject: "Your KhulnaCart order #{{order_number}} has been delivered",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Order Delivered</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Your order #{{order_number}} has been delivered. We hope you enjoy your purchase!</p>
@@ -327,19 +327,19 @@ const PROFESSIONAL_TEMPLATES = {
       </div>
 
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
 </div>`
   },
   order_cancelled: {
-    subject: "Update regarding your khulnaCart order #{{order_number}}",
+    subject: "Update regarding your KhulnaCart order #{{order_number}}",
     html: `<div style="background-color: #111111; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #F59E0B; border-radius: 16px; padding: 24px 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     <div style="background-color: #000000; border-radius: 12px; padding: 40px 20px; color: #FBBF24;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <img src="{{site_logo}}" alt="khulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
+        <img src="{{site_logo}}" alt="KhulnaCart" style="height: 60px; width: auto; display: block; margin: 0 auto;">
       </div>
       <h1 style="color: #EF4444; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Order Cancelled</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
@@ -350,7 +350,7 @@ const PROFESSIONAL_TEMPLATES = {
       </div>
 
       <div style="text-align: center; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
-        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} khulnaCart. All rights reserved.</p>
+        <p style="font-size: 12px; color: #666; margin: 0;">© {{current_year}} KhulnaCart. All rights reserved.</p>
       </div>
     </div>
   </div>
@@ -371,7 +371,7 @@ export default function AdminEmail() {
     gmail_app_password: "",
     notification_email: "",
     order_notification_enabled: "false",
-    email_sender_name: "Khulna Cart",
+    email_sender_name: "KhulnaCart",
     email_sender_address: "onboarding@resend.dev",
     email_enabled: "false",
     email_auto_send_welcome: "true",

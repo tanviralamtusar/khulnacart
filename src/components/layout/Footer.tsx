@@ -36,7 +36,7 @@ const Footer = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const siteName = siteSettings?.site_name || 'Khulna Cart';
+  const siteName = siteSettings?.site_name || 'KhulnaCart';
 
   const trustBadges = [
     { icon: ShieldCheck, text: '100% Authentic' },

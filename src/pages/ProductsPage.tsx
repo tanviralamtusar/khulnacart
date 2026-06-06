@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Filter, X, ChevronDown, Grid3X3, LayoutGrid, Loader2, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSEO } from '@/hooks/useSEO';
 import { Input } from '@/components/ui/input';
 import ProductCard from '@/components/products/ProductCard';
 import Header from '@/components/layout/Header';
@@ -11,6 +12,15 @@ import { fetchProducts, fetchCategories } from '@/services/productService';
 import { Product, Category } from '@/types';
 
 const ProductsPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryFilter = searchParams.get('category');
+  const searchQuery = searchParams.get('search') || '';
+
+  useSEO({
+    title: categoryFilter ? `${categoryFilter} Collection` : (searchQuery ? `Search results for "${searchQuery}"` : 'All Products'),
+    description: 'Browse our collection of high-quality products at KhulnaCart.'
+  });
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);

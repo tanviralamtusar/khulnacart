@@ -61,7 +61,7 @@ const Header = () => {
     refetchOnWindowFocus: false,
   });
 
-  const siteName = headerSettings?.site_name || 'Khulna Cart';
+  const siteName = headerSettings?.site_name || 'KhulnaCart';
   const siteLogo = headerSettings?.site_logo || headerSettings?.shop_logo_url || defaultLogo;
 
   useEffect(() => {
