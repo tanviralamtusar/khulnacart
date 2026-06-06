@@ -360,106 +360,9 @@ export default function FashionHomePage() {
         </div>
       </section>
 
-      {/* Recent Products - Recent Products */}
-      {recentProducts.length > 0 && (
-        <section className="py-12 md:py-16 bg-background">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <span className="text-primary font-medium text-sm tracking-wider uppercase">New Upload</span>
-                <h2 className="text-2xl md:text-3xl font-bold mt-1">
-                  Recent <span className="text-primary">Products</span>
-                </h2>
-              </div>
-              <Button variant="outline" onClick={() => navigate('/products')} className="rounded-full">
-                View All <ChevronRight className="ml-1 w-4 h-4" />
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {recentProducts.slice(0, 8).map((product: any, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group"
-                >
-                  <div 
-                    className="bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                    onClick={() => product.slug && navigate(`/product/${product.slug}`)}
-                  >
-                    {/* Product Image */}
-                    <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4">
-                      <img
-                        src={product.images?.[0]}
-                        alt={product.name}
-                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
-                      
-                      {/* Discount Badge */}
-                      {getDiscount(product.price, product.original_price) && (
-                        <Badge className="absolute top-3 left-3 bg-destructive text-destructive-foreground">
-                          -{getDiscount(product.price, product.original_price)}%
-                        </Badge>
-                      )}
-
-                      {/* New Badge */}
-                      {product.is_new && !getDiscount(product.price, product.original_price) && (
-                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                          New
-                        </Badge>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md"
-                          onClick={(e) => handleToggleWishlist(product, e)}
-                        >
-                          <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-destructive text-destructive' : ''}`} />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md"
-                          onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.slug}`); }}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Product Info */}
-                    <div className="p-3.5 sm:p-4 flex flex-col justify-between h-full">
-                      <div>
-                        <h3 className="font-semibold text-xs sm:text-sm text-foreground line-clamp-2 mb-2 min-h-[2.5rem] leading-snug group-hover:text-primary transition-colors">
-                          {product.name}
-                        </h3>
-                        <div className="flex items-center gap-1.5 mb-2.5">
-                          <span className="text-sm sm:text-base font-black text-primary">{formatPrice(product.price)}</span>
-                          {product.original_price && product.original_price > product.price && (
-                            <span className="text-[10px] sm:text-xs text-muted-foreground line-through">
-                              {formatPrice(product.original_price)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-      
       {/* Best Selling Section */}
       {displayProducts.length > 0 && (
-        <section className="py-12 md:py-16 bg-secondary/30">
+        <section className="py-12 md:py-16 bg-background">
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -557,8 +460,105 @@ export default function FashionHomePage() {
       </section>
       )}
 
-      {displayNewArrivals.length > 0 && (
+      {/* Recent Products - Recent Products */}
+      {recentProducts.length > 0 && (
         <section className="py-12 md:py-16 bg-secondary/30">
+          <div className="container-custom">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <span className="text-primary font-medium text-sm tracking-wider uppercase">New Upload</span>
+                <h2 className="text-2xl md:text-3xl font-bold mt-1">
+                  Recent <span className="text-primary">Products</span>
+                </h2>
+              </div>
+              <Button variant="outline" onClick={() => navigate('/products')} className="rounded-full">
+                View All <ChevronRight className="ml-1 w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {recentProducts.slice(0, 8).map((product: any, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group"
+                >
+                  <div 
+                    className="bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                    onClick={() => product.slug && navigate(`/product/${product.slug}`)}
+                  >
+                    {/* Product Image */}
+                    <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4">
+                      <img
+                        src={product.images?.[0]}
+                        alt={product.name}
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                      
+                      {/* Discount Badge */}
+                      {getDiscount(product.price, product.original_price) && (
+                        <Badge className="absolute top-3 left-3 bg-destructive text-destructive-foreground">
+                          -{getDiscount(product.price, product.original_price)}%
+                        </Badge>
+                      )}
+
+                      {/* New Badge */}
+                      {product.is_new && !getDiscount(product.price, product.original_price) && (
+                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                          New
+                        </Badge>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          size="icon"
+                          variant="secondary"
+                          className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md"
+                          onClick={(e) => handleToggleWishlist(product, e)}
+                        >
+                          <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-destructive text-destructive' : ''}`} />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="secondary"
+                          className="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md"
+                          onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.slug}`); }}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="p-3.5 sm:p-4 flex flex-col justify-between h-full">
+                      <div>
+                        <h3 className="font-semibold text-xs sm:text-sm text-foreground line-clamp-2 mb-2 min-h-[2.5rem] leading-snug group-hover:text-primary transition-colors">
+                          {product.name}
+                        </h3>
+                        <div className="flex items-center gap-1.5 mb-2.5">
+                          <span className="text-sm sm:text-base font-black text-primary">{formatPrice(product.price)}</span>
+                          {product.original_price && product.original_price > product.price && (
+                            <span className="text-[10px] sm:text-xs text-muted-foreground line-through">
+                              {formatPrice(product.original_price)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {displayNewArrivals.length > 0 && (
+        <section className="py-12 md:py-16 bg-background">
           <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -621,6 +621,7 @@ export default function FashionHomePage() {
           </div>
         </section>
       )}
+
 
       <Footer />
     </div>
