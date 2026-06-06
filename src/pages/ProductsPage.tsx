@@ -49,12 +49,9 @@ const ProductsPage = () => {
     };
     loadData();
   }, []);
-  const [searchParams, setSearchParams] = useSearchParams();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [gridCols, setGridCols] = useState<3 | 4>(4);
 
-  const categoryFilter = searchParams.get('category');
-  const searchQuery = searchParams.get('search') || '';
   const sortBy = searchParams.get('sort') || 'newest';
   const minPrice = searchParams.get('minPrice');
   const maxPrice = searchParams.get('maxPrice');

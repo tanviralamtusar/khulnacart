@@ -826,37 +826,6 @@ const ProductLandingPage = () => {
   const [showFloatingCta, setShowFloatingCta] = useState(true);
   const checkoutRef = useRef<HTMLDivElement>(null);
 
-  // Update SEO tags
-  useSEO({
-    title: product?.name,
-    description: product?.short_description || product?.long_description?.substring(0, 160),
-    image: product?.images?.[0],
-    type: 'product'
-  });
-
-  // Hide floating CTA when checkout section is visible
-  useEffect(() => {
-    const checkVisibility = () => {
-      if (checkoutRef.current) {
-        const rect = checkoutRef.current.getBoundingClientRect();
-        // Hide floating button when checkout section top is in lower 70% of viewport
-        const isCheckoutVisible = rect.top < window.innerHeight * 0.7;
-        setShowFloatingCta(!isCheckoutVisible);
-      }
-    };
-
-    // Check on scroll
-    window.addEventListener('scroll', checkVisibility, { passive: true });
-    // Initial check after a small delay to ensure DOM is ready
-    const timer = setTimeout(checkVisibility, 100);
-
-    return () => {
-      window.removeEventListener('scroll', checkVisibility);
-      clearTimeout(timer);
-    };
-  }, []);
-
-
   const { data: product, isLoading, error } = useQuery({
     queryKey: ["product-landing", slug],
     queryFn: async () => {
@@ -897,6 +866,16 @@ const ProductLandingPage = () => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  // Update SEO tags
+  useSEO({
+    title: product?.name,
+    description: product?.short_description || product?.long_description?.substring(0, 160),
+    image: product?.images?.[0],
+    type: 'product'
+  });
+
+  // Hide floating CTA when checkout section is visible
 
   const scrollToCheckout = useCallback(() => {
     document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth" });
