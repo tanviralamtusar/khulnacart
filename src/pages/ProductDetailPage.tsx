@@ -64,24 +64,30 @@ const ProductDetailPage = () => {
     if (!product?.variations) return {};
     
     const groups: Record<string, string[]> = {};
+    const config = product.variation_config || [];
     
     product.variations.forEach(v => {
-      if (v.option1_name && v.option1_value) {
-        if (!groups[v.option1_name]) groups[v.option1_name] = [];
-        if (!groups[v.option1_name].includes(v.option1_value)) {
-          groups[v.option1_name].push(v.option1_value);
+      const opt1Name = v.option1_name || config[0];
+      const opt1Value = v.option1_value;
+      if (opt1Name && opt1Value) {
+        if (!groups[opt1Name]) groups[opt1Name] = [];
+        if (!groups[opt1Name].includes(opt1Value)) {
+          groups[opt1Name].push(opt1Value);
         }
       }
-      if (v.option2_name && v.option2_value) {
-        if (!groups[v.option2_name]) groups[v.option2_name] = [];
-        if (!groups[v.option2_name].includes(v.option2_value)) {
-          groups[v.option2_name].push(v.option2_value);
+
+      const opt2Name = v.option2_name || config[1];
+      const opt2Value = v.option2_value;
+      if (opt2Name && opt2Value) {
+        if (!groups[opt2Name]) groups[opt2Name] = [];
+        if (!groups[opt2Name].includes(opt2Value)) {
+          groups[opt2Name].push(opt2Value);
         }
       }
     });
     
     return groups;
-  }, [product?.variations]);
+  }, [product?.variations, product?.variation_config]);
 
   // Update selected variation based on selected options
   useEffect(() => {
@@ -90,9 +96,17 @@ const ProductDetailPage = () => {
     const optionNames = Object.keys(variationGroups);
     if (optionNames.length === 0) return;
 
+    // Check if all required options are selected
+    const allSelected = optionNames.every(name => !!selectedOptions[name]);
+    
+    if (!allSelected) {
+      setSelectedVariation(undefined);
+      return;
+    }
+
     const match = product.variations.find(v => {
-      const opt1Name = v.option1_name;
-      const opt2Name = v.option2_name;
+      const opt1Name = v.option1_name || product.variation_config?.[0];
+      const opt2Name = v.option2_name || product.variation_config?.[1];
       
       const match1 = !opt1Name || selectedOptions[opt1Name] === v.option1_value;
       const match2 = !opt2Name || selectedOptions[opt2Name] === v.option2_value;
@@ -105,7 +119,7 @@ const ProductDetailPage = () => {
     } else {
       setSelectedVariation(undefined);
     }
-  }, [selectedOptions, product?.variations, variationGroups]);
+  }, [selectedOptions, product?.variations, variationGroups, product?.variation_config]);
 
   // Review states
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -438,23 +452,30 @@ const ProductDetailPage = () => {
 
             {/* Variation Selector */}
             {hasVariations && (
-              <div className="space-y-4">
+              <div className="space-y-6 py-2">
                 {Object.keys(variationGroups).length > 0 ? (
                   // Multi-variation rendering
                   Object.entries(variationGroups).map(([groupName, values]) => (
-                    <div key={groupName} className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        {groupName} Select Option: <span className="font-semibold text-foreground">{selectedOptions[groupName] || ''}</span>
-                      </p>
+                    <div key={groupName} className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                          Select {groupName}
+                        </p>
+                        {selectedOptions[groupName] && (
+                          <span className="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-full">
+                            {selectedOptions[groupName]}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex flex-wrap gap-2">
                         {values.map((value) => (
                           <button
                             key={value}
                             onClick={() => setSelectedOptions(prev => ({ ...prev, [groupName]: value }))}
-                            className={`min-w-[60px] px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
+                            className={`min-w-[50px] h-10 px-4 rounded-lg text-sm font-semibold border-2 transition-all flex items-center justify-center ${
                               selectedOptions[groupName] === value
-                                ? 'border-foreground bg-foreground text-background'
-                                : 'border-border bg-background text-foreground hover:border-foreground'
+                                ? 'border-primary bg-primary text-white shadow-md scale-105'
+                                : 'border-border bg-background text-foreground hover:border-muted-foreground hover:bg-muted/50'
                             }`}
                           >
                             {value}
@@ -465,19 +486,26 @@ const ProductDetailPage = () => {
                   ))
                 ) : (
                   // Legacy/Single variation rendering
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      Select Option: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
-                    </p>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                        Select Option
+                      </p>
+                      {selectedVariation && (
+                        <span className="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-full">
+                          {selectedVariation.name}
+                        </span>
+                      )}
+                    </div>
                     <div className="flex flex-wrap gap-2">
                       {product.variations!.map((variation) => (
                         <button
                           key={variation.id}
                           onClick={() => setSelectedVariation(variation)}
-                          className={`min-w-[60px] px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
+                          className={`min-w-[50px] h-10 px-4 rounded-lg text-sm font-semibold border-2 transition-all flex items-center justify-center ${
                             selectedVariation?.id === variation.id
-                              ? 'border-foreground bg-foreground text-background'
-                              : 'border-border bg-background text-foreground hover:border-foreground'
+                              ? 'border-primary bg-primary text-white shadow-md scale-105'
+                              : 'border-border bg-background text-foreground hover:border-muted-foreground hover:bg-muted/50'
                           }`}
                         >
                           {variation.name}

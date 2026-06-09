@@ -155,6 +155,10 @@ const mapProductFromDB = (data: any): Product => {
     stock: v.stock,
     sort_order: v.sort_order || 0,
     is_active: v.is_active ?? true,
+    option1_name: v.option1_name,
+    option1_value: v.option1_value,
+    option2_name: v.option2_name,
+    option2_value: v.option2_value,
   }));
 
   return {
@@ -178,5 +182,6 @@ const mapProductFromDB = (data: any): Product => {
     discount: discount,
     tags: data.tags || [],
     variations: variations.length > 0 ? variations : undefined,
+    variation_config: data.variation_config || [],
   };
 };
