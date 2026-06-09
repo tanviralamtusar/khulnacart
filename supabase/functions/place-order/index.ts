@@ -217,48 +217,12 @@ Deno.serve(async (req) => {
 
     let finalUserId = body.userId;
 
-    // If guest checkout, attempt auto-registration
+    // Strict Rule: No guest orders. User must be logged in.
     if (!finalUserId) {
-      try {
-        console.log(`Checking auto-registration for: ${customerEmailRaw}`);
-        // First check if a profile already exists for this email
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('user_id')
-          .eq('email', customerEmailRaw)
-          .maybeSingle();
-
-        if (existingProfile) {
-          console.log(`Found existing user ID for email: ${existingProfile.user_id}`);
-          finalUserId = existingProfile.user_id;
-        } else {
-          // No user exists, create one silently using Admin API
-          console.log(`Creating new account for: ${customerEmailRaw}`);
-          const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-            email: customerEmailRaw,
-            email_confirm: true,
-            user_metadata: {
-              full_name: (body?.shipping?.name ?? '').trim(),
-              phone: (body?.shipping?.phone ?? '').trim(),
-              source: 'auto_registered_on_checkout'
-            }
-          });
-
-          if (createError) {
-            console.error('Auto-registration error:', createError);
-            // If creation fails (e.g. duplicate during race condition), we still proceed with order
-            // but we don't block the purchase.
-          } else if (newUser?.user) {
-            finalUserId = newUser.user.id;
-            console.log(`Auto-registered new user: ${finalUserId}`);
-            
-            // The handle_new_user trigger in the DB will automatically create their profile record.
-            // We can wait a tiny bit or just proceed.
-          }
-        }
-      } catch (regError) {
-        console.error('Failed auto-registration flow:', regError);
-      }
+      return new Response(JSON.stringify({ error: 'অর্ডার করতে লগইন করা প্রয়োজন।' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     if (!name || name.length > 100) {

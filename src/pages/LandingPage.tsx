@@ -17,6 +17,7 @@ import { ShippingMethodSelector, ShippingZone, SHIPPING_RATES } from "@/componen
 import { toast } from "sonner";
 import { getEmbedUrl as getVideoEmbedUrl, parseIframeHtml } from "@/lib/videoEmbed";
 import { useAutofillAddress } from "@/hooks/useAutofillAddress";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Section {
   id: string;
@@ -157,6 +158,7 @@ interface ProductWithVariations {
 
 const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentImage, setCurrentImage] = useState(0);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [orderForm, setOrderForm] = useState({
@@ -254,6 +256,12 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
       return;
     }
 
+    if (!user) {
+      toast.error("অর্ডার করতে লগইন করুন");
+      navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+
     const selected = getSelectedVariation();
     if (!selected) {
       toast.error("প্রোডাক্ট সিলেক্ট করুন");
@@ -276,7 +284,7 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
       // Use the backend function (public) to create the order (bypasses RLS safely)
       const { data, error } = await supabase.functions.invoke('place-order', {
         body: {
-          userId: null,
+          userId: user.id,
           items: [
             {
               productId: product.id,
