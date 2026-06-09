@@ -75,11 +75,11 @@ const WishlistPage = () => {
                 className="bg-card rounded-xl border border-border overflow-hidden group"
               >
                 <Link to={`/product/${product.slug}`}>
-                  <div className="aspect-square overflow-hidden bg-muted">
+                  <div className="aspect-square overflow-hidden bg-muted flex items-center justify-center">
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="max-w-full max-h-full object-contain"
                     />
                   </div>
                 </Link>

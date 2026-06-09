@@ -391,11 +391,11 @@ export default function FashionHomePage() {
                   onClick={() => product.slug && navigate(`/product/${product.slug}`)}
                 >
                   {/* Product Image */}
-                  <div className="relative aspect-[3/4] overflow-hidden">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4 flex items-center justify-center">
                     <img
                       src={product.images?.[0]}
                       alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="max-w-full max-h-full object-contain"
                     />
                     
                     {/* Discount Badge */}
@@ -491,11 +491,11 @@ export default function FashionHomePage() {
                     onClick={() => product.slug && navigate(`/product/${product.slug}`)}
                   >
                     {/* Product Image */}
-                    <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4 flex items-center justify-center">
                       <img
                         src={product.images?.[0]}
                         alt={product.name}
-                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        className="max-w-full max-h-full object-contain"
                       />
                       
                       {/* Discount Badge */}
@@ -583,11 +583,11 @@ export default function FashionHomePage() {
                 className="group cursor-pointer bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300"
                 onClick={() => product.slug && navigate(`/product/${product.slug}`)}
               >
-                <div className="relative aspect-[3/4] overflow-hidden">
+                <div className="relative aspect-[3/4] overflow-hidden bg-white p-2 sm:p-4 flex items-center justify-center">
                   <img
                     src={product.images?.[0]}
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="max-w-full max-h-full object-contain"
                   />
                   
                   <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
