@@ -251,6 +251,9 @@ SET html_template = '<div style="background-color: #111111; padding: 20px; font-
       <h1 style="color: #F59E0B; font-size: 28px; font-weight: bold; margin-bottom: 10px; line-height: 1.2;">Order Delivered</h1>
       <p style="font-size: 16px; margin-bottom: 15px; color: #FBBF24;">Hi {{customer_name}},</p>
       <p style="font-size: 16px; margin-bottom: 25px; line-height: 1.6; color: #FBBF24;">Your order #{{order_number}} has been delivered. We hope you enjoy your purchase!</p>
+      <div style="text-align: center; margin: 20px 0;">
+        <a href="{{site_url}}/order/{{order_number}}/review" style="background-color: #F59E0B; color: #121212; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">Leave a Review</a>
+      </div>
       
       <div style="background-color: #111111; border-radius: 8px; padding: 15px; margin-bottom: 30px; font-size: 14px; line-height: 1.6; color: #FBBF24; border-left: 4px solid #F59E0B;">
         আপনার অর্ডারটি সফলভাবে ডেলিভারি করা হয়েছে। আমাদের সাথে থাকার জন্য ধন্যবাদ!
