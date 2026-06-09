@@ -341,14 +341,25 @@ const CheckoutPage = () => {
     loadUserAddress();
   }, [user]);
 
-  // Redirect to cart if empty (only on initial load, not after order placed)
+  // Redirect to cart if empty or login if not authenticated
   const hasPlacedOrder = useRef(false);
   
   useEffect(() => {
-    if (!authLoading && cartItems.length === 0 && !hasPlacedOrder.current) {
+    if (authLoading) return;
+
+    if (!user) {
+      toast({
+        title: "অর্ডার করতে লগইন করুন",
+        description: "অর্ডার করার আগে দয়া করে লগইন করুন।",
+      });
+      navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+
+    if (cartItems.length === 0 && !hasPlacedOrder.current) {
       navigate('/cart');
     }
-  }, [cartItems, authLoading, navigate]);
+  }, [cartItems, authLoading, user, navigate, toast]);
 
   // Track InitiateCheckout event once (both client and server side with same event ID)
   useEffect(() => {

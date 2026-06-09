@@ -35,6 +35,7 @@ import {
 import { toast } from "sonner";
 import { useAutofillAddress } from "@/hooks/useAutofillAddress";
 import { useSEO } from "@/hooks/useSEO";
+import { useAuth } from "@/hooks/useAuth";
 // ====== Interfaces ======
 interface ProductVariation {
   id: string;
@@ -901,6 +902,7 @@ CheckoutSection.displayName = 'CheckoutSection';
 const ProductLandingPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentImage, setCurrentImage] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFloatingCta, setShowFloatingCta] = useState(true);
@@ -963,12 +965,19 @@ const ProductLandingPage = () => {
 
   const handleOrderSubmit = async (form: OrderForm) => {
     if (!product) return;
+
+    if (!user) {
+      toast.error("অর্ডার করতে লগইন করুন");
+      navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
       const { data, error } = await supabase.functions.invoke('place-order', {
         body: {
-          userId: null,
+          userId: user.id,
           items: [{ productId: product.id, variationId: form.selectedVariationId || null, quantity: form.quantity }],
           shipping: { name: form.name, phone: form.phone, address: form.address },
           shippingZone: form.shippingZone,
