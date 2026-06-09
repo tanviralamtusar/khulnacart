@@ -57,6 +57,55 @@ const ProductDetailPage = () => {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedVariation, setSelectedVariation] = useState<ProductVariation | undefined>(undefined);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+
+  // Group variations by option types
+  const variationGroups = useMemo(() => {
+    if (!product?.variations) return {};
+    
+    const groups: Record<string, string[]> = {};
+    
+    product.variations.forEach(v => {
+      if (v.option1_name && v.option1_value) {
+        if (!groups[v.option1_name]) groups[v.option1_name] = [];
+        if (!groups[v.option1_name].includes(v.option1_value)) {
+          groups[v.option1_name].push(v.option1_value);
+        }
+      }
+      if (v.option2_name && v.option2_value) {
+        if (!groups[v.option2_name]) groups[v.option2_name] = [];
+        if (!groups[v.option2_name].includes(v.option2_value)) {
+          groups[v.option2_name].push(v.option2_value);
+        }
+      }
+    });
+    
+    return groups;
+  }, [product?.variations]);
+
+  // Update selected variation based on selected options
+  useEffect(() => {
+    if (!product?.variations) return;
+    
+    const optionNames = Object.keys(variationGroups);
+    if (optionNames.length === 0) return;
+
+    const match = product.variations.find(v => {
+      const opt1Name = v.option1_name;
+      const opt2Name = v.option2_name;
+      
+      const match1 = !opt1Name || selectedOptions[opt1Name] === v.option1_value;
+      const match2 = !opt2Name || selectedOptions[opt2Name] === v.option2_value;
+      
+      return match1 && match2;
+    });
+    
+    if (match) {
+      setSelectedVariation(match);
+    } else {
+      setSelectedVariation(undefined);
+    }
+  }, [selectedOptions, product?.variations, variationGroups]);
 
   // Review states
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -389,25 +438,54 @@ const ProductDetailPage = () => {
 
             {/* Variation Selector */}
             {hasVariations && (
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Select Option: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {product.variations!.map((variation) => (
-                    <button
-                      key={variation.id}
-                      onClick={() => setSelectedVariation(variation)}
-                      className={`min-w-[60px] px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
-                        selectedVariation?.id === variation.id
-                          ? 'border-foreground bg-foreground text-background'
-                          : 'border-border bg-background text-foreground hover:border-foreground'
-                      }`}
-                    >
-                      {variation.name}
-                    </button>
-                  ))}
-                </div>
+              <div className="space-y-4">
+                {Object.keys(variationGroups).length > 0 ? (
+                  // Multi-variation rendering
+                  Object.entries(variationGroups).map(([groupName, values]) => (
+                    <div key={groupName} className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        {groupName} Select Option: <span className="font-semibold text-foreground">{selectedOptions[groupName] || ''}</span>
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {values.map((value) => (
+                          <button
+                            key={value}
+                            onClick={() => setSelectedOptions(prev => ({ ...prev, [groupName]: value }))}
+                            className={`min-w-[60px] px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
+                              selectedOptions[groupName] === value
+                                ? 'border-foreground bg-foreground text-background'
+                                : 'border-border bg-background text-foreground hover:border-foreground'
+                            }`}
+                          >
+                            {value}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  // Legacy/Single variation rendering
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Select Option: <span className="font-semibold text-foreground">{selectedVariation?.name || ''}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {product.variations!.map((variation) => (
+                        <button
+                          key={variation.id}
+                          onClick={() => setSelectedVariation(variation)}
+                          className={`min-w-[60px] px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
+                            selectedVariation?.id === variation.id
+                              ? 'border-foreground bg-foreground text-background'
+                              : 'border-border bg-background text-foreground hover:border-foreground'
+                          }`}
+                        >
+                          {variation.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

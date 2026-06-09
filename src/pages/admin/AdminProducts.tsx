@@ -60,6 +60,10 @@ interface ProductVariation {
   stock: number;
   sort_order: number;
   is_active: boolean;
+  option1_name?: string;
+  option1_value?: string;
+  option2_name?: string;
+  option2_value?: string;
 }
 
 interface Product {
@@ -79,6 +83,7 @@ interface Product {
   is_featured: boolean | null;
   is_new: boolean | null;
   is_active: boolean | null;
+  variation_config?: string[] | null;
   categories?: { id: string; name: string } | null;
   created_at?: string;
 }
@@ -104,10 +109,20 @@ const initialFormState = {
   is_featured: false,
   is_new: false,
   is_active: true,
+  variation_config: [] as string[],
 };
 
 const defaultVariations: ProductVariation[] = [
-  { clientId: crypto.randomUUID(), name: '', price: 0, stock: 100, sort_order: 1, is_active: true },
+  { 
+    clientId: crypto.randomUUID(), 
+    name: '', 
+    price: 0, 
+    stock: 100, 
+    sort_order: 1, 
+    is_active: true,
+    option1_name: 'Size',
+    option1_value: '',
+  },
 ];
 
 export default function AdminProducts() {
@@ -166,17 +181,8 @@ export default function AdminProducts() {
     }
 
     if (data && data.length > 0) {
-      // Deduplicate by normalized name (a product should not show same size multiple times)
-      const uniqueVariations = Array.from(
-        new Map(
-          data
-            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-            .map((v) => [String(v.name).trim().toLowerCase(), v])
-        ).values()
-      );
-
       setVariations(
-        uniqueVariations.map((v) => ({
+        data.map((v) => ({
           id: v.id,
           clientId: v.id ?? crypto.randomUUID(),
           name: v.name,
@@ -185,6 +191,10 @@ export default function AdminProducts() {
           stock: v.stock,
           sort_order: v.sort_order || 0,
           is_active: v.is_active ?? true,
+          option1_name: v.option1_name || undefined,
+          option1_value: v.option1_value || undefined,
+          option2_name: v.option2_name || undefined,
+          option2_value: v.option2_value || undefined,
         }))
       );
       setHasVariations(true);
@@ -239,6 +249,7 @@ export default function AdminProducts() {
       is_featured: product.is_featured || false,
       is_new: product.is_new || false,
       is_active: product.is_active ?? true,
+      variation_config: product.variation_config || [],
     });
     setProductImages(product.images || []);
     await loadProductVariations(product.id);
@@ -322,6 +333,10 @@ export default function AdminProducts() {
         stock: 100,
         sort_order: variations.length + 1,
         is_active: true,
+        option1_name: formData.variation_config[0] || 'Size',
+        option1_value: '',
+        option2_name: formData.variation_config[1] || undefined,
+        option2_value: '',
       },
     ]);
   };
@@ -341,7 +356,23 @@ export default function AdminProducts() {
     value: any
   ) => {
     setVariations((prev) =>
-      prev.map((v) => (v.clientId === clientId ? { ...v, [field]: value } : v))
+      prev.map((v) => {
+        if (v.clientId !== clientId) return v;
+        
+        const updated = { ...v, [field]: value };
+        
+        // Auto-update name if option values change
+        if (field === 'option1_value' || field === 'option2_value') {
+          const parts = [];
+          if (updated.option1_value) parts.push(updated.option1_value);
+          if (updated.option2_value) parts.push(updated.option2_value);
+          if (parts.length > 0) {
+            updated.name = parts.join(' / ');
+          }
+        }
+        
+        return updated;
+      })
     );
   };
 
@@ -362,19 +393,11 @@ export default function AdminProducts() {
     if (hasVariations && variations.length > 0) {
       const validVariations = variations.filter((v) => v.name && v.price > 0);
 
-      // Dedupe by normalized name before saving (prevents accidental duplicates in UI)
-      const uniqueValidVariations = Array.from(
-        new Map(
-          validVariations
-            .map((v) => [String(v.name).trim().toLowerCase(), v])
-        ).values()
-      );
-
-      if (uniqueValidVariations.length > 0) {
+      if (validVariations.length > 0) {
         const { error } = await supabase
           .from('product_variations')
           .insert(
-            uniqueValidVariations.map((v, idx) => ({
+            validVariations.map((v, idx) => ({
               product_id: productId,
               name: v.name,
               price: v.price,
@@ -382,6 +405,10 @@ export default function AdminProducts() {
               stock: v.stock,
               sort_order: idx + 1,
               is_active: v.is_active,
+              option1_name: v.option1_name || null,
+              option1_value: v.option1_value || null,
+              option2_name: v.option2_name || null,
+              option2_value: v.option2_value || null,
             }))
           );
         
@@ -415,17 +442,22 @@ export default function AdminProducts() {
         is_featured: formData.is_featured,
         is_new: formData.is_new,
         is_active: formData.is_active,
+        variation_config: formData.variation_config || [],
       };
 
       let productId: string;
 
       if (editingProduct) {
-        await updateProduct(editingProduct.id, productData);
+        // @ts-ignore - variation_config is a new column
+        const { error } = await supabase.from('products').update(productData).eq('id', editingProduct.id);
+        if (error) throw error;
         productId = editingProduct.id;
         toast.success('Product updated successfully');
       } else {
-        const newProduct = await createProduct(productData);
-        productId = newProduct.id;
+        // @ts-ignore - variation_config is a new column
+        const { data, error } = await supabase.from('products').insert(productData).select().single();
+        if (error) throw error;
+        productId = data.id;
         toast.success('Product created successfully');
       }
 
@@ -436,6 +468,7 @@ export default function AdminProducts() {
       setIsDialogOpen(false);
       loadData();
     } catch (error) {
+      console.error('Save error:', error);
       toast.error('Failed to save product');
     } finally {
       setSubmitting(false);
@@ -818,94 +851,117 @@ export default function AdminProducts() {
                 </div>
 
                 {hasVariations && (
-                  <div className="space-y-3 bg-muted/50 rounded-lg p-3 sm:p-4">
-                    {/* Header: only show on tablet/desktop */}
-                    <div className="hidden sm:grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground mb-2">
-                      <div className="col-span-3">ভ্যারিয়েশন (Size/Kg/Ml)</div>
-                      <div className="col-span-3">দাম (Price) ৳</div>
-                      <div className="col-span-3">আগের দাম</div>
-                      <div className="col-span-2">স্টক</div>
-                      <div className="col-span-1"></div>
-                    </div>
-                    
-                    {variations.map((variation) => (
-                      <div key={variation.clientId} className="flex flex-col sm:grid sm:grid-cols-12 gap-3 sm:gap-2 p-3 sm:p-0 border sm:border-0 rounded-lg sm:rounded-none bg-background sm:bg-transparent items-start sm:items-center relative">
-                        <div className="w-full sm:col-span-3">
-                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">ভ্যারিয়েশন (Size/Kg/Ml)</Label>
-                          <Input
-                            placeholder="যেমন: Size 36, 1kg, 500ml..."
-                            value={variation.name}
-                            onChange={(e) => handleVariationChange(variation.clientId, 'name', e.target.value)}
-                          />
-                        </div>
-                        <div className="w-full sm:col-span-3">
-                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">দাম (Price) ৳</Label>
-                          <Input
-                            type="number"
-                            placeholder="950"
-                            value={variation.price || ''}
-                            onChange={(e) =>
-                              handleVariationChange(
-                                variation.clientId,
-                                'price',
-                                parseFloat(e.target.value) || 0
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="w-full sm:col-span-3">
-                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">আগের দাম</Label>
-                          <Input
-                            type="number"
-                            placeholder="Optional"
-                            value={variation.original_price || ''}
-                            onChange={(e) =>
-                              handleVariationChange(
-                                variation.clientId,
-                                'original_price',
-                                parseFloat(e.target.value) || undefined
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="w-full sm:col-span-2">
-                          <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">স্টক</Label>
-                          <Input
-                            type="number"
-                            value={variation.stock}
-                            onChange={(e) =>
-                              handleVariationChange(
-                                variation.clientId,
-                                'stock',
-                                parseInt(e.target.value) || 0
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="absolute right-2 top-2 sm:static sm:col-span-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveVariation(variation.clientId)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
+                  <div className="space-y-4 bg-muted/50 rounded-lg p-3 sm:p-4 border border-border/50 shadow-inner">
+                    <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                      <div className="flex-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">ভ্যারিয়েশন ১ (Option 1 Name)</Label>
+                        <Input
+                          placeholder="যেমন: Size, Color, Ml"
+                          value={formData.variation_config[0] || ''}
+                          onChange={(e) => {
+                            const newConfig = [...formData.variation_config];
+                            newConfig[0] = e.target.value;
+                            setFormData({ ...formData, variation_config: newConfig });
+                            // Update all variations with this name
+                            setVariations(prev => prev.map(v => ({ ...v, option1_name: e.target.value })));
+                          }}
+                        />
                       </div>
-                    ))}
+                      <div className="flex-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">ভ্যারিয়েশন ২ (Option 2 Name - Optional)</Label>
+                        <Input
+                          placeholder="যেমন: Color, Material"
+                          value={formData.variation_config[1] || ''}
+                          onChange={(e) => {
+                            const newConfig = [...formData.variation_config];
+                            newConfig[1] = e.target.value;
+                            setFormData({ ...formData, variation_config: newConfig });
+                            // Update all variations with this name
+                            setVariations(prev => prev.map(v => ({ ...v, option2_name: e.target.value })));
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Variations List */}
+                    <div className="space-y-3">
+                      <div className="hidden sm:grid grid-cols-12 gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-tight mb-1 px-1">
+                        <div className="col-span-2">{formData.variation_config[0] || 'Option 1'}</div>
+                        <div className="col-span-2">{formData.variation_config[1] || 'Option 2'}</div>
+                        <div className="col-span-3">ডিসপ্লে নাম (Display Name)</div>
+                        <div className="col-span-2">দাম (৳)</div>
+                        <div className="col-span-2">স্টক</div>
+                        <div className="col-span-1"></div>
+                      </div>
+                      
+                      {variations.map((variation) => (
+                        <div key={variation.clientId} className="flex flex-col sm:grid sm:grid-cols-12 gap-3 sm:gap-2 p-3 sm:p-2 border rounded-lg bg-background items-start sm:items-center relative shadow-sm">
+                          <div className="w-full sm:col-span-2">
+                            <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">{formData.variation_config[0] || 'Option 1'}</Label>
+                            <Input
+                              placeholder="Value 1"
+                              value={variation.option1_value || ''}
+                              onChange={(e) => handleVariationChange(variation.clientId, 'option1_value', e.target.value)}
+                            />
+                          </div>
+                          <div className="w-full sm:col-span-2">
+                            <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">{formData.variation_config[1] || 'Option 2'}</Label>
+                            <Input
+                              placeholder="Value 2"
+                              disabled={!formData.variation_config[1]}
+                              value={variation.option2_value || ''}
+                              onChange={(e) => handleVariationChange(variation.clientId, 'option2_value', e.target.value)}
+                            />
+                          </div>
+                          <div className="w-full sm:col-span-3">
+                            <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">ডিসপ্লে নাম (Display Name)</Label>
+                            <Input
+                              placeholder="Red / XL"
+                              value={variation.name}
+                              onChange={(e) => handleVariationChange(variation.clientId, 'name', e.target.value)}
+                            />
+                          </div>
+                          <div className="w-full sm:col-span-2">
+                            <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">দাম (৳)</Label>
+                            <Input
+                              type="number"
+                              value={variation.price || ''}
+                              onChange={(e) => handleVariationChange(variation.clientId, 'price', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                          <div className="w-full sm:col-span-2">
+                            <Label className="sm:hidden text-xs text-muted-foreground mb-1 block">স্টক</Label>
+                            <Input
+                              type="number"
+                              value={variation.stock}
+                              onChange={(e) => handleVariationChange(variation.clientId, 'stock', parseInt(e.target.value) || 0)}
+                            />
+                          </div>
+                          <div className="absolute right-2 top-2 sm:static sm:col-span-1 flex justify-center">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveVariation(variation.clientId)}
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={handleAddVariation}
-                      className="mt-2"
+                      className="mt-2 w-full sm:w-auto"
                     >
                       <Plus className="h-4 w-4 mr-1" />
-                      আরো যোগ করুন
+                      আরো ভ্যারিয়েশন যোগ করুন
                     </Button>
-
                   </div>
                 )}
               </div>

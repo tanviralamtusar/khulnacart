@@ -7,6 +7,10 @@ export interface ProductVariation {
   stock: number;
   sort_order: number;
   is_active: boolean;
+  option1_name?: string;
+  option1_value?: string;
+  option2_name?: string;
+  option2_value?: string;
 }
 
 export interface Product {
@@ -30,6 +34,7 @@ export interface Product {
   discount?: number;
   tags?: string[];
   variations?: ProductVariation[];
+  variation_config?: string[];
 }
 
 export interface Category {

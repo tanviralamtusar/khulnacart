@@ -481,6 +481,32 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
   const formRef = useRef<HTMLFormElement>(null);
   const sizeSelectionRef = useRef<HTMLDivElement>(null);
 
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+
+  // Group variations by option types
+  const variationGroups = useMemo(() => {
+    if (!product?.variations) return {};
+    
+    const groups: Record<string, string[]> = {};
+    
+    product.variations.forEach(v => {
+      if (v.option1_name && v.option1_value) {
+        if (!groups[v.option1_name]) groups[v.option1_name] = [];
+        if (!groups[v.option1_name].includes(v.option1_value)) {
+          groups[v.option1_name].push(v.option1_value);
+        }
+      }
+      if (v.option2_name && v.option2_value) {
+        if (!groups[v.option2_name]) groups[v.option2_name] = [];
+        if (!groups[v.option2_name].includes(v.option2_value)) {
+          groups[v.option2_name].push(v.option2_value);
+        }
+      }
+    });
+    
+    return groups;
+  }, [product?.variations]);
+
   const variations = useMemo(() => {
     // De-dupe by variation name to avoid showing the same "Size" multiple times
     const seen = new Set<string>();
@@ -495,9 +521,33 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
     return out;
   }, [product.variations]);
 
+  // Update selected variation based on selected options
+  useEffect(() => {
+    if (!product?.variations) return;
+    
+    const optionNames = Object.keys(variationGroups);
+    if (optionNames.length === 0) return;
+
+    const match = product.variations.find(v => {
+      const opt1Name = v.option1_name;
+      const opt2Name = v.option2_name;
+      
+      const match1 = !opt1Name || selectedOptions[opt1Name] === v.option1_value;
+      const match2 = !opt2Name || selectedOptions[opt2Name] === v.option2_value;
+      
+      return match1 && match2;
+    });
+    
+    if (match) {
+      updateForm('selectedVariationId', match.id);
+    } else {
+      updateForm('selectedVariationId', "");
+    }
+  }, [selectedOptions, product?.variations, variationGroups]);
+
   const selectedVariation = useMemo(
-    () => variations.find(v => v.id === form.selectedVariationId),
-    [variations, form.selectedVariationId]
+    () => (product.variations || []).find(v => v.id === form.selectedVariationId),
+    [product.variations, form.selectedVariationId]
   );
 
   const unitPrice = selectedVariation?.price || product.price;
@@ -563,25 +613,55 @@ const CheckoutSection = memo(({ product, onSubmit, isSubmitting }: {
                 </div>
 
                  {/* Size Selection */}
-                {variations.length > 0 && (
+                {product.variations && product.variations.length > 0 && (
                   <div ref={sizeSelectionRef} className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Select Variation <span className="text-red-500">*</span></p>
-                    <div className="flex flex-wrap gap-2">
-                      {variations.map((v) => (
-                        <button
-                          key={v.id}
-                          type="button"
-                          onClick={() => updateForm('selectedVariationId', v.id)}
-                          className={`px-4 py-2.5 rounded-lg font-semibold transition-all border-2 ${
-                            form.selectedVariationId === v.id
-                              ? 'border-amber-500 bg-amber-500 text-white shadow-md'
-                              : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-amber-300'
-                          }`}
-                        >
-                          {v.name}
-                        </button>
-                      ))}
-                    </div>
+                    {Object.keys(variationGroups).length > 0 ? (
+                      // Multi-variation rendering
+                      <div className="space-y-3">
+                        {Object.entries(variationGroups).map(([groupName, values]) => (
+                          <div key={groupName}>
+                            <p className="text-sm font-medium text-gray-700 mb-2">{groupName} <span className="text-red-500">*</span></p>
+                            <div className="flex flex-wrap gap-2">
+                              {values.map((value) => (
+                                <button
+                                  key={value}
+                                  type="button"
+                                  onClick={() => setSelectedOptions(prev => ({ ...prev, [groupName]: value }))}
+                                  className={`px-4 py-2.5 rounded-lg font-semibold transition-all border-2 ${
+                                    selectedOptions[groupName] === value
+                                      ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                                      : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-amber-300'
+                                  }`}
+                                >
+                                  {value}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      // Legacy/Single variation rendering
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Select Variation <span className="text-red-500">*</span></p>
+                        <div className="flex flex-wrap gap-2">
+                          {variations.map((v) => (
+                            <button
+                              key={v.id}
+                              type="button"
+                              onClick={() => updateForm('selectedVariationId', v.id)}
+                              className={`px-4 py-2.5 rounded-lg font-semibold transition-all border-2 ${
+                                form.selectedVariationId === v.id
+                                  ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                                  : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-amber-300'
+                              }`}
+                            >
+                              {v.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {!form.selectedVariationId && (
                       <p className="text-xs text-red-500 mt-1">* Please select a variation</p>
                     )}
