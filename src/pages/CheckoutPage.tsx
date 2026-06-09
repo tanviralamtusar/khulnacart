@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingBag, Truck, ArrowLeft, Loader2, Banknote, CreditCard } from 'lucide-react';
+import { ShoppingBag, Truck, ArrowLeft, Loader2, Banknote, CreditCard, Tag, X } from 'lucide-react';
 import { ShippingMethodSelector, ShippingZone } from '@/components/checkout/ShippingMethodSelector';
 import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { useServerTracking } from '@/hooks/useServerTracking';
@@ -107,6 +107,8 @@ const CheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bkash' | 'nagad' | 'rocket'>('bkash');
   const [transactionId, setTransactionId] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number; max_discount_amount: number | null; calculatedDiscount: number } | null>(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
 
   const [shippingForm, setShippingForm] = useState<ShippingForm>({
     name: '',
@@ -121,6 +123,121 @@ const CheckoutPage = () => {
   
   const couponDiscount = appliedCoupon?.calculatedDiscount || 0;
   const total = cartTotal + shippingCost - onlineDiscount - couponDiscount;
+
+  const handleApplyCoupon = async () => {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) {
+      toast({
+        title: "কুপন কোড লিখুন",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCouponLoading(true);
+    try {
+      const { data: coupon, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', code)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!coupon) {
+        toast({
+          title: "ভুল কুপন কোড! এই কুপন পাওয়া যায়নি।",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check date validity
+      const now = new Date();
+      if (coupon.starts_at && new Date(coupon.starts_at) > now) {
+        toast({
+          title: "এই কুপনটি এখনও শুরু হয়নি।",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (coupon.expires_at && new Date(coupon.expires_at) < now) {
+        toast({
+          title: "এই কুপনের মেয়াদ শেষ হয়ে গেছে।",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check usage limit
+      if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
+        toast({
+          title: "এই কুপনের ব্যবহার সীমা পূর্ণ হয়ে গেছে।",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check minimum order amount
+      if (coupon.min_order_amount && cartTotal < coupon.min_order_amount) {
+        toast({
+          title: `সর্বনিম্ন ${formatPrice(coupon.min_order_amount)} অর্ডারে এই কুপন প্রযোজ্য।`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Calculate discount
+      let discount = 0;
+      if (coupon.discount_type === 'percentage') {
+        discount = Math.round((cartTotal * coupon.discount_value) / 100);
+        if (coupon.max_discount_amount && discount > coupon.max_discount_amount) {
+          discount = coupon.max_discount_amount;
+        }
+      } else {
+        // fixed amount
+        discount = coupon.discount_value;
+      }
+
+      // Don't let discount exceed cartTotal
+      if (discount > cartTotal) {
+        discount = cartTotal;
+      }
+
+      const couponData = {
+        code: coupon.code,
+        discount_type: coupon.discount_type,
+        discount_value: Number(coupon.discount_value),
+        max_discount_amount: coupon.max_discount_amount == null ? null : Number(coupon.max_discount_amount),
+        calculatedDiscount: discount,
+      };
+
+      setAppliedCoupon(couponData);
+      localStorage.setItem('applied_coupon', JSON.stringify(couponData));
+
+      toast({
+        title: `কুপন "${coupon.code}" সফলভাবে প্রয়োগ হয়েছে! ${formatPrice(discount)} ছাড় পাচ্ছেন।`,
+      });
+    } catch (err) {
+      console.error('Coupon validation error:', err);
+      toast({
+        title: "কুপন যাচাই করতে সমস্যা হয়েছে।",
+        variant: "destructive",
+      });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    localStorage.removeItem('applied_coupon');
+    toast({
+      title: "কুপন সরিয়ে দেওয়া হয়েছে।",
+    });
+  };
 
   // Load coupon from localStorage
   useEffect(() => {
@@ -659,7 +776,64 @@ const CheckoutPage = () => {
                     );
                   })}
                 </div>
-
+ 
+                {/* Coupon Code Input */}
+                <div className="my-4 pt-4 border-t border-border">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5 mb-2">
+                    <Tag className="h-4 w-4 text-primary" />
+                    Promo Coupon / কুপন কোড
+                  </label>
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between p-2.5 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-green-600" />
+                        <div>
+                          <span className="font-bold text-green-700 dark:text-green-400 text-sm">{appliedCoupon.code}</span>
+                          <p className="text-[10px] text-green-600 dark:text-green-500">
+                            {appliedCoupon.discount_type === 'percentage' 
+                              ? `${appliedCoupon.discount_value}% ছাড়` 
+                              : `${formatPrice(appliedCoupon.discount_value)} ছাড়`}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-green-700 hover:text-destructive hover:bg-destructive/10"
+                        onClick={handleRemoveCoupon}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="কুপন কোড লিখুন"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleApplyCoupon();
+                          }
+                        }}
+                        className="text-sm font-mono uppercase tracking-wider h-9"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleApplyCoupon}
+                        disabled={couponLoading || !couponCode.trim()}
+                        className="px-4 shrink-0 font-semibold h-9"
+                      >
+                        {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+ 
                 <Separator className="my-4" />
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="font-medium text-foreground">{formatPrice(cartTotal)}</span></div>
