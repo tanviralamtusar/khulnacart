@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectCartItems, selectCartTotal, clearCart, setCartItemVariation } from '@/store/slices/cartSlice';
 import { useAuth } from '@/hooks/useAuth';
@@ -37,6 +38,7 @@ const getSessionId = () => {
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -511,6 +513,10 @@ const CheckoutPage = () => {
         couponCode: appliedCoupon?.code,
       });
       if (draftOrderId.current) await supabase.from('draft_orders').update({ is_converted: true, converted_at: new Date().toISOString() }).eq('id', draftOrderId.current);
+      
+      // Invalidate pending orders count to update the admin sidebar badge
+      queryClient.invalidateQueries({ queryKey: ['pending-orders-count'] });
+      
       localStorage.removeItem('checkout_session_id');
       localStorage.removeItem('applied_coupon');
       hasPlacedOrder.current = true;

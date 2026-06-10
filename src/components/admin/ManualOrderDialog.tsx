@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Plus, Minus, Trash2, Star, Loader2, Phone, MessageCircle, UserCheck, History, AlertTriangle, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Badge } from '@/components/ui/badge';
 
@@ -192,6 +193,7 @@ let previousCustomersCache: { data: PreviousCustomer[]; fetchedAt: number } | nu
 const PREVIOUS_CUSTOMERS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: ManualOrderDialogProps) {
+  const queryClient = useQueryClient();
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [codeSearch, setCodeSearch] = useState('');
@@ -698,6 +700,10 @@ export function ManualOrderDialog({ open, onOpenChange, onOrderCreated }: Manual
 
 
       toast.success(`Order created successfully! Order #${data.orderNumber || data.orderId}`);
+      
+      // Invalidate pending orders count to update the admin sidebar badge
+      queryClient.invalidateQueries({ queryKey: ['pending-orders-count'] });
+      
       resetForm();
       onOrderCreated(data.orderId);
       onOpenChange(false);

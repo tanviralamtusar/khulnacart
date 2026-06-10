@@ -1,4 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
+import { QueryClient } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 // Dashboard Stats
 export type DateRange = 'today' | 'week' | 'month' | 'custom';
@@ -316,6 +319,10 @@ export const updateOrderStatus = async (id: string, status: string, trackingNumb
     .single();
 
   if (error) throw error;
+  
+  // Invalidate queries to update UI counters
+  queryClient.invalidateQueries({ queryKey: ['pending-orders-count'] });
+  
   return data;
 };
 
@@ -348,6 +355,9 @@ export const deleteOrder = async (id: string) => {
     .eq('id', id);
 
   if (error) throw error;
+  
+  // Invalidate queries to update UI counters
+  queryClient.invalidateQueries({ queryKey: ['pending-orders-count'] });
 };
 
 // Users Management
