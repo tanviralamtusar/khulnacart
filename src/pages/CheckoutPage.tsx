@@ -200,9 +200,9 @@ const CheckoutPage = () => {
         discount = coupon.discount_value;
       }
 
-      // Don't let discount exceed cartTotal
-      if (discount > cartTotal) {
-        discount = cartTotal;
+      // Don't let discount exceed cartTotal + shippingCost
+      if (discount > (cartTotal + shippingCost)) {
+        discount = cartTotal + shippingCost;
       }
 
       const couponData = {
@@ -254,8 +254,8 @@ const CheckoutPage = () => {
         } else {
           discount = parsed.discount_value;
         }
-        if (discount > cartTotal) {
-          discount = cartTotal;
+        if (discount > (cartTotal + shippingCost)) {
+          discount = cartTotal + shippingCost;
         }
         setAppliedCoupon({
           ...parsed,

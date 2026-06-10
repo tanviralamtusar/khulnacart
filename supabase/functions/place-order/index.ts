@@ -568,8 +568,8 @@ Deno.serve(async (req) => {
           } else {
             couponDiscount = Number(coupon.discount_value);
           }
-          if (couponDiscount > subtotal) {
-            couponDiscount = subtotal;
+          if (couponDiscount > (subtotal + shippingCost)) {
+            couponDiscount = subtotal + shippingCost;
           }
           
           discount += couponDiscount;
