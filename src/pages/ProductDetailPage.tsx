@@ -231,6 +231,18 @@ const ProductDetailPage = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
+  // Scroll to reviews section if URL hash is present
+  useEffect(() => {
+    if (window.location.hash === '#reviews') {
+      const element = document.getElementById('reviews-section');
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 500);
+      }
+    }
+  }, [isLoading]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen pt-40 pb-16 flex items-center justify-center">
@@ -670,8 +682,9 @@ const ProductDetailPage = () => {
         )}
 
         {/* Customer Reviews Section */}
-        <ReviewsSection 
-          product={product}
+        <div id="reviews-section">
+          <ReviewsSection 
+            product={product}
           reviews={reviews}
           setReviews={setReviews}
           user={user}
@@ -690,6 +703,7 @@ const ProductDetailPage = () => {
           purchaseCheckLoading={purchaseCheckLoading}
           setPurchaseCheckLoading={setPurchaseCheckLoading}
         />
+        </div>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
@@ -795,6 +809,8 @@ function ReviewsSection({
         console.error('Purchase verification error:', error);
         setUserHasPurchased(false);
       } else {
+        // If they purchased this product in ANY order, allow review
+        // Or if they are coming from a specific order review link (handled via user check)
         setUserHasPurchased((data?.length || 0) > 0);
       }
 

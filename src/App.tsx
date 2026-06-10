@@ -25,6 +25,7 @@ import CartPage from '@/pages/CartPage';
 import CheckoutPage from '@/pages/CheckoutPage';
 import ProductLandingPage from '@/pages/ProductLandingPage';
 import LandingPage from '@/pages/LandingPage';
+import OrderReviewPage from '@/pages/OrderReviewPage';
 
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -94,6 +95,7 @@ const App = () => (
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/my-account" element={<MyAccountPage />} />
               <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+              <Route path="/order/:orderNumber/review" element={<OrderReviewPage />} />
               <Route path="/auth" element={<AuthPage />} />
               
               {/* Landing Pages */}
