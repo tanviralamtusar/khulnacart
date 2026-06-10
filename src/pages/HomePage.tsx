@@ -8,8 +8,7 @@ import { fetchFeaturedProducts, fetchNewProducts, fetchRecentProducts } from '@/
 import { Product } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import whyChooseBg from '@/assets/why-choose-bg.png';
-import khejurHero from '@/assets/khejur-hero.webp';
-import datesBowl from '@/assets/dates-bowl.png';
+// Khejur related images removed
 
 // Features data for hero overlay cards
 const heroFeatures = [
@@ -119,9 +118,9 @@ const HomePage = () => {
 
   // Default values
   const hero = content.hero || {
-    title: 'Pure Dates, Directly',
+    title: 'Pure Products, Directly',
     subtitle: 'At Your Doorstep.',
-    description: 'Collect the best dates of the season — fresh, soft, and full of natural flavor.',
+    description: 'Collect the best items of the season — fresh and full of natural flavor.',
     buttonText: 'Order Now',
     badgeTitle: '100% Organic',
     badgeSubtitle: 'Pure & Fresh',
@@ -130,10 +129,10 @@ const HomePage = () => {
   const about = content.about || {
     tagline: 'We sell what we eat.',
     title: 'About Us',
-    badge1: 'Fresh & Pure Dates',
+    badge1: 'Fresh & Pure Products',
     badge2: 'Fast Nationwide Delivery',
-    paragraph1: 'We believe dates are not just a fruit — they are a symbol of tradition, nutrition, and blessing. Our journey started from this belief.',
-    paragraph2: 'Our goal is simple — to deliver the best quality dates to the people of Bangladesh, which will be fresh, pure, and affordable.',
+    paragraph1: 'We believe quality items are not just products — they are a symbol of tradition, nutrition, and blessing. Our journey started from this belief.',
+    paragraph2: 'Our goal is simple — to deliver the best quality products to the people of Bangladesh, which will be fresh, pure, and affordable.',
     quote: 'We sell what we eat. Trust, quality, and satisfaction are our true identities.',
     experienceYears: '30+',
     experienceText: 'Years of Experience',
@@ -144,7 +143,7 @@ const HomePage = () => {
       image: '/images/promo-bag.png',
       tagline: '100% Organic',
       title: '100% Natural',
-      subtitle: 'Best Quality Dates',
+      subtitle: 'Best Quality Items',
       buttonText: 'Buy Now',
     },
     banner2: {
@@ -157,39 +156,39 @@ const HomePage = () => {
   };
 
   const featuredSection = content.featured_products || {
-    tagline: 'Our Dates',
-    title: 'Hand-picked Dates Directly from the Farm',
-    buttonText: 'View All Dates',
+    tagline: 'Our Products',
+    title: 'Hand-picked Items Directly from the Farm',
+    buttonText: 'View All Products',
   };
 
   const whyChooseUs = content.why_choose_us || {
-    tagline: 'Why Choose Our Dates?',
-    title: 'Thousands of people are choosing us for the quality and freshness of our dates.',
+    tagline: 'Why Choose Our Products?',
+    title: 'Thousands of people are choosing us for the quality and freshness of our items.',
   };
 
   const testimonials = content.testimonials?.items || [
     {
       name: 'Touhidul Haque',
       location: 'Narayanganj',
-      text: "I've been cheated buying dates online before, but here I got completely fresh and authentic dates. Now I only buy from here.",
+      text: "I've been cheated buying items online before, but here I got completely fresh and authentic products. Now I only buy from here.",
     },
     {
       name: 'Shamim Ahmed',
       location: 'Chittagong',
-      text: 'Packaging is great, there were no insects or dust in the dates. The quality of the dates shows they were well-preserved.',
+      text: 'Packaging is great. The quality of the products shows they were well-preserved.',
     },
     {
       name: 'Rubina Islam',
       location: 'Dhaka',
-      text: 'The dates were so sweet and soft they melt in the mouth. Perfect for Iftar in Ramadan.',
+      text: 'The items were so fresh and high quality. Perfect for daily needs.',
     },
   ];
 
   const features = content.features?.items || [
-    { title: 'Fresh & Premium Quality Dates', description: 'Each date is picked with care' },
-    { title: 'Direct Collection from Trusted Farm', description: 'Dates are collected directly from the source' },
-    { title: 'Clean & Safe Packaging', description: 'Dates are packed in a hygienic way' },
-    { title: 'Affordable & Fair Price', description: 'We provide quality dates at a fair price' },
+    { title: 'Fresh & Premium Quality Items', description: 'Each item is picked with care' },
+    { title: 'Direct Collection from Trusted Source', description: 'Products are collected directly from the source' },
+    { title: 'Clean & Safe Packaging', description: 'Products are packed in a hygienic way' },
+    { title: 'Affordable & Fair Price', description: 'We provide quality products at a fair price' },
   ];
 
   if (isLoading) {
@@ -221,11 +220,9 @@ const HomePage = () => {
               className="relative order-2 lg:order-1"
             >
               <div className="relative">
-                <img
-                  src={khejurHero}
-                  alt="Premium Dates"
-                  className="w-full max-w-lg mx-auto drop-shadow-2xl"
-                />
+                <div className="w-full max-w-lg mx-auto aspect-square bg-muted/50 rounded-2xl flex items-center justify-center border-2 border-dashed border-border">
+                  <Leaf className="h-16 w-16 text-primary/30" />
+                </div>
                 {/* Floating badge */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -342,11 +339,9 @@ const HomePage = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <img
-                src={datesBowl}
-                alt="About Us"
-                className="rounded-2xl shadow-xl w-full max-w-md mx-auto"
-              />
+              <div className="w-full max-w-md mx-auto aspect-square bg-muted/50 rounded-2xl flex items-center justify-center border-2 border-dashed border-border shadow-xl">
+                 <Heart className="h-16 w-16 text-primary/30" />
+              </div>
               <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-lg">
                 <p className="text-3xl font-bold">{about.experienceYears}</p>
                 <p className="text-sm opacity-90">{about.experienceText}</p>
@@ -541,10 +536,10 @@ const HomePage = () => {
           >
             <span className="text-secondary font-medium">{content.testimonials?.tagline || 'Customer Experience'}</span>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2">
-              {content.testimonials?.title || 'Satisfaction with Our Dates'}
+              {content.testimonials?.title || 'Satisfaction with Our Products'}
             </h2>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-              Read what customers are feeling after eating our dates. Freshness, taste, and service—these are most important to us.
+              Read what customers are feeling after trying our products. Freshness, taste, and service—these are most important to us.
             </p>
           </motion.div>
 
@@ -581,7 +576,7 @@ const HomePage = () => {
             Order Today
           </h2>
           <p className="text-secondary-foreground/80 mb-8 max-w-md mx-auto">
-            Order now to get pure and fresh dates. Fast delivery nationwide.
+            Order now to get pure and fresh products. Fast delivery nationwide.
           </p>
           <Button size="lg" className="bg-primary-foreground text-foreground hover:bg-primary-foreground/90" asChild>
             <Link to="/products">
