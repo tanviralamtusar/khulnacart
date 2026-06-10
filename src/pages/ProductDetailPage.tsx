@@ -453,38 +453,68 @@ const ProductDetailPage = () => {
             {/* Variation Selector */}
             {hasVariations && (
               <div className="space-y-6 py-2">
-                {Object.keys(variationGroups).length > 0 ? (
+                {product.variation_config && product.variation_config.length > 0 ? (
                   // Multi-variation rendering
-                  Object.entries(variationGroups).map(([groupName, values]) => (
-                    <div key={groupName} className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                          Select {groupName}
-                        </p>
-                        {selectedOptions[groupName] && (
-                          <span className="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-full">
-                            {selectedOptions[groupName]}
-                          </span>
-                        )}
+                  product.variation_config.map((groupName, index) => {
+                    const values = variationGroups[groupName] || [];
+                    
+                    // Filter values based on previous selections to "auto hide"
+                    const availableValues = values.filter(value => {
+                      if (index === 0) return true;
+                      
+                      const prevGroups = product.variation_config!.slice(0, index);
+                      return product.variations?.some(v => {
+                        const matchesPrevious = prevGroups.every((prevName, prevIdx) => {
+                          const selected = selectedOptions[prevName];
+                          return !selected || (prevIdx === 0 ? v.option1_value : (prevIdx === 1 ? v.option2_value : v.option3_value)) === selected;
+                        });
+                        const currentValue = index === 0 ? v.option1_value : (index === 1 ? v.option2_value : v.option3_value);
+                        return matchesPrevious && currentValue === value;
+                      });
+                    });
+
+                    if (availableValues.length === 0) return null;
+
+                    return (
+                      <div key={groupName} className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                            Select {groupName}
+                          </p>
+                          {selectedOptions[groupName] && (
+                            <span className="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-full">
+                              {selectedOptions[groupName]}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {availableValues.map((value) => (
+                            <button
+                              key={value}
+                              onClick={() => {
+                                setSelectedOptions(prev => {
+                                  const next = { ...prev, [groupName]: value };
+                                  // Clear subsequent selections to prevent invalid combinations
+                                  product.variation_config?.slice(index + 1).forEach(name => {
+                                    delete next[name];
+                                  });
+                                  return next;
+                                });
+                              }}
+                              className={`min-w-[50px] h-10 px-4 rounded-lg text-sm font-semibold border-2 transition-all flex items-center justify-center ${
+                                selectedOptions[groupName] === value
+                                  ? 'border-primary bg-primary text-white shadow-md scale-105'
+                                  : 'border-border bg-background text-foreground hover:border-muted-foreground hover:bg-muted/50'
+                              }`}
+                            >
+                              {value}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {values.map((value) => (
-                          <button
-                            key={value}
-                            onClick={() => setSelectedOptions(prev => ({ ...prev, [groupName]: value }))}
-                            className={`min-w-[50px] h-10 px-4 rounded-lg text-sm font-semibold border-2 transition-all flex items-center justify-center ${
-                              selectedOptions[groupName] === value
-                                ? 'border-primary bg-primary text-white shadow-md scale-105'
-                                : 'border-border bg-background text-foreground hover:border-muted-foreground hover:bg-muted/50'
-                            }`}
-                          >
-                            {value}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                ) : (
+                    );
+                  })
+                ) : hasVariations ? (
                   // Legacy/Single variation rendering
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -513,7 +543,7 @@ const ProductDetailPage = () => {
                       ))}
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             )}
 
