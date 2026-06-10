@@ -13,7 +13,13 @@ export const useSEO = ({ title, description, image, url, type = 'website' }: SEO
     const siteName = 'KhulnaCart';
     const fullTitle = title ? `${title} | ${siteName}` : siteName;
     const currentUrl = url || window.location.href;
-    const defaultImage = '/src/assets/favicon1.png'; // Fallback image
+    const origin = window.location.origin;
+    const defaultImage = `${origin}/og-image.png`; // Fallback image
+
+    // Ensure image is an absolute URL
+    const ogImage = image 
+      ? (image.startsWith('http') ? image : `${origin}${image.startsWith('/') ? '' : '/'}${image}`)
+      : defaultImage;
 
     // Update Basic Tags
     if (title) document.title = fullTitle;
@@ -34,7 +40,7 @@ export const useSEO = ({ title, description, image, url, type = 'website' }: SEO
       updateMetaTag('og:description', description);
       updateMetaTag('description', description, 'name');
     }
-    updateMetaTag('og:image', image || defaultImage);
+    updateMetaTag('og:image', ogImage);
     updateMetaTag('og:url', currentUrl);
     updateMetaTag('og:type', type);
     updateMetaTag('og:site_name', siteName);
@@ -43,7 +49,7 @@ export const useSEO = ({ title, description, image, url, type = 'website' }: SEO
     updateMetaTag('twitter:card', 'summary_large_image', 'name');
     updateMetaTag('twitter:title', fullTitle, 'name');
     if (description) updateMetaTag('twitter:description', description, 'name');
-    updateMetaTag('twitter:image', image || defaultImage, 'name');
+    updateMetaTag('twitter:image', ogImage, 'name');
 
     // Canonical Link
     let canonical = document.querySelector('link[rel="canonical"]');
