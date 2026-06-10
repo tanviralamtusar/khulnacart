@@ -25,12 +25,9 @@ const phoneSchema = z.object({
 
 const signUpSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  email: z.string().email('Enter a valid email').max(255).optional().or(z.literal('')),
+  email: z.string().email('Enter a valid email').max(255),
   phone: z.string().regex(/^01[3-9]\d{8}$/, 'Enter a valid phone number').optional().or(z.literal('')),
   password: z.string().min(6, 'Password must be at least 6 characters').max(100),
-}).refine((data) => data.email || data.phone, {
-  message: 'Provide either email or phone number',
-  path: ['email'],
 });
 
 const AuthPage = () => {
@@ -114,9 +111,8 @@ const AuthPage = () => {
           toast.success('Login successful!');
         }
       } else {
-        // Use email if provided, otherwise use phone as email format
-        const signUpEmail = formData.email || `${formData.phone}@phone.local`;
-        const { error } = await signUp(signUpEmail, formData.password, formData.fullName, formData.phone || undefined);
+        // Email is now mandatory for sign up
+        const { error } = await signUp(formData.email, formData.password, formData.fullName, formData.phone || undefined);
         if (error) {
           if (error.message.includes('already registered')) {
             toast.error('This email/phone is already registered');
@@ -362,7 +358,7 @@ const AuthPage = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Email <span className="text-muted-foreground text-xs">(Email or phone is required)</span>
+                          Email <span className="text-destructive">*</span>
                         </label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -372,6 +368,7 @@ const AuthPage = () => {
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="pl-10"
+                            required
                           />
                         </div>
                         {errors.email && (
@@ -381,7 +378,7 @@ const AuthPage = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Phone Number <span className="text-muted-foreground text-xs">(Email or phone is required)</span>
+                          Phone Number <span className="text-muted-foreground text-xs">(Optional)</span>
                         </label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
