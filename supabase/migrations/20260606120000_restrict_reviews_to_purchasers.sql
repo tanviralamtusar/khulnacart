@@ -51,7 +51,7 @@ begin
   order by o.created_at desc
   limit 1;
 
-  new.customer_name := coalesce(profile_name, order_name, 'Customer');
+  new.customer_name := coalesce(new.customer_name, profile_name, order_name, 'Customer');
   return new;
 end;
 $$;
@@ -98,7 +98,7 @@ create policy "Users can update reviews for purchased products"
 
 update public.reviews r
 set
-  is_verified = true,
+  is_verified = coalesce(is_verified, false),
   customer_name = coalesce(
     (
       select nullif(trim(p.full_name), '')
@@ -119,7 +119,7 @@ set
     r.customer_name,
     'Customer'
   )
-where private.has_purchased_product(r.user_id, r.product_id);
+where customer_name is null;
 
 create or replace function public.update_product_rating()
 returns trigger

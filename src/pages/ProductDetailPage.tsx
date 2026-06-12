@@ -773,6 +773,9 @@ function ReviewsSection({
           .in('user_id', userIds);
 
         const profileMap: Record<string, string> = {};
+        if (user) {
+          profileMap[user.id] = user.user_metadata?.full_name || user.user_metadata?.name || 'Customer';
+        }
         profiles?.forEach(p => { profileMap[p.user_id] = p.full_name || 'Customer'; });
 
         const enriched = data.map(r => ({
@@ -848,6 +851,7 @@ function ReviewsSection({
           product_id: product.id,
           rating: reviewRating,
           comment: reviewComment.trim(),
+          customer_name: user?.user_metadata?.full_name || user?.user_metadata?.name || null,
           is_verified: true,
         })
         .select()
@@ -864,7 +868,7 @@ function ReviewsSection({
 
       setReviews(prev => [{
         ...data,
-        profile: { full_name: profile?.full_name || 'Customer' }
+        profile: { full_name: profile?.full_name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Customer' }
       }, ...prev]);
       setReviewComment('');
       setReviewRating(5);

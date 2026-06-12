@@ -188,6 +188,8 @@ const Header = () => {
 
       {/* Navigation - Desktop (Simplified) removed */}
 
+    </header>
+
       {/* Mobile Menu Sidebar-like Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -216,8 +218,6 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-    </header>
 
     {/* Bottom Navigation (Sticky/Mobile) */}
     <div className="fixed bottom-0 left-0 right-0 z-[100] bg-background border-t border-border px-4 py-2 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:hidden">
