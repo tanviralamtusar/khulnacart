@@ -589,7 +589,7 @@ const ProductDetailPage = () => {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <CheckCircle2 className={`h-5 w-5 ${currentStock > 0 ? 'text-[#6B8E23]' : 'text-destructive'}`} />
               <span className="font-medium">
-                {currentStock > 0 ? `Stock: ${currentStock} পিস বাকি আছে` : 'Stock: স্টক শেষ'}
+                {currentStock > 0 ? `Stock: ${currentStock} pieces left` : 'Stock: Out of Stock'}
               </span>
             </div>
 
@@ -833,7 +833,7 @@ function ReviewsSection({
       return;
     }
     if (!reviewComment.trim()) {
-      toast.error('অনুগ্রহ করে রিভিউ লিখুন');
+      toast.error('Please write a review');
       return;
     }
 
@@ -873,10 +873,11 @@ function ReviewsSection({
       setReviewComment('');
       setReviewRating(5);
       setUserHasReviewed(true);
-      toast.success('রিভিউ সফলভাবে জমা হয়েছে! ধন্যবাদ।');
+      toast.success('Review submitted successfully! Thank you.');
     } catch (err) {
       console.error('Review submission error:', err);
-      toast.error('রিভিউ জমা দিতে সমস্যা হয়েছে।');
+      toast.error('Failed to submit review.');
+
     } finally {
       setSubmittingReview(false);
     }
@@ -884,7 +885,7 @@ function ReviewsSection({
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
   return (
@@ -913,7 +914,7 @@ function ReviewsSection({
                   ))}
                 </div>
                 <span className="text-sm font-semibold text-foreground">{avgRating.toFixed(1)}</span>
-                <span className="text-sm text-muted-foreground">({reviews.length}টি রিভিউ)</span>
+                <span className="text-sm text-muted-foreground">({reviews.length} reviews)</span>
               </div>
             )}
           </div>
@@ -930,11 +931,11 @@ function ReviewsSection({
 
         {!userHasReviewed && (!user || userHasPurchased) && (
           <div className="mb-8 p-5 bg-muted/30 border border-border rounded-xl">
-            <h3 className="font-semibold text-foreground mb-4">আপনার মতামত দিন</h3>
+            <h3 className="font-semibold text-foreground mb-4">Leave a Review</h3>
             
             {/* Star Rating Selector */}
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-sm text-muted-foreground font-medium">রেটিং:</span>
+              <span className="text-sm text-muted-foreground font-medium">Rating:</span>
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map(star => (
                   <button
@@ -960,7 +961,7 @@ function ReviewsSection({
 
             {/* Comment */}
             <Textarea
-              placeholder={user ? 'আপনার অভিজ্ঞতা শেয়ার করুন...' : 'রিভিউ দিতে লগইন করুন'}
+              placeholder={user ? 'Share your experience...' : 'Login to leave a review'}
               value={reviewComment}
               onChange={(e) => setReviewComment(e.target.value)}
               rows={3}
@@ -974,11 +975,11 @@ function ReviewsSection({
               className="font-semibold"
             >
               {submittingReview ? (
-                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> জমা হচ্ছে...</>
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Submitting...</>
               ) : user ? (
-                'রিভিউ জমা দিন'
+                'Submit Review'
               ) : (
-                'লগইন করুন'
+                'Login'
               )}
             </Button>
           </div>
@@ -988,8 +989,9 @@ function ReviewsSection({
         {reviews.length === 0 ? (
           <div className="text-center py-10">
             <MessageSquare className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-muted-foreground">এখনো কোনো রিভিউ নেই। প্রথম রিভিউটি আপনি দিন!</p>
+            <p className="text-muted-foreground">No reviews yet. Be the first to review!</p>
           </div>
+
         ) : (
           <div className="space-y-5">
             {reviews.map(review => (
