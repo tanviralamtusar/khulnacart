@@ -538,6 +538,7 @@ const CheckoutPage = () => {
           city: 'khulna', 
           district: 'khulna' 
         },
+      });
     } catch (error) {
       console.error('Order error:', error);
       toast({ title: "Order placement failed", description: "Please try again.", variant: "destructive" });

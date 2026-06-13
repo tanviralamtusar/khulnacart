@@ -448,13 +448,13 @@ export default function AdminProducts() {
       let productId: string;
 
       if (editingProduct) {
-        // @ts-ignore - variation_config is a new column
+        // @ts-expect-error - variation_config is a new column
         const { error } = await supabase.from('products').update(productData).eq('id', editingProduct.id);
         if (error) throw error;
         productId = editingProduct.id;
         toast.success('Product updated successfully');
       } else {
-        // @ts-ignore - variation_config is a new column
+        // @ts-expect-error - variation_config is a new column
         const { data, error } = await supabase.from('products').insert(productData).select().single();
         if (error) throw error;
         productId = data.id;

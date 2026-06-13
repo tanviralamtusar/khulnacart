@@ -18,8 +18,8 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
 
 // Intercept place-order edge function calls to inject a fallback email when missing.
 const originalInvoke = supabase.functions.invoke.bind(supabase.functions);
-// @ts-ignore
-supabase.functions.invoke = async function (functionName: string, options?: any) {
+// @ts-expect-error - Overriding invoke to inject fallback email for place-order
+supabase.functions.invoke = async function (functionName: string, options?: Record<string, unknown>) {
   if (functionName === 'place-order' && options?.body) {
     const body = options.body;
     if (!body.email) {

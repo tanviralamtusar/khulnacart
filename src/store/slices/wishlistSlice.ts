@@ -14,7 +14,9 @@ const loadWishlistFromStorage = (): Product[] => {
       console.error('Error parsing wishlist from localStorage:', e);
       try {
         localStorage.removeItem('wishlist');
-      } catch (err) {}
+      } catch (err) {
+        // Ignore error when removing corrupted wishlist
+      }
     }
   }
   return [];

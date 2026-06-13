@@ -501,7 +501,7 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
       // Helper to clean text - remove special characters/emojis that don't render
       const cleanText = (text: string) => {
         if (!text) return text;
-        return text.replace(/^[👍✅✔️•\-\*◊◆●○▪▫🔘🌴👉]+\s*/g, '').trim();
+        return text.replace(/^(?:[👍✅•\-*◊◆●○▪▫🔘🌴👉]|✔️)+\s*/gu, '').trim();
       };
       
       return (
@@ -1455,7 +1455,7 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
       // Helper to clean text - remove special characters/emojis that don't render
       const cleanText = (text: string) => {
         if (!text) return text;
-        return text.replace(/^[👍✅✔️•\-\*◊◆●○▪▫🔘🌴]+\s*/g, '').trim();
+        return text.replace(/^(?:[👍✅•\-*◊◆●○▪▫🔘🌴]|✔️)+\s*/gu, '').trim();
       };
 
       return (

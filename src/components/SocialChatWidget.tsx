@@ -18,9 +18,9 @@ const SocialChatWidget = () => {
     location.pathname.startsWith("/l/") ||
     location.pathname.startsWith("/landing/");
   
-  if (isLandingPage) return null;
   const { data: settings } = useQuery({
     queryKey: ["social-chat-settings"],
+    enabled: !isLandingPage,
     queryFn: async () => {
       const keys = ["messenger_enabled", "messenger_page_id", "whatsapp_enabled", "whatsapp_number"];
       const { data, error } = await supabase
@@ -48,6 +48,8 @@ const SocialChatWidget = () => {
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
+
+  if (isLandingPage) return null;
 
   const hasAnyEnabled =
     (settings?.messenger_enabled && settings?.messenger_page_id) ||

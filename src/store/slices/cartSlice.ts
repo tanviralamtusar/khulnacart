@@ -15,7 +15,9 @@ const loadCartFromStorage = (): CartItem[] => {
       console.error('Error parsing cart from localStorage:', e);
       try {
         localStorage.removeItem('cart');
-      } catch (err) {}
+      } catch (err) {
+        // Ignore error when removing corrupted cart
+      }
     }
   }
   return [];

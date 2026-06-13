@@ -215,7 +215,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    let finalUserId = body.userId;
+    const finalUserId = body.userId;
 
     // Strict Rule: No guest orders. User must be logged in.
     if (!finalUserId) {
