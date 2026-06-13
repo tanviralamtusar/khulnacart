@@ -520,12 +520,24 @@ const CheckoutPage = () => {
       localStorage.removeItem('checkout_session_id');
       localStorage.removeItem('applied_coupon');
       hasPlacedOrder.current = true;
-      const orderItems = cartItems.map(item => ({ productId: item.product.id, productName: item.product.name, price: item.product.price, quantity: item.quantity }));
+      const orderItems = order.items.map(item => ({ 
+        productId: item.productId, 
+        productName: item.name, 
+        price: item.price, 
+        quantity: item.quantity 
+      }));
       dispatch(clearCart());
       navigate('/order-confirmation', {
-        state: { orderNumber: order.id, customerName: shippingForm.name, phone: shippingForm.phone, total: total, items: orderItems, numItems: cartItems.reduce((sum, item) => sum + item.quantity, 0), city: 'khulna', district: 'khulna' },
-        replace: true,
-      });
+        state: { 
+          orderNumber: order.id, 
+          customerName: shippingForm.name, 
+          phone: shippingForm.phone, 
+          total: order.total, 
+          items: orderItems, 
+          numItems: orderItems.reduce((sum, item) => sum + item.quantity, 0), 
+          city: 'khulna', 
+          district: 'khulna' 
+        },
     } catch (error) {
       console.error('Order error:', error);
       toast({ title: "Order placement failed", description: "Please try again.", variant: "destructive" });

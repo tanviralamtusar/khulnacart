@@ -315,14 +315,14 @@ const SectionRenderer = ({ section, theme, slug }: SectionRendererProps) => {
           orderNumber: data.orderNumber || data.orderId,
           customerName: orderForm.name,
           phone: orderForm.phone,
-          total: total,
-          items: [{
-            productId: product.id,
-            productName: product.name,
-            price: variation.price,
-            quantity: orderForm.quantity,
-          }],
-          numItems: orderForm.quantity,
+          total: data.total,
+          items: data.items.map((item: any) => ({
+            productId: item.productId,
+            productName: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          numItems: data.items.reduce((sum: number, item: any) => sum + item.quantity, 0),
           fromLandingPage: true,
           landingPageSlug: slug,
         }
